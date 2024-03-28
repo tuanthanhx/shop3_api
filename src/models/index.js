@@ -37,8 +37,15 @@ Object.keys(db).forEach((modelName) => {
     db[modelName].associate(db);
   }
 });
+
 db.user.belongsTo(db.language, { foreignKey: 'language_id' });
 db.user.belongsTo(db.currency, { foreignKey: 'currency_id' });
+
+db.user_verification.belongsTo(db.user, { foreignKey: 'user_id' });
+db.user.hasMany(db.user_verification, { foreignKey: 'user_id' });
+
+db.user_address.belongsTo(db.country, { foreignKey: 'country_code' });
+db.country.hasMany(db.user_address, { foreignKey: 'country_code' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

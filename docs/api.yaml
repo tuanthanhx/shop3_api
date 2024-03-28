@@ -16,7 +16,7 @@ paths:
       summary: Returns a list of users.
       description: Optional extended description in CommonMark or HTML.
       tags:
-        - users
+        - Users
       responses:
         '200':    # status code
           description: A JSON array of user names
@@ -24,10 +24,12 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
     post:
       summary: Creates a user.
       tags:
-        - users
+        - Users
       requestBody:
         required: true
         content:
@@ -45,9 +47,9 @@ paths:
 
   /users/{userId}:
     get:
-      summary: Returns a user by ID.22
+      summary: Returns a user by ID.
       tags:
-        - store
+        - Users
       parameters:
         - name: userId
           in: path
@@ -63,6 +65,329 @@ paths:
       security:
         - bearerAuth: []
 
+  /user_verifications:
+    get:
+      summary: Returns a list of user verification codes.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - User Verifications
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Creates a user verification code.
+      tags:
+        - User Verifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+
+  /user_addresses:
+    get:
+      summary: Returns a list of user addresses.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - User Addresses
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Creates a user address.
+      tags:
+        - User Addresses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+
+  /countries:
+    get:
+      summary: Returns a list of countries.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Countries
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Creates a country.
+      tags:
+        - Countries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+  /countries/{code}:
+    get:
+      summary: Returns a country.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Countries
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    put:
+      summary: Updates a country.
+      tags:
+        - Countries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Updated
+      security:
+        - bearerAuth: []
+    delete:
+      summary: Deletes a country.
+      tags:
+        - Countries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Deleted
+      security:
+        - bearerAuth: []
+
+  /languages:
+    get:
+      summary: Returns a list of languages.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Languages
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Creates a language.
+      tags:
+        - Languages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+  /languages/{id}:
+    get:
+      summary: Returns a language by ID.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Languages
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    put:
+      summary: Updates a language.
+      tags:
+        - Languages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Updated
+      security:
+        - bearerAuth: []
+    delete:
+      summary: Deletes a language.
+      tags:
+        - Languages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Deleted
+      security:
+        - bearerAuth: []
+
+  /currencies:
+    get:
+      summary: Returns a list of currencies.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Currencies
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    post:
+      summary: Creates a currency.
+      tags:
+        - Currencies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+  /currencies/{id}:
+    get:
+      summary: Returns a currency by ID.
+      description: Optional extended description in CommonMark or HTML.
+      tags:
+        - Currencies
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []
+    put:
+      summary: Updates a currency.
+      tags:
+        - Currencies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+    delete:
+      summary: Deletes a currency.
+      tags:
+        - Currencies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses: 
+        '201':
+          description: Created
+      security:
+        - bearerAuth: []
+
 components:
 
   schemas:
@@ -72,8 +397,39 @@ components:
       properties:
         id:
           type: integer
+        uuid:
+          type: string
+          format: uuid
         name:
           type: string
+        password:
+          type: string
+          format: password
+        phone:
+          type: string
+        avatar:
+          type: string
+        gender:
+          type: string
+        dob:
+          type: string
+          format: date-time
+        language_id:
+          type: integer
+        currency_id:
+          type: integer
+        is_email_validated:
+          type: boolean
+        is_phone_validated:
+          type: boolean
+        is_active:
+          type: boolean
+        last_login:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
 
   securitySchemes:
     bearerAuth: 
