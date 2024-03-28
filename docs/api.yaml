@@ -45,7 +45,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /users/{userId}:
+  /users/{id}:
     get:
       summary: Returns a user by ID.
       tags:
@@ -64,6 +64,40 @@ paths:
           description: OK
       security:
         - bearerAuth: []
+  /users/{id}/activate:
+    put:
+      summary: Activate user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to activate
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User activated successfully
+        '404':
+          description: User not found
+  /users/{id}/deactivate:
+    put:
+      summary: Deactivate user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ID of the user to deactivate
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deactivated successfully
+        '404':
+          description: User not found
 
   /user_verifications:
     get:
