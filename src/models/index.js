@@ -17,6 +17,9 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
     acquire: dbConfig.pool.acquire,
     idle: dbConfig.pool.idle,
   },
+  define: {
+    underscored: true,
+  },
 });
 
 const db = {};
@@ -34,6 +37,8 @@ Object.keys(db).forEach((modelName) => {
     db[modelName].associate(db);
   }
 });
+db.user.belongsTo(db.language, { foreignKey: 'language_id' });
+db.user.belongsTo(db.currency, { foreignKey: 'currency_id' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

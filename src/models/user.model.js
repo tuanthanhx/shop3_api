@@ -1,29 +1,44 @@
 module.exports = function (sequelize, Sequelize) {
   const User = sequelize.define('user', {
-    fullName: {
+    name: {
+      type: Sequelize.STRING,
+    },
+    uuid: {
+      type: Sequelize.STRING,
+      defaultValue: Sequelize.UUIDV4,
+    },
+    email: {
       type: Sequelize.STRING,
     },
     password: {
       type: Sequelize.STRING,
     },
+    phone: {
+      type: Sequelize.STRING,
+    },
     avatar: {
+      type: Sequelize.STRING,
+    },
+    gender: {
+      type: Sequelize.INTEGER,
+    },
+    dob: {
+      type: Sequelize.DATE,
+    },
+    is_phone_validated: {
       type: Sequelize.BOOLEAN,
     },
-    avatar2: {
+    is_email_validated: {
       type: Sequelize.BOOLEAN,
     },
-    avatar3: {
+    is_active: {
       type: Sequelize.BOOLEAN,
     },
-    avatar4: {
-      type: Sequelize.BOOLEAN,
+    last_login: {
+      type: Sequelize.DATE,
     },
-    avatar5: {
-      type: Sequelize.BOOLEAN,
-    },
-    avatar6: {
-      type: Sequelize.BOOLEAN,
-    },
+  }, {
+    paranoid: true,
   });
 
   return User;

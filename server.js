@@ -19,9 +19,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Shop3 API',
+      title: process.env.TITLE,
       version: '1.0.0',
-      description: 'Documentation for Shop3 API.',
+      description: `Documentation for ${process.env.TITLE}.`,
     },
     servers: [
       {
@@ -45,7 +45,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: 'Shop3 API Docs' }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: `${process.env.TITLE} Docs` }));
 
 db.sequelize.sync()
   .then(() => {
@@ -56,7 +56,10 @@ db.sequelize.sync()
   });
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Shop3 API.' });
+  res.json({
+    message: process.env.TITLE,
+    version: process.env.VERSION,
+  });
 });
 
 const routesDir = `${__dirname}/src/routes`;

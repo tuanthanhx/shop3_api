@@ -1,17 +1,17 @@
 module.exports = function (sequelize, Sequelize) {
-  const Tutorial = sequelize.define('tutorial', {
-    title: {
+  const Currency = sequelize.define('currency', {
+    name: {
       type: Sequelize.STRING,
     },
-    description: {
+    code: {
       type: Sequelize.STRING,
     },
-    published: {
-      type: Sequelize.BOOLEAN,
+    symbol: {
+      type: Sequelize.STRING,
     },
   }, {
     paranoid: true,
   });
 
-  return Tutorial;
+  return Currency;
 };

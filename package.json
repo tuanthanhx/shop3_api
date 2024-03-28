@@ -18,7 +18,7 @@
       ".env"
     ],
     "ext": "js, json, yaml",
-    "ignore": []
+    "ignore": ["src/migrations/*", "src/seeders/*"]
   },
   "author": "Shop3's Developers",
   "license": "UNLICENSED",
