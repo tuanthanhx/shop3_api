@@ -4,11 +4,21 @@
   "description": "Shop3 API",
   "main": "server.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
     "start": "cross-env NODE_ENV=production node server.js",
     "test": "npx eslint server.js src/**/*.js --fix",
     "migrate": "cd src && npx sequelize-cli db:migrate",
     "seed": "cd src && npx sequelize-cli db:seed:all"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src",
+      "docs",
+      "server.js",
+      ".env"
+    ],
+    "ext": "js, json, yaml",
+    "ignore": []
   },
   "author": "Shop3's Developers",
   "license": "UNLICENSED",
@@ -18,12 +28,15 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mariadb": "^3.3.0",
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.37.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "sequelize-cli": "^6.6.2"
   }

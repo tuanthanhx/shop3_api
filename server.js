@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 const db = require('./src/models');
 
 require('dotenv').config();
@@ -13,11 +15,37 @@ if (process.env.NODE_ENV === 'production') {
   };
 }
 
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Shop3 API',
+      version: '1.0.0',
+      description: 'Documentation for Shop3 API.',
+    },
+    servers: [
+      {
+        url: 'http://127.0.0.1:3000/v1',
+        description: 'Test Server',
+      },
+      {
+        url: 'https://api.shop3.com',
+        description: 'Production Server',
+      },
+    ],
+  },
+  apis: ['./docs/api.yaml'],
+};
+
+const openapiSpecification = swaggerJsdoc(options);
+
 const app = express();
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: 'Shop3 API Docs' }));
 
 db.sequelize.sync()
   .then(() => {
