@@ -2,11 +2,11 @@
   "name": "shop3_server",
   "version": "1.0.0",
   "description": "Shop3 API",
-  "main": "server.js",
+  "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server.js",
     "start": "cross-env NODE_ENV=production node server.js",
-    "test": "npx eslint server.js src/**/*.js --fix",
+    "lint": "npx eslint server.js src/**/*.js --fix",
     "migrate": "cd src && npx sequelize-cli db:migrate",
     "seed": "cd src && npx sequelize-cli db:seed:all"
   },
@@ -23,8 +23,7 @@
       "src/seeders/*"
     ]
   },
-  "author": "Shop3's Developers",
-  "license": "UNLICENSED",
+  "author": "tuanthanhx",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

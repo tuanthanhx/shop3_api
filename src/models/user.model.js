@@ -52,9 +52,15 @@ module.exports = function (sequelize, Sequelize) {
     },
   }, {
     paranoid: true,
+    defaultScope: {
+      attributes: { exclude: ['password'] },
+    },
     hooks: {
       beforeCreate: (user) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(8));
+      },
+      afterCreate: (user) => {
+        delete user.dataValues.password;
       },
     },
     instanceMethods: {

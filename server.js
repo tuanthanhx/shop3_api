@@ -8,8 +8,10 @@ const db = require('./src/models');
 
 require('dotenv').config();
 
+const env = process.env.NODE_ENV || 'development'
+
 let corsOptions = {};
-if (process.env.NODE_ENV === 'production') {
+if (env !== 'development') {
   corsOptions = {
     origin: process.env.ALLOWED_ORIGINS.split(','),
   };
@@ -25,12 +27,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://127.0.0.1:3000/v1',
-        description: 'Test Server',
-      },
-      {
-        url: 'https://api.shop3.com',
-        description: 'Production Server',
+        url: env === 'development' ? process.env.APP_URL_DEV : process.env.APP_URL_PROD,
       },
     ],
   },
@@ -74,5 +71,5 @@ fs.readdirSync(routesDir)
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 app.listen(PORT, () => {
-  console.info(`Server is running with ${NODE_ENV} mode on port ${PORT}.`);
+  console.info(`Server is running by ${NODE_ENV} mode on port ${PORT}.`);
 });

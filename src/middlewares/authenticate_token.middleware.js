@@ -1,6 +1,6 @@
 // TODO: Use passport.js to handle auth later
 
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
