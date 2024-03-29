@@ -17,11 +17,11 @@ module.exports = {
       created_at: new Date(),
       updated_at: new Date(),
     }));
-    await queryInterface.bulkInsert('Languages', languageObjects, {});
+    await queryInterface.bulkInsert('languages', languageObjects, {});
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('Languages', null, {});
-    await queryInterface.sequelize.query('ALTER TABLE Languages AUTO_INCREMENT = 1;');
+    await queryInterface.bulkDelete('languages', null, {});
+    await queryInterface.sequelize.query('ALTER TABLE languages AUTO_INCREMENT = 1;');
   },
 };

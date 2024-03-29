@@ -1,6 +1,6 @@
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert('Currencies', [
+    await queryInterface.bulkInsert('currencies', [
       {
         name: 'U.S. dollar',
         code: 'USD',
@@ -278,7 +278,7 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('Currencies', null, {});
-    await queryInterface.sequelize.query('ALTER TABLE Currencies AUTO_INCREMENT = 1;');
+    await queryInterface.bulkDelete('currencies', null, {});
+    await queryInterface.sequelize.query('ALTER TABLE currencies AUTO_INCREMENT = 1;');
   },
 };

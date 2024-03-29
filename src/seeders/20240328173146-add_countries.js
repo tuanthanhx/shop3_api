@@ -1,6 +1,6 @@
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert('Countries', [
+    await queryInterface.bulkInsert('countries', [
       {
         code: 'af',
         name: 'Afghanistan',
@@ -1499,7 +1499,7 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('Countries', null, {});
-    await queryInterface.sequelize.query('ALTER TABLE Countries AUTO_INCREMENT = 1;');
+    await queryInterface.bulkDelete('countries', null, {});
+    await queryInterface.sequelize.query('ALTER TABLE countries AUTO_INCREMENT = 1;');
   },
 };
