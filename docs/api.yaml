@@ -56,7 +56,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+
       security:
         - bearerAuth: []
     post:
@@ -181,9 +196,21 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Language"
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Language"
       security:
         - bearerAuth: []
     post:
@@ -323,9 +350,21 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Currency"
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Currency"
       security:
         - bearerAuth: []
     post:
@@ -452,7 +491,7 @@ components:
           example: John Smith
         phone:
           type: string
-          example: 0123456789
+          example: "0123456789"
         avatar:
           type: string
           example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
@@ -495,7 +534,7 @@ components:
           example: abc123
         phone:
           type: string
-          example: 0123456789
+          example: "0123456789"
         avatar:
           type: string
           example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
@@ -526,7 +565,7 @@ components:
           example: John Smith
         phone:
           type: string
-          example: 0123456789
+          example: "0123456789"
         avatar:
           type: string
           example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg

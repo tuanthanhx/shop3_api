@@ -3,8 +3,9 @@
 // const jwt = require('jsonwebtoken');
 
 exports.authenticateToken = (req, res, next) => {
-  const publicPaths = ['/api/languages', '/api/login'];
-  if (publicPaths.includes(req.path)) {
+  const publicPaths = ['/public', '/favicon.ico', '/api/auth', '/api-docs/'];
+  const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
+  if (isPublicPaths) {
     return next();
   }
 
