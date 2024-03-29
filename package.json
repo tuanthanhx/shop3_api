@@ -30,6 +30,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.3.0",
     "sequelize": "^6.37.1",

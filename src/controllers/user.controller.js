@@ -74,7 +74,7 @@ exports.findOne = (req, res) => {
 exports.create = (req, res) => {
   if (!req.body.name) {
     res.status(400).send({
-      message: 'Content cannot be empty.',
+      message: 'Name cannot be empty.',
     });
     return;
   }
@@ -115,10 +115,15 @@ exports.update = (req, res) => {
   User.update(object, {
     where: { id },
   })
-    .then(() => {
-      res.send({
-        message: 'User was updated successfully.',
-      });
+    .then(async ([num]) => {
+      if (num > 0) {
+        const data = await User.findByPk(id);
+        res.send(data);
+      } else {
+        res.send({
+          message: `Cannot updated User with id=${id}.`,
+        });
+      }
     })
     .catch((err) => {
       console.error(err);

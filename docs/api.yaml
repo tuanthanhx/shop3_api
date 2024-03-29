@@ -5,25 +5,58 @@ info:
   version: 1.0.0
 servers:
   - url: http://127.0.0.1:3000/v1
-    description: Internal staging server for testing
-  - url: https://api.shop3.com
-    description: Production server
 
 paths:
-
   /users:
     get:
       summary: Returns a list of users.
-      description: Optional extended description in CommonMark or HTML.
       tags:
         - Users
+      parameters:
+        - name: name
+          in: query
+          description: Names to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Emails to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: phone
+          in: query
+          description: Phones to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        "200":
+          description: A JSON array of user
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
+              schema:
+                $ref: "#/components/schemas/User"
       security:
         - bearerAuth: []
     post:
@@ -35,13 +68,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
+              $ref: "#/components/schemas/UserAddRequest"
+      responses:
+        "200":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
       security:
         - bearerAuth: []
 
@@ -51,203 +85,63 @@ paths:
       tags:
         - Users
       parameters:
-        - name: userId
+        - name: id
           in: path
+          description: ID of user
           required: true
-          description: Parameter description in CommonMark or HTML.
           schema:
-            type : integer
+            type: integer
             format: int64
-            minimum: 1
-      responses: 
-        '200':
-          description: OK
+      responses:
+        "200":
+          description: A JSON object of user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
       security:
         - bearerAuth: []
-  /users/{id}/activate:
     put:
-      summary: Activate user
+      summary: Updates a user.
       tags:
         - Users
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
+          description: ID of user
           required: true
-          description: ID of the user to activate
           schema:
-            type: string
-      responses:
-        '200':
-          description: User activated successfully
-        '404':
-          description: User not found
-  /users/{id}/deactivate:
-    put:
-      summary: Deactivate user
-      tags:
-        - Users
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          description: ID of the user to deactivate
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User deactivated successfully
-        '404':
-          description: User not found
-
-  /user_verifications:
-    get:
-      summary: Returns a list of user verification codes.
-      description: Optional extended description in CommonMark or HTML.
-      tags:
-        - User Verifications
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a user verification code.
-      tags:
-        - User Verifications
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
-          description: Created
-      security:
-        - bearerAuth: []
-
-  /user_addresses:
-    get:
-      summary: Returns a list of user addresses.
-      description: Optional extended description in CommonMark or HTML.
-      tags:
-        - User Addresses
+              $ref: "#/components/schemas/UserUpdateRequest"
       responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a user address.
-      tags:
-        - User Addresses
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
-          description: Created
-      security:
-        - bearerAuth: []
-
-  /countries:
-    get:
-      summary: Returns a list of countries.
-      description: Optional extended description in CommonMark or HTML.
-      tags:
-        - Countries
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a country.
-      tags:
-        - Countries
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
-          description: Created
-      security:
-        - bearerAuth: []
-  /countries/{code}:
-    get:
-      summary: Returns a country.
-      description: Optional extended description in CommonMark or HTML.
-      tags:
-        - Countries
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
-    put:
-      summary: Updates a country.
-      tags:
-        - Countries
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
+        "200":
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
       security:
         - bearerAuth: []
     delete:
-      summary: Deletes a country.
+      summary: Deletes a user.
       tags:
-        - Countries
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
+        - Users
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
           description: Deleted
       security:
         - bearerAuth: []
@@ -255,16 +149,41 @@ paths:
   /languages:
     get:
       summary: Returns a list of languages.
-      description: Optional extended description in CommonMark or HTML.
       tags:
         - Languages
+      parameters:
+        - name: name
+          in: query
+          description: Names to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        "200":
+          description: A JSON array of languages
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Language"
       security:
         - bearerAuth: []
     post:
@@ -278,32 +197,53 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-      responses: 
-        '201':
+                  example: English
+      responses:
+        "200":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Language"
       security:
         - bearerAuth: []
+
   /languages/{id}:
     get:
       summary: Returns a language by ID.
-      description: Optional extended description in CommonMark or HTML.
       tags:
         - Languages
+      parameters:
+        - name: id
+          in: path
+          description: ID of language
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        "200":
+          description: A JSON object of language
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
+              schema:
+                $ref: "#/components/schemas/Language"
       security:
         - bearerAuth: []
     put:
       summary: Updates a language.
       tags:
         - Languages
+      parameters:
+        - name: id
+          in: path
+          description: ID of language
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
@@ -311,28 +251,32 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-      responses: 
-        '201':
+                  example: English
+      responses:
+        "200":
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Language"
       security:
         - bearerAuth: []
     delete:
       summary: Deletes a language.
       tags:
         - Languages
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
+      parameters:
+        - name: id
+          in: path
+          description: ID of language
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
           description: Deleted
       security:
         - bearerAuth: []
@@ -340,16 +284,48 @@ paths:
   /currencies:
     get:
       summary: Returns a list of currencies.
-      description: Optional extended description in CommonMark or HTML.
       tags:
         - Currencies
+      parameters:
+        - name: name
+          in: query
+          description: Names to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: code
+          in: query
+          description: Codes to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        "200":
+          description: A JSON array of currencies
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Currency"
       security:
         - bearerAuth: []
     post:
@@ -363,32 +339,59 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-      responses: 
-        '201':
+                  example: U.S. dollar
+                code:
+                  type: string
+                  example: USD
+                symbol:
+                  type: string
+                  example: $
+      responses:
+        "200":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Currency"
       security:
         - bearerAuth: []
+
   /currencies/{id}:
     get:
       summary: Returns a currency by ID.
-      description: Optional extended description in CommonMark or HTML.
       tags:
         - Currencies
+      parameters:
+        - name: id
+          in: path
+          description: ID of currency
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        "200":
+          description: A JSON object of currency
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/User'
+              schema:
+                $ref: "#/components/schemas/Currency"
       security:
         - bearerAuth: []
     put:
       summary: Updates a currency.
       tags:
         - Currencies
+      parameters:
+        - name: id
+          in: path
+          description: ID of currency
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         required: true
         content:
@@ -396,62 +399,75 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-      responses: 
-        '201':
-          description: Created
+                  example: U.S. dollar
+                code:
+                  type: string
+                  example: USD
+                symbol:
+                  type: string
+                  example: $
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Currency"
       security:
         - bearerAuth: []
     delete:
       summary: Deletes a currency.
       tags:
         - Currencies
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-      responses: 
-        '201':
-          description: Created
+      parameters:
+        - name: id
+          in: path
+          description: ID of currency
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Deleted
       security:
         - bearerAuth: []
 
 components:
-
   schemas:
-
     User:
       type: object
       properties:
         id:
           type: integer
+          example: 1
         uuid:
           type: string
           format: uuid
+          example: 6252290c-1a4e-4556-a8cd-e3e32e316fd7
         name:
           type: string
-        password:
-          type: string
-          format: password
+          example: John Smith
         phone:
           type: string
+          example: 0123456789
         avatar:
           type: string
+          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
         gender:
-          type: string
+          type: integer
+          example: 1
         dob:
           type: string
           format: date-time
         language_id:
           type: integer
+          example: 1
         currency_id:
           type: integer
+          example: 1
         is_email_validated:
           type: boolean
         is_phone_validated:
@@ -464,9 +480,115 @@ components:
         created_at:
           type: string
           format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserAddRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Smith
+        password:
+          type: string
+          example: abc123
+        phone:
+          type: string
+          example: 0123456789
+        avatar:
+          type: string
+          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+        gender:
+          type: integer
+          example: 1
+        dob:
+          type: string
+          format: date-time
+        language_id:
+          type: integer
+          example: 1
+        currency_id:
+          type: integer
+          example: 1
+        is_email_validated:
+          type: boolean
+        is_phone_validated:
+          type: boolean
+        is_active:
+          type: boolean
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Smith
+        phone:
+          type: string
+          example: 0123456789
+        avatar:
+          type: string
+          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+        gender:
+          type: integer
+          example: 1
+        dob:
+          type: string
+          format: date-time
+        language_id:
+          type: integer
+          example: 1
+        currency_id:
+          type: integer
+          example: 1
+        is_email_validated:
+          type: boolean
+        is_phone_validated:
+          type: boolean
+        is_active:
+          type: boolean
+
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: English
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Currency:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: U.S. dollar
+        code:
+          type: string
+          example: USD
+        symbol:
+          type: string
+          example: $
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
   securitySchemes:
-    bearerAuth: 
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT

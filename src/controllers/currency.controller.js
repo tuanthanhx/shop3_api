@@ -1,11 +1,12 @@
 const db = require('../models');
 
-const Language = db.language;
+const Currency = db.currency;
 const { Op } = db.Sequelize;
 
 exports.findAll = (req, res) => {
   const {
     name,
+    code,
     page,
     limit,
   } = req.query;
@@ -14,12 +15,15 @@ exports.findAll = (req, res) => {
   if (name) {
     condition.name = { [Op.like]: `%${name}%` };
   }
+  if (code) {
+    condition.code = { [Op.like]: `%${code}%` };
+  }
 
   const pageNo = parseInt(page, 10) || 1;
   const limitPerPage = parseInt(limit, 10) || 10;
   const offset = (pageNo - 1) * limitPerPage;
 
-  Language.findAndCountAll({
+  Currency.findAndCountAll({
     where: condition,
     limit: limitPerPage,
     offset,
@@ -45,20 +49,20 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const { id } = req.params;
 
-  Language.findByPk(id)
+  Currency.findByPk(id)
     .then((data) => {
       if (data) {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find Language with id=${id}.`,
+          message: `Cannot find Currency with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       console.error(err);
       res.status(500).send({
-        message: `Error retrieving Language with id=${id}`,
+        message: `Error retrieving Currency with id=${id}`,
       });
     });
 };
@@ -73,9 +77,11 @@ exports.create = (req, res) => {
 
   const object = {
     name: req.body.name,
+    code: req.body.code,
+    symbol: req.body.symbol,
   };
 
-  Language.create(object)
+  Currency.create(object)
     .then((data) => {
       res.send(data);
     })
@@ -94,23 +100,23 @@ exports.update = (req, res) => {
     name: req.body.name,
   };
 
-  Language.update(object, {
+  Currency.update(object, {
     where: { id },
   })
     .then(async ([num]) => {
       if (num > 0) {
-        const data = await Language.findByPk(id);
+        const data = await Currency.findByPk(id);
         res.send(data);
       } else {
         res.send({
-          message: `Cannot updated Language with id=${id}.`,
+          message: `Cannot updated Currency with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       console.error(err);
       res.status(500).send({
-        message: `Error updating Language with id=${id}`,
+        message: `Error updating Currency with id=${id}`,
       });
     });
 };
@@ -118,24 +124,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const { id } = req.params;
 
-  Language.destroy({
+  Currency.destroy({
     where: { id },
   })
     .then((num) => {
       if (num > 0) {
         res.send({
-          message: 'Language was deleted successfully!',
+          message: 'Currency was deleted successfully!',
         });
       } else {
         res.send({
-          message: `Cannot delete Language with id=${id}.`,
+          message: `Cannot delete Currency with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       console.error(err);
       res.status(500).send({
-        message: `Could not delete Language with id=${id}`,
+        message: `Could not delete Currency with id=${id}`,
       });
     });
 };
