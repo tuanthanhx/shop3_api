@@ -1,13 +1,12 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const users = require('../controllers/user.controller.js');
-  const authenticateToken = require('../middlewares/authenticate_token.middleware.js');
+  const users = require('../controllers/user.controller');
 
-  router.get('/', authenticateToken, users.findAll);
-  router.get('/:id', authenticateToken, users.findOne);
-  router.post('/', authenticateToken, users.create);
-  router.put('/:id', authenticateToken, users.update);
-  router.delete('/:id', authenticateToken, users.delete);
+  router.get('/', users.findAll);
+  router.get('/:id', users.findOne);
+  router.post('/', users.create);
+  router.put('/:id', users.update);
+  router.delete('/:id', users.delete);
 
   app.use('/api/users', router);
 };

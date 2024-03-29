@@ -6,9 +6,12 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const db = require('./src/models');
 
+const { authenticateToken } = require('./src/middlewares/authenticate_token');
+const { handleErrors, handleQueries } = require('./src/middlewares/validators');
+
 require('dotenv').config();
 
-const env = process.env.NODE_ENV || 'development'
+const env = process.env.NODE_ENV || 'development';
 
 let corsOptions = {};
 if (env !== 'development') {
@@ -41,6 +44,9 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(authenticateToken);
+app.use(handleQueries);
+app.use(handleErrors);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: `${process.env.TITLE} Docs` }));
 

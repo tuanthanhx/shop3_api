@@ -2,7 +2,12 @@
 
 // const jwt = require('jsonwebtoken');
 
-function authenticateToken(req, res, next) {
+exports.authenticateToken = (req, res, next) => {
+  const publicPaths = ['/api/languages', '/api/login'];
+  if (publicPaths.includes(req.path)) {
+    return next();
+  }
+
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -11,6 +16,4 @@ function authenticateToken(req, res, next) {
   }
 
   return next();
-}
-
-module.exports = authenticateToken;
+};

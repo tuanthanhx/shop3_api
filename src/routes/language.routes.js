@@ -1,13 +1,12 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const languages = require('../controllers/language.controller.js');
-  const authenticateToken = require('../middlewares/authenticate_token.middleware.js');
+  const languages = require('../controllers/language.controller');
 
-  router.get('/', authenticateToken, languages.findAll);
-  router.get('/:id', authenticateToken, languages.findOne);
-  router.post('/', authenticateToken, languages.create);
-  router.put('/:id', authenticateToken, languages.update);
-  router.delete('/:id', authenticateToken, languages.delete);
+  router.get('/', languages.findAll);
+  router.get('/:id', languages.findOne);
+  router.post('/', languages.create);
+  router.put('/:id', languages.update);
+  router.delete('/:id', languages.delete);
 
   app.use('/api/languages', router);
 };
