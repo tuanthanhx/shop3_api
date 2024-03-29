@@ -1,5 +1,3 @@
-// TODO: Use passport.js to handle auth later
-
 // const jwt = require('jsonwebtoken');
 
 exports.authenticateToken = (req, res, next) => {
