@@ -71,6 +71,26 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.findMe = (req, res) => {
+  const { id } = req.user;
+  User.findByPk(id)
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find User with id=${id}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({
+        message: `Error retrieving User with id=${id}`,
+      });
+    });
+};
+
 exports.create = (req, res) => {
   if (!req.body.name) {
     res.status(400).send({

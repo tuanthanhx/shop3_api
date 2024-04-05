@@ -3,7 +3,7 @@ module.exports = (app) => {
   const register = require('../controllers/register.controller');
 
   router.post('/', register.register);
-  router.post('/generate_verification_code', register.generateVerificationCode);
+  router.post('/generate_code', register.generateVerificationCode);
 
   app.use('/api/register', router);
 };

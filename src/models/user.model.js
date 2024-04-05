@@ -63,15 +63,15 @@ module.exports = function (sequelize, Sequelize) {
         delete user.dataValues.password;
       },
     },
-    instanceMethods: {
-      generateHash(password) {
-        return bcrypt.hash(password, bcrypt.genSaltSync(8));
-      },
-      validPassword(password) {
-        return bcrypt.compareSync(password, this.password);
-      },
-    },
   });
+
+  // User.prototype.generateHash = function (password) {
+  //   return bcrypt.hash(password, bcrypt.genSaltSync(8));
+  // };
+
+  User.prototype.validPassword = function (password) {
+    return bcrypt.compareSync(password, this.password);
+  };
 
   return User;
 };

@@ -41,6 +41,9 @@ Object.keys(db).forEach((modelName) => {
 db.user.belongsTo(db.language, { foreignKey: 'language_id' });
 db.user.belongsTo(db.currency, { foreignKey: 'currency_id' });
 
+db.user.hasMany(db.user_refresh_token);
+db.user_refresh_token.belongsTo(db.user);
+
 db.user_verification.belongsTo(db.user, { foreignKey: 'user_id' });
 db.user.hasMany(db.user_verification, { foreignKey: 'user_id' });
 

@@ -7,6 +7,161 @@ servers:
   - url: http://127.0.0.1:3000/v1
 
 paths:
+
+  /register:
+    post:
+      summary: Register a new user.
+      description: This API requires either an email or a phone field.
+      tags:
+        - Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+                verification_code:
+                  type: string
+                  example: "123456"
+                password:
+                  type: string
+                  example: abc123
+                password_confirm:
+                  type: string
+                  example: abc123
+              oneOf:
+                - required: ['email']
+                - required: ['phone']
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+      security:
+        - bearerAuth: []
+
+  /register/generate_code:
+    post:
+      summary: Generate a verification code for sign up, and send to the user.
+      description: This API requires either an email or a phone field.
+      tags:
+        - Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+              oneOf:
+                - required: ['email']
+                - required: ['phone']
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: null
+      security:
+        - bearerAuth: []
+
+  /login:
+    post:
+      summary: Login.
+      tags:
+        - Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: johnsm
+                  password:
+                    type: string
+                    example: abc123
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
+                      refresh_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
+                      expires_in:
+                        type: integer
+                        example: 900
+  /refresh_token:
+    post:
+      summary: Refresh token.
+      tags:
+        - Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
+                      expires_in:
+                        type: integer
+                        example: 900
+  /logout:
+    post:
+      summary: Logout.
+      tags:
+        - Login
+      responses:
+        "204":
+          description: No Content
+
   /users:
     get:
       summary: Returns a list of users.
@@ -87,6 +242,21 @@ paths:
       responses:
         "200":
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+        - bearerAuth: []
+
+  /users/me:
+    get:
+      summary: Returns the current user.
+      tags:
+        - Users
+      responses:
+        "200":
+          description: A JSON object of user
           content:
             application/json:
               schema:
@@ -489,6 +659,9 @@ components:
         name:
           type: string
           example: John Smith
+        email:
+          type: string
+          example: johnsm@gmail.com
         phone:
           type: string
           example: "0123456789"

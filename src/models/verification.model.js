@@ -9,7 +9,7 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: true,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return Verification;
