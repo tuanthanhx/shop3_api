@@ -46,8 +46,6 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Bad Request
-      security:
-        - bearerAuth: []
 
   /register/generate_code:
     post:
@@ -80,8 +78,6 @@ paths:
                   data:
                     type: object
                     example: null
-      security:
-        - bearerAuth: []
 
   /login:
     post:
