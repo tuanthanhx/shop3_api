@@ -13,7 +13,7 @@ paths:
       summary: Register a new user.
       description: This API requires either an email or a phone field.
       tags:
-        - Register
+        - Authentication
       requestBody:
         required: true
         content:
@@ -46,13 +46,15 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Bad Request
+        "500":
+          description: Internal Server Error
 
   /register/generate_code:
     post:
       summary: Generate a verification code for sign up, and send to the user.
       description: This API requires either an email or a phone field.
       tags:
-        - Register
+        - Authentication
       requestBody:
         required: true
         content:
@@ -78,12 +80,16 @@ paths:
                   data:
                     type: object
                     example: null
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
 
   /login:
     post:
       summary: Login.
       tags:
-        - Login
+        - Authentication
       requestBody:
         required: true
         content:
@@ -117,11 +123,91 @@ paths:
                       expires_in:
                         type: integer
                         example: 900
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /login/reset_password:
+    post:
+      summary: Recover password for users.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+                verification_code:
+                  type: string
+                  example: "123456"
+                password:
+                  type: string
+                  example: abc123
+                password_confirm:
+                  type: string
+                  example: abc123
+              oneOf:
+                - required: ['email']
+                - required: ['phone']
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: null
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /login/generate_sms:
+    post:
+      summary: Generate SMS code for login with SMS.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  phone:
+                    type: string
+                    example: "0123456789"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: null
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
   /refresh_token:
     post:
       summary: Refresh token.
       tags:
-        - Login
+        - Authentication
       requestBody:
         required: true
         content:
@@ -149,101 +235,110 @@ paths:
                       expires_in:
                         type: integer
                         example: 900
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
   /logout:
     post:
       summary: Logout.
       tags:
-        - Login
+        - Authentication
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
 
-  /users:
-    get:
-      summary: Returns a list of users.
-      tags:
-        - Users
-      parameters:
-        - name: name
-          in: query
-          description: Names to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: email
-          in: query
-          description: Emails to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: phone
-          in: query
-          description: Phones to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: page
-          in: query
-          description: The page number for paginated results.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 1
-        - name: limit
-          in: query
-          description: Maximum number of results to return.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 10
-      responses:
-        "200":
-          description: A JSON array of user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totalItems:
-                    type: integer
-                    example: 100
-                  totalPages:
-                    type: integer
-                    example: 10
-                  currentPage:
-                    type: integer
-                    example: 1
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/User"
+  # /users:
+  #   get:
+  #     summary: Returns a list of users.
+  #     tags:
+  #       - Users
+  #     parameters:
+  #       - name: name
+  #         in: query
+  #         description: Names to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: email
+  #         in: query
+  #         description: Emails to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: phone
+  #         in: query
+  #         description: Phones to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: page
+  #         in: query
+  #         description: The page number for paginated results.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 1
+  #       - name: limit
+  #         in: query
+  #         description: Maximum number of results to return.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 10
+  #     responses:
+  #       "200":
+  #         description: A JSON array of user
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 totalItems:
+  #                   type: integer
+  #                   example: 100
+  #                 totalPages:
+  #                   type: integer
+  #                   example: 10
+  #                 currentPage:
+  #                   type: integer
+  #                   example: 1
+  #                 data:
+  #                   type: array
+  #                   items:
+  #                     $ref: "#/components/schemas/User"
 
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a user.
-      tags:
-        - Users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserAddRequest"
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-      security:
-        - bearerAuth: []
+  #     security:
+  #       - bearerAuth: []
+  #   post:
+  #     summary: Creates a user.
+  #     tags:
+  #       - Users
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/UserAddRequest"
+  #     responses:
+  #       "200":
+  #         description: Created
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #     security:
+  #       - bearerAuth: []
 
   /users/me:
     get:
@@ -260,385 +355,385 @@ paths:
       security:
         - bearerAuth: []
 
-  /users/{id}:
-    get:
-      summary: Returns a user by ID.
-      tags:
-        - Users
-      parameters:
-        - name: id
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: A JSON object of user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-      security:
-        - bearerAuth: []
-    put:
-      summary: Updates a user.
-      tags:
-        - Users
-      parameters:
-        - name: id
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserUpdateRequest"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-      security:
-        - bearerAuth: []
-    delete:
-      summary: Deletes a user.
-      tags:
-        - Users
-      parameters:
-        - name: id
-          in: path
-          description: ID of user
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: Deleted
-      security:
-        - bearerAuth: []
+  # /users/{id}:
+  #   get:
+  #     summary: Returns a user by ID.
+  #     tags:
+  #       - Users
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of user
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: A JSON object of user
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #     security:
+  #       - bearerAuth: []
+  #   put:
+  #     summary: Updates a user.
+  #     tags:
+  #       - Users
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of user
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/UserUpdateRequest"
+  #     responses:
+  #       "200":
+  #         description: Updated
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #     security:
+  #       - bearerAuth: []
+  #   delete:
+  #     summary: Deletes a user.
+  #     tags:
+  #       - Users
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of user
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: Deleted
+  #     security:
+  #       - bearerAuth: []
 
-  /languages:
-    get:
-      summary: Returns a list of languages.
-      tags:
-        - Languages
-      parameters:
-        - name: name
-          in: query
-          description: Names to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: page
-          in: query
-          description: The page number for paginated results.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 1
-        - name: limit
-          in: query
-          description: Maximum number of results to return.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 10
-      responses:
-        "200":
-          description: A JSON array of languages
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totalItems:
-                    type: integer
-                    example: 100
-                  totalPages:
-                    type: integer
-                    example: 10
-                  currentPage:
-                    type: integer
-                    example: 1
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Language"
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a language.
-      tags:
-        - Languages
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: English
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Language"
-      security:
-        - bearerAuth: []
+  # /languages:
+  #   get:
+  #     summary: Returns a list of languages.
+  #     tags:
+  #       - Languages
+  #     parameters:
+  #       - name: name
+  #         in: query
+  #         description: Names to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: page
+  #         in: query
+  #         description: The page number for paginated results.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 1
+  #       - name: limit
+  #         in: query
+  #         description: Maximum number of results to return.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 10
+  #     responses:
+  #       "200":
+  #         description: A JSON array of languages
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 totalItems:
+  #                   type: integer
+  #                   example: 100
+  #                 totalPages:
+  #                   type: integer
+  #                   example: 10
+  #                 currentPage:
+  #                   type: integer
+  #                   example: 1
+  #                 data:
+  #                   type: array
+  #                   items:
+  #                     $ref: "#/components/schemas/Language"
+  #     security:
+  #       - bearerAuth: []
+  #   post:
+  #     summary: Creates a language.
+  #     tags:
+  #       - Languages
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #                 example: English
+  #     responses:
+  #       "200":
+  #         description: Created
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Language"
+  #     security:
+  #       - bearerAuth: []
 
-  /languages/{id}:
-    get:
-      summary: Returns a language by ID.
-      tags:
-        - Languages
-      parameters:
-        - name: id
-          in: path
-          description: ID of language
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: A JSON object of language
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Language"
-      security:
-        - bearerAuth: []
-    put:
-      summary: Updates a language.
-      tags:
-        - Languages
-      parameters:
-        - name: id
-          in: path
-          description: ID of language
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: English
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Language"
-      security:
-        - bearerAuth: []
-    delete:
-      summary: Deletes a language.
-      tags:
-        - Languages
-      parameters:
-        - name: id
-          in: path
-          description: ID of language
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: Deleted
-      security:
-        - bearerAuth: []
+  # /languages/{id}:
+  #   get:
+  #     summary: Returns a language by ID.
+  #     tags:
+  #       - Languages
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of language
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: A JSON object of language
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Language"
+  #     security:
+  #       - bearerAuth: []
+  #   put:
+  #     summary: Updates a language.
+  #     tags:
+  #       - Languages
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of language
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #                 example: English
+  #     responses:
+  #       "200":
+  #         description: Updated
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Language"
+  #     security:
+  #       - bearerAuth: []
+  #   delete:
+  #     summary: Deletes a language.
+  #     tags:
+  #       - Languages
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of language
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: Deleted
+  #     security:
+  #       - bearerAuth: []
 
-  /currencies:
-    get:
-      summary: Returns a list of currencies.
-      tags:
-        - Currencies
-      parameters:
-        - name: name
-          in: query
-          description: Names to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: code
-          in: query
-          description: Codes to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
-        - name: page
-          in: query
-          description: The page number for paginated results.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 1
-        - name: limit
-          in: query
-          description: Maximum number of results to return.
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 10
-      responses:
-        "200":
-          description: A JSON array of currencies
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totalItems:
-                    type: integer
-                    example: 100
-                  totalPages:
-                    type: integer
-                    example: 10
-                  currentPage:
-                    type: integer
-                    example: 1
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Currency"
-      security:
-        - bearerAuth: []
-    post:
-      summary: Creates a currency.
-      tags:
-        - Currencies
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: U.S. dollar
-                code:
-                  type: string
-                  example: USD
-                symbol:
-                  type: string
-                  example: $
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Currency"
-      security:
-        - bearerAuth: []
+  # /currencies:
+  #   get:
+  #     summary: Returns a list of currencies.
+  #     tags:
+  #       - Currencies
+  #     parameters:
+  #       - name: name
+  #         in: query
+  #         description: Names to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: code
+  #         in: query
+  #         description: Codes to filter by.
+  #         required: false
+  #         style: form
+  #         schema:
+  #           type: string
+  #       - name: page
+  #         in: query
+  #         description: The page number for paginated results.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 1
+  #       - name: limit
+  #         in: query
+  #         description: Maximum number of results to return.
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int32
+  #           default: 10
+  #     responses:
+  #       "200":
+  #         description: A JSON array of currencies
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 totalItems:
+  #                   type: integer
+  #                   example: 100
+  #                 totalPages:
+  #                   type: integer
+  #                   example: 10
+  #                 currentPage:
+  #                   type: integer
+  #                   example: 1
+  #                 data:
+  #                   type: array
+  #                   items:
+  #                     $ref: "#/components/schemas/Currency"
+  #     security:
+  #       - bearerAuth: []
+  #   post:
+  #     summary: Creates a currency.
+  #     tags:
+  #       - Currencies
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #                 example: U.S. dollar
+  #               code:
+  #                 type: string
+  #                 example: USD
+  #               symbol:
+  #                 type: string
+  #                 example: $
+  #     responses:
+  #       "200":
+  #         description: Created
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Currency"
+  #     security:
+  #       - bearerAuth: []
 
-  /currencies/{id}:
-    get:
-      summary: Returns a currency by ID.
-      tags:
-        - Currencies
-      parameters:
-        - name: id
-          in: path
-          description: ID of currency
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: A JSON object of currency
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Currency"
-      security:
-        - bearerAuth: []
-    put:
-      summary: Updates a currency.
-      tags:
-        - Currencies
-      parameters:
-        - name: id
-          in: path
-          description: ID of currency
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: U.S. dollar
-                code:
-                  type: string
-                  example: USD
-                symbol:
-                  type: string
-                  example: $
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Currency"
-      security:
-        - bearerAuth: []
-    delete:
-      summary: Deletes a currency.
-      tags:
-        - Currencies
-      parameters:
-        - name: id
-          in: path
-          description: ID of currency
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: Deleted
-      security:
-        - bearerAuth: []
+  # /currencies/{id}:
+  #   get:
+  #     summary: Returns a currency by ID.
+  #     tags:
+  #       - Currencies
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of currency
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: A JSON object of currency
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Currency"
+  #     security:
+  #       - bearerAuth: []
+  #   put:
+  #     summary: Updates a currency.
+  #     tags:
+  #       - Currencies
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of currency
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               name:
+  #                 type: string
+  #                 example: U.S. dollar
+  #               code:
+  #                 type: string
+  #                 example: USD
+  #               symbol:
+  #                 type: string
+  #                 example: $
+  #     responses:
+  #       "200":
+  #         description: Updated
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Currency"
+  #     security:
+  #       - bearerAuth: []
+  #   delete:
+  #     summary: Deletes a currency.
+  #     tags:
+  #       - Currencies
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: ID of currency
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #     responses:
+  #       "200":
+  #         description: Deleted
+  #     security:
+  #       - bearerAuth: []
 
 components:
   schemas:
@@ -692,108 +787,108 @@ components:
           type: string
           format: date-time
 
-    UserAddRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          example: John Smith
-        password:
-          type: string
-          example: abc123
-        phone:
-          type: string
-          example: "0123456789"
-        avatar:
-          type: string
-          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
-        gender:
-          type: integer
-          example: 1
-        dob:
-          type: string
-          format: date-time
-        language_id:
-          type: integer
-          example: 1
-        currency_id:
-          type: integer
-          example: 1
-        is_email_validated:
-          type: boolean
-        is_phone_validated:
-          type: boolean
-        is_active:
-          type: boolean
+    # UserAddRequest:
+    #   type: object
+    #   properties:
+    #     name:
+    #       type: string
+    #       example: John Smith
+    #     password:
+    #       type: string
+    #       example: abc123
+    #     phone:
+    #       type: string
+    #       example: "0123456789"
+    #     avatar:
+    #       type: string
+    #       example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+    #     gender:
+    #       type: integer
+    #       example: 1
+    #     dob:
+    #       type: string
+    #       format: date-time
+    #     language_id:
+    #       type: integer
+    #       example: 1
+    #     currency_id:
+    #       type: integer
+    #       example: 1
+    #     is_email_validated:
+    #       type: boolean
+    #     is_phone_validated:
+    #       type: boolean
+    #     is_active:
+    #       type: boolean
 
-    UserUpdateRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          example: John Smith
-        phone:
-          type: string
-          example: "0123456789"
-        avatar:
-          type: string
-          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
-        gender:
-          type: integer
-          example: 1
-        dob:
-          type: string
-          format: date-time
-        language_id:
-          type: integer
-          example: 1
-        currency_id:
-          type: integer
-          example: 1
-        is_email_validated:
-          type: boolean
-        is_phone_validated:
-          type: boolean
-        is_active:
-          type: boolean
+    # UserUpdateRequest:
+    #   type: object
+    #   properties:
+    #     name:
+    #       type: string
+    #       example: John Smith
+    #     phone:
+    #       type: string
+    #       example: "0123456789"
+    #     avatar:
+    #       type: string
+    #       example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+    #     gender:
+    #       type: integer
+    #       example: 1
+    #     dob:
+    #       type: string
+    #       format: date-time
+    #     language_id:
+    #       type: integer
+    #       example: 1
+    #     currency_id:
+    #       type: integer
+    #       example: 1
+    #     is_email_validated:
+    #       type: boolean
+    #     is_phone_validated:
+    #       type: boolean
+    #     is_active:
+    #       type: boolean
 
-    Language:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        name:
-          type: string
-          example: English
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+    # Language:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       example: 1
+    #     name:
+    #       type: string
+    #       example: English
+    #     created_at:
+    #       type: string
+    #       format: date-time
+    #     updated_at:
+    #       type: string
+    #       format: date-time
 
-    Currency:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        name:
-          type: string
-          example: U.S. dollar
-        code:
-          type: string
-          example: USD
-        symbol:
-          type: string
-          example: $
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+    # Currency:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       example: 1
+    #     name:
+    #       type: string
+    #       example: U.S. dollar
+    #     code:
+    #       type: string
+    #       example: USD
+    #     symbol:
+    #       type: string
+    #       example: $
+    #     created_at:
+    #       type: string
+    #       format: date-time
+    #     updated_at:
+    #       type: string
+    #       format: date-time
 
   securitySchemes:
     bearerAuth:
