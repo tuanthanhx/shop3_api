@@ -7,7 +7,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const db = require('./src/models');
 
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
-const { handleErrors, handleQueries } = require('./src/middlewares/validators');
+const { handleQueries, validateRules } = require('./src/middlewares/validators');
 
 require('dotenv').config();
 
@@ -46,7 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(authenticateToken);
 app.use(handleQueries);
-app.use(handleErrors);
+app.use(validateRules);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: `${process.env.TITLE} Docs` }));
 

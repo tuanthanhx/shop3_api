@@ -27,10 +27,7 @@ exports.isLogin = async (req, res) => {
 
 exports.login = async (req, res) => {
   if (!req.body.email && !req.body.phone) {
-    res.status(400).send({
-      message: 'Need to provide at least an email address or a phone number',
-    });
-    return;
+    return res.status(400).json({ error: 'Either email or phone is required' });
   }
 
   const { email, phone, password } = req.body;
@@ -78,77 +75,34 @@ exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    res.status(401).json({ error: 'Refresh token is not valid' });
+    res.status(401).json({ error: 'Refresh token is invalid' });
     return;
   }
 
   try {
     const findRefreshToken = await UserRefreshToken.findOne({ where: { token: refreshToken } });
     if (!findRefreshToken) {
-      res.status(401).json({ error: 'Refresh token is not valid' });
+      res.status(401).json({ error: 'Refresh token is invalid' });
       return;
     }
 
     jwt.verify(refreshToken, refreshTokenSecret, (err, user) => {
       if (err) {
-        return res.status(403).json({ error: 'Refresh token is not valid' });
+        return res.status(403).json({ error: 'Refresh token is invalid' });
       }
       const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: '15m' });
       return res.json({ accessToken });
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Refresh token is not valid' });
+    res.status(500).json({ error: 'Refresh token is invalid' });
   }
-};
-
-exports.generateOTP = async (req, res) => {
-  if (!req.body.email && !req.body.phone) {
-    res.status(400).send({
-      message: 'Need to provide at least an email address or a phone number',
-    });
-    return;
-  }
-
-  const { email, phone } = req.body;
-  const code = generateRandomNumber(6);
-
-  const object = {
-    code,
-  };
-
-  if (email) {
-    object.receiver = email;
-  }
-
-  if (phone) {
-    object.receiver = phone;
-  }
-
-  Verification.findOne({ where: { receiver: object.receiver } })
-    .then((verification) => {
-      if (verification) {
-        return verification.update({ code });
-      }
-      return Verification.create(object);
-    })
-    .then(async () => {
-      if (email) {
-        sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
-      }
-      res.send({ data: true });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred',
-      });
-    });
 };
 
 exports.resetPassword = async (req, res) => {
   if (!req.body.email && !req.body.phone) {
     res.status(400).send({
-      message: 'Need to provide at least an email address or a phone number',
+      message: 'Either email or phone is required',
     });
     return;
   }
@@ -159,13 +113,6 @@ exports.resetPassword = async (req, res) => {
   ) {
     res.status(400).send({
       message: 'Password and confirm password does not match',
-    });
-    return;
-  }
-
-  if (!req.body.verification_code) {
-    res.status(400).send({
-      message: 'Verification code cannot be empty',
     });
     return;
   }
@@ -218,6 +165,49 @@ exports.resetPassword = async (req, res) => {
       res.status(500).send({
         message:
           err.message || 'Some error occurred',
+      });
+    });
+};
+
+exports.generateOTP = async (req, res) => {
+  if (!req.body.email && !req.body.phone) {
+    res.status(400).send({
+      message: 'Either email or phone is required',
+    });
+    return;
+  }
+
+  const { email, phone } = req.body;
+  const code = generateRandomNumber(6);
+
+  const object = {
+    code,
+  };
+
+  if (email) {
+    object.receiver = email;
+  }
+
+  if (phone) {
+    object.receiver = phone;
+  }
+
+  Verification.findOne({ where: { receiver: object.receiver } })
+    .then((verification) => {
+      if (verification) {
+        return verification.update({ code });
+      }
+      return Verification.create(object);
+    })
+    .then(async () => {
+      if (email) {
+        sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+      }
+      res.send({ data: true });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred',
       });
     });
 };
