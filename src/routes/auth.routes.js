@@ -12,7 +12,8 @@ module.exports = (app) => {
   router.post('/logout', auth.logout);
   router.post('/refresh_token', rules.refreshToken, auth.refreshToken);
   router.post('/reset_password', rules.resetPassword, auth.resetPassword);
-  router.post('/generate_otp', rules.generateOTP, auth.generateOTP);
+  router.post('/generate_otp/email', rules.generateOtpByEmail, auth.generateOtpByEmail);
+  router.post('/generate_otp/phone', rules.generateOtpByPhone, auth.generateOtpByPhone);
 
   app.use(`/api/${apiVersion}/auth`, router);
 };

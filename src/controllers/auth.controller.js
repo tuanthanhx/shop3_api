@@ -169,30 +169,16 @@ exports.resetPassword = async (req, res) => {
     });
 };
 
-exports.generateOTP = async (req, res) => {
-  if (!req.body.email && !req.body.phone) {
-    res.status(400).send({
-      message: 'Either email or phone is required',
-    });
-    return;
-  }
-
-  const { email, phone } = req.body;
+exports.generateOtpByEmail = async (req, res) => {
+  const { email } = req.body;
   const code = generateRandomNumber(6);
 
   const object = {
     code,
+    receiver: email,
   };
 
-  if (email) {
-    object.receiver = email;
-  }
-
-  if (phone) {
-    object.receiver = phone;
-  }
-
-  Verification.findOne({ where: { receiver: object.receiver } })
+  Verification.findOne({ where: { receiver: email } })
     .then((verification) => {
       if (verification) {
         return verification.update({ code });
@@ -200,9 +186,35 @@ exports.generateOTP = async (req, res) => {
       return Verification.create(object);
     })
     .then(async () => {
-      if (email) {
-        sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+      sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+      res.send({ data: true });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred',
+      });
+    });
+};
+
+exports.generateOtpByPhone = async (req, res) => {
+  const { phone } = req.body;
+  const code = generateRandomNumber(6);
+
+  const object = {
+    code,
+    receiver: phone,
+  };
+
+  Verification.findOne({ where: { receiver: phone } })
+    .then((verification) => {
+      if (verification) {
+        return verification.update({ code });
       }
+      return Verification.create(object);
+    })
+    .then(async () => {
+      // TODO: Make SMS feature later
+      // sendSms(phone, 'Verification Code', `Your verification code is: ${code}`);
       res.send({ data: true });
     })
     .catch((err) => {
