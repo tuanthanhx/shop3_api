@@ -5,17 +5,17 @@ exports.login = [
   body('email')
     .optional()
     .isEmail()
-    .withMessage('Email is invalid format'),
+    .withMessage('email is invalid format'),
   body('password')
     .notEmpty()
-    .withMessage('Password is required'),
+    .withMessage('password is required'),
   validateRules,
 ];
 
 exports.refreshToken = [
-  body('refreshToken')
+  body('refresh_token')
     .notEmpty()
-    .withMessage('RefreshToken is required'),
+    .withMessage('refresh_token is required'),
   validateRules,
 ];
 
@@ -23,16 +23,16 @@ exports.resetPassword = [
   body('email')
     .optional()
     .isEmail()
-    .withMessage('Email is invalid format'),
+    .withMessage('email is invalid format'),
   body('password')
     .notEmpty()
-    .withMessage('Password is required'),
+    .withMessage('password is required'),
   body('password_confirm')
     .notEmpty()
-    .withMessage('Confirm Password is required'),
+    .withMessage('password_confirm is required'),
   body('verification_code')
     .notEmpty()
-    .withMessage('Verification Code is required'),
+    .withMessage('verification_code is required'),
   validateRules,
 ];
 
@@ -40,6 +40,6 @@ exports.generateOTP = [
   body('email')
     .optional()
     .isEmail()
-    .withMessage('Email is invalid format'),
+    .withMessage('email is invalid format'),
   validateRules,
 ];

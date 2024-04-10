@@ -7,13 +7,12 @@ servers:
   - url: http://127.0.0.1:3000/v1
 
 paths:
-
   /register:
     post:
       summary: Register a new user.
       description: This API requires either an email or a phone field.
       tags:
-        - Authentication
+        - Registration
       requestBody:
         required: true
         content:
@@ -35,8 +34,8 @@ paths:
                   type: string
                   example: abc123
               oneOf:
-                - required: ['email']
-                - required: ['phone']
+                - required: ["email"]
+                - required: ["phone"]
       responses:
         "200":
           description: Created
@@ -52,10 +51,9 @@ paths:
         "500":
           description: Internal Server Error
 
-  /register/generate_code:
+  /auth/login:
     post:
-      summary: Generate a verification code for sign up, and send to the user.
-      description: This API requires either an email or a phone field.
+      summary: Login.
       tags:
         - Authentication
       requestBody:
@@ -67,45 +65,13 @@ paths:
               properties:
                 email:
                   type: string
-                  format: email
                   example: johnsm@gmail.com
+                password:
+                  type: string
+                  example: abc123
               oneOf:
-                - required: ['email']
-                - required: ['phone']
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: null
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal Server Error
-
-  /auth/login:
-    post:
-      summary: Login.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                type: object
-                properties:
-                  email:
-                    type: string
-                    example: johnsm@gmail.com
-                  password:
-                    type: string
-                    example: abc123
+                - required: ["email"]
+                - required: ["phone"]
       responses:
         "200":
           description: OK
@@ -126,6 +92,27 @@ paths:
                       expires_in:
                         type: integer
                         example: 900
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/is_login:
+    post:
+      summary: Check if user is logged in or not.
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
         "400":
           description: Bad Request
         "500":
@@ -157,11 +144,11 @@ paths:
                   type: string
                   example: abc123
               oneOf:
-                - required: ['email']
-                - required: ['phone']
+                - required: ["email"]
+                - required: ["phone"]
       responses:
         "200":
-          description: Updated
+          description: OK
           content:
             application/json:
               schema:
@@ -169,37 +156,6 @@ paths:
                 properties:
                   data:
                     $ref: "#/components/schemas/User"
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal Server Error
-
-  /auth/generate_sms:
-    post:
-      summary: Generate SMS code for login with SMS.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                type: object
-                properties:
-                  phone:
-                    type: string
-                    example: "0123456789"
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: null
         "400":
           description: Bad Request
         "500":
@@ -217,7 +173,7 @@ paths:
             schema:
               type: object
               properties:
-                refreshToken:
+                refresh_token:
                   type: string
                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
       responses:
@@ -242,11 +198,24 @@ paths:
         "500":
           description: Internal Server Error
 
-  /auth/is_login:
+  /auth/generate_otp:
     post:
-      summary: Check if user is logged in or not.
+      summary: Generate OTP code by email or phone.
       tags:
         - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "johnsm@gmail.com"
+              oneOf:
+                - required: ["email"]
+                - required: ["phone"]
       responses:
         "200":
           description: OK
@@ -256,8 +225,8 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: boolean
-                    example: true
+                    type: object
+                    example: null
         "400":
           description: Bad Request
         "500":
@@ -784,7 +753,6 @@ paths:
                           example: "Dummy"
       security:
         - bearerAuth: []
-
 
 components:
   schemas:

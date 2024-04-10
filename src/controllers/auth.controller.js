@@ -72,7 +72,7 @@ exports.logout = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-  const { refreshToken } = req.body;
+  const { refresh_token: refreshToken } = req.body;
 
   if (!refreshToken) {
     res.status(401).json({ error: 'Refresh token is invalid' });
