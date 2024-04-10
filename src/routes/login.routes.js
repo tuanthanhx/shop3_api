@@ -1,11 +1,16 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const login = require('../controllers/login.controller');
+  const auth = require('../controllers/auth.controller');
 
-  router.post('/', login.login);
-  router.post('/reset_password', login.resetPassword);
-  router.post('/refresh', login.refreshToken);
-  router.post('/generate_sms', login.generateSms);
+  require('dotenv').config();
+  const apiVersion = process.env.VERSION || 'v1';
 
-  app.use('/api/login', router);
+  router.get('/is_login', auth.isLogin);
+  router.post('/login', auth.login);
+  router.post('/logout', auth.logout);
+  router.post('/refresh_token', auth.refreshToken);
+  router.post('/reset_password', auth.resetPassword);
+  router.post('/generate_otp', auth.generateOTP);
+
+  app.use(`/api/${apiVersion}/auth`, router);
 };

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { generateRandomNumber } = require('../utils/utils');
+const { sendEmail } = require('../utils/email');
 const db = require('../models');
 
 require('dotenv').config();
@@ -11,6 +12,18 @@ const { Op } = db.Sequelize;
 
 const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
+
+exports.isLogin = async (req, res) => {
+  if (req.user) {
+    res.status(200).send({
+      data: true,
+    });
+    return;
+  }
+  res.status(401).send({
+    message: 'You are not logged in',
+  });
+};
 
 exports.login = async (req, res) => {
   if (!req.body.email && !req.body.phone) {
@@ -54,51 +67,65 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.logout = async (req, res) => {
+  if (req.user?.id) {
+    await UserRefreshToken.destroy({ where: { user_id: req.user.id } });
+  }
+  res.status(204).end();
+};
+
 exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    res.status(401).json({ error: 'Refresh token is not valid 1' });
+    res.status(401).json({ error: 'Refresh token is not valid' });
     return;
   }
 
   try {
     const findRefreshToken = await UserRefreshToken.findOne({ where: { token: refreshToken } });
     if (!findRefreshToken) {
-      res.status(401).json({ error: 'Refresh token is not valid 2' });
+      res.status(401).json({ error: 'Refresh token is not valid' });
       return;
     }
 
     jwt.verify(refreshToken, refreshTokenSecret, (err, user) => {
       if (err) {
-        return res.status(403).json({ error: 'Refresh token is not valid 3' });
+        return res.status(403).json({ error: 'Refresh token is not valid' });
       }
       const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: '15m' });
       return res.json({ accessToken });
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Refresh token is not valid 4' });
+    res.status(500).json({ error: 'Refresh token is not valid' });
   }
 };
 
-exports.generateSms = async (req, res) => {
-  if (!req.body.phone) {
+exports.generateOTP = async (req, res) => {
+  if (!req.body.email && !req.body.phone) {
     res.status(400).send({
-      message: 'Need to provide a phone number',
+      message: 'Need to provide at least an email address or a phone number',
     });
     return;
   }
 
-  const { phone } = req.body;
+  const { email, phone } = req.body;
   const code = generateRandomNumber(6);
 
   const object = {
     code,
-    receiver: phone,
   };
 
-  Verification.findOne({ where: { receiver: phone } })
+  if (email) {
+    object.receiver = email;
+  }
+
+  if (phone) {
+    object.receiver = phone;
+  }
+
+  Verification.findOne({ where: { receiver: object.receiver } })
     .then((verification) => {
       if (verification) {
         return verification.update({ code });
@@ -106,11 +133,14 @@ exports.generateSms = async (req, res) => {
       return Verification.create(object);
     })
     .then(async () => {
+      if (email) {
+        sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+      }
       res.send({ data: true });
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred.',
+        message: err.message || 'Some error occurred',
       });
     });
 };
@@ -128,14 +158,14 @@ exports.resetPassword = async (req, res) => {
     || (req.body.password !== req.body.password_confirm)
   ) {
     res.status(400).send({
-      message: 'Password and confirm password does not match.',
+      message: 'Password and confirm password does not match',
     });
     return;
   }
 
   if (!req.body.verification_code) {
     res.status(400).send({
-      message: 'Verification code cannot be empty.',
+      message: 'Verification code cannot be empty',
     });
     return;
   }
@@ -159,7 +189,7 @@ exports.resetPassword = async (req, res) => {
   const findUser = await User.findOne({ where: whereCondition });
   if (!findUser) {
     res.status(400).send({
-      message: 'Cannot find an account with the provided email or phone number.',
+      message: 'Cannot find an account with the provided email or phone number',
     });
     return;
   }
@@ -168,7 +198,7 @@ exports.resetPassword = async (req, res) => {
     const findCode = await Verification.findOne({ where: { receiver: email || phone } });
     if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
       res.status(400).send({
-        message: 'The provided verification code is incorrect.',
+        message: 'The provided verification code is incorrect',
       });
       return;
     }
@@ -180,12 +210,14 @@ exports.resetPassword = async (req, res) => {
 
   findUser.update(object)
     .then((data) => {
-      res.send(data);
+      res.send({
+        data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred.',
+          err.message || 'Some error occurred',
       });
     });
 };

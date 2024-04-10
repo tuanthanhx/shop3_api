@@ -43,7 +43,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/User"
         "400":
           description: Bad Request
         "500":
@@ -85,7 +88,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /login:
+  /auth/login:
     post:
       summary: Login.
       tags:
@@ -97,9 +100,9 @@ paths:
             schema:
                 type: object
                 properties:
-                  username:
+                  email:
                     type: string
-                    example: johnsm
+                    example: johnsm@gmail.com
                   password:
                     type: string
                     example: abc123
@@ -128,7 +131,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /login/reset_password:
+  /auth/reset_password:
     post:
       summary: Recover password for users.
       tags:
@@ -158,21 +161,20 @@ paths:
                 - required: ['phone']
       responses:
         "200":
-          description: Created
+          description: Updated
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   data:
-                    type: object
-                    example: null
+                    $ref: "#/components/schemas/User"
         "400":
           description: Bad Request
         "500":
           description: Internal Server Error
 
-  /login/generate_sms:
+  /auth/generate_sms:
     post:
       summary: Generate SMS code for login with SMS.
       tags:
@@ -203,7 +205,7 @@ paths:
         "500":
           description: Internal Server Error
 
-  /refresh_token:
+  /auth/refresh_token:
     post:
       summary: Refresh token.
       tags:
@@ -240,7 +242,28 @@ paths:
         "500":
           description: Internal Server Error
 
-  /logout:
+  /auth/is_login:
+    post:
+      summary: Check if user is logged in or not.
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                    example: true
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/logout:
     post:
       summary: Logout.
       tags:
@@ -734,6 +757,34 @@ paths:
   #         description: Deleted
   #     security:
   #       - bearerAuth: []
+
+  /seller/business_type:
+    get:
+      summary: Returns a list of business types.
+      tags:
+        - Seller
+      responses:
+        "200":
+          description: A JSON array of business types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: integer
+                          example: "Household"
+                        description:
+                          type: integer
+                          example: "Dummy"
+      security:
+        - bearerAuth: []
+
 
 components:
   schemas:

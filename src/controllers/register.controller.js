@@ -1,53 +1,8 @@
-const { generateRandomNumber } = require('../utils/utils');
-const { sendEmail } = require('../utils/email');
 const db = require('../models');
 
 const User = db.user;
 const Verification = db.verification;
 const { Op } = db.Sequelize;
-
-exports.generateVerificationCode = (req, res) => {
-  if (!req.body.email && !req.body.phone) {
-    res.status(400).send({
-      message: 'Need to provide at least an email address or a phone number',
-    });
-    return;
-  }
-
-  const { email, phone } = req.body;
-  const code = generateRandomNumber(6);
-
-  const object = {
-    code,
-  };
-
-  if (email) {
-    object.receiver = email;
-  }
-
-  if (phone) {
-    object.receiver = phone;
-  }
-
-  Verification.findOne({ where: { receiver: object.receiver } })
-    .then((verification) => {
-      if (verification) {
-        return verification.update({ code });
-      }
-      return Verification.create(object);
-    })
-    .then(async () => {
-      if (email) {
-        sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
-      }
-      res.send({ data: true });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred.',
-      });
-    });
-};
 
 exports.register = async (req, res) => {
   if (!req.body.email && !req.body.phone) {
@@ -62,14 +17,14 @@ exports.register = async (req, res) => {
     || (req.body.password !== req.body.password_confirm)
   ) {
     res.status(400).send({
-      message: 'Password and confirm password does not match.',
+      message: 'Password and confirm password does not match',
     });
     return;
   }
 
   if (!req.body.verification_code) {
     res.status(400).send({
-      message: 'Verification code cannot be empty.',
+      message: 'Verification code cannot be empty',
     });
     return;
   }
@@ -85,7 +40,7 @@ exports.register = async (req, res) => {
     const findCode = await Verification.findOne({ where: { receiver: email || phone } });
     if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
       res.status(400).send({
-        message: 'The provided verification code is incorrect.',
+        message: 'The provided verification code is incorrect',
       });
       return;
     }
@@ -103,7 +58,7 @@ exports.register = async (req, res) => {
   const findUser = await User.findOne({ where: whereCondition });
   if (findUser) {
     res.status(400).send({
-      message: 'An user with the provided email or phone number already exists.',
+      message: 'An user with the provided email or phone number already exists',
     });
     return;
   }
@@ -116,12 +71,14 @@ exports.register = async (req, res) => {
 
   User.create(object)
     .then((data) => {
-      res.send(data);
+      res.send({
+        data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred.',
+          err.message || 'Some error occurred',
       });
     });
 };

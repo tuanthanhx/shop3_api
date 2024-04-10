@@ -26,7 +26,7 @@ const options = {
     info: {
       title: process.env.TITLE,
       version: '1.0.0',
-      description: `Documentation for ${process.env.TITLE}.`,
+      description: `Documentation for ${process.env.TITLE}`,
     },
     servers: [
       {
@@ -77,5 +77,5 @@ fs.readdirSync(routesDir)
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 app.listen(PORT, () => {
-  console.info(`Server is running by ${NODE_ENV} mode on port ${PORT}.`);
+  console.info(`Server is running by ${NODE_ENV} mode on port ${PORT}`);
 });

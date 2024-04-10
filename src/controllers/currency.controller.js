@@ -41,7 +41,7 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred.',
+          err.message || 'Some error occurred',
       });
     });
 };
@@ -55,7 +55,7 @@ exports.findOne = (req, res) => {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find Currency with id=${id}.`,
+          message: `Cannot find Currency with id=${id}`,
         });
       }
     })
@@ -70,7 +70,7 @@ exports.findOne = (req, res) => {
 exports.create = (req, res) => {
   if (!req.body.name) {
     res.status(400).send({
-      message: 'Name cannot be empty.',
+      message: 'Name cannot be empty',
     });
     return;
   }
@@ -88,7 +88,7 @@ exports.create = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || 'Some error occurred.',
+          err.message || 'Some error occurred',
       });
     });
 };
@@ -109,7 +109,7 @@ exports.update = (req, res) => {
         res.send(data);
       } else {
         res.send({
-          message: `Cannot updated Currency with id=${id}.`,
+          message: `Cannot updated Currency with id=${id}`,
         });
       }
     })
@@ -134,7 +134,7 @@ exports.delete = (req, res) => {
         });
       } else {
         res.send({
-          message: `Cannot delete Currency with id=${id}.`,
+          message: `Cannot delete Currency with id=${id}`,
         });
       }
     })
