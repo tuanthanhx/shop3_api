@@ -30,16 +30,16 @@ exports.createShop = async (req, res) => {
   const { id: userId } = req.user;
 
   const object = {
-    seller_business_type_id: businessType,
-    shop_name: shopName,
-    user_id: userId,
+    sellerBusinessTypeId: businessType,
+    shopName,
+    userId,
   };
 
   if (businessType === 1) { // Household
-    object.registration_business_name = registrationBusinessName;
-    object.registration_business_number = registrationBusinessNumber;
-    object.registration_owner_name = registrationOwnerName;
-    object.registration_owner_id = registrationOwnerId;
+    object.registrationBusinessName = registrationBusinessName;
+    object.registrationBusinessNumber = registrationBusinessNumber;
+    object.registrationOwnerName = registrationOwnerName;
+    object.registrationOwnerId = registrationOwnerId;
   }
 
   try {
@@ -53,7 +53,7 @@ exports.createShop = async (req, res) => {
       return;
     }
 
-    const foundShop = await Shops.findOne({ where: { user_id: userId } });
+    const foundShop = await Shops.findOne({ where: { userId } });
     if (foundShop) {
       res.status(400).send({
         message: 'This user already has a shop',
@@ -75,26 +75,26 @@ exports.createShop = async (req, res) => {
       if (businessType === 1) { // Household
         if (uploadedFiles.length >= 3) {
           const [registrationDocument1, registrationDocument2, registrationDocument3] = uploadedFiles;
-          object.registration_document_1 = registrationDocument1;
-          object.registration_document_2 = registrationDocument2;
-          object.registration_document_3 = registrationDocument3;
+          object.registrationDocument1 = registrationDocument1;
+          object.registrationDocument2 = registrationDocument2;
+          object.registrationDocument3 = registrationDocument3;
         }
       }
 
       if (businessType === 2) { // Individual
         if (uploadedFiles.length >= 2) {
           const [identityCardFront, identityCardBack] = uploadedFiles;
-          object.identity_card_front = identityCardFront;
-          object.identity_card_back = identityCardBack;
+          object.identityCardFront = identityCardFront;
+          object.identityCardBack = identityCardBack;
         }
       }
 
       if (businessType === 3) { // Corporate
         if (uploadedFiles.length >= 3) {
           const [registrationDocument1, registrationDocument2, registrationDocument3] = uploadedFiles;
-          object.registration_document_1 = registrationDocument1;
-          object.registration_document_2 = registrationDocument2;
-          object.registration_document_3 = registrationDocument3;
+          object.registrationDocument1 = registrationDocument1;
+          object.registrationDocument2 = registrationDocument2;
+          object.registrationDocument3 = registrationDocument3;
         }
       }
     }

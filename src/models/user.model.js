@@ -29,25 +29,25 @@ module.exports = function (sequelize, Sequelize) {
     dob: {
       type: Sequelize.DATEONLY,
     },
-    language_id: {
+    languageId: {
       type: Sequelize.INTEGER,
       defaultValue: 1,
     },
-    currency_id: {
+    currencyId: {
       type: Sequelize.INTEGER,
       defaultValue: 1,
     },
-    is_phone_validated: {
+    isPhoneValidated: {
       type: Sequelize.BOOLEAN,
     },
-    is_email_validated: {
+    isEmailValidated: {
       type: Sequelize.BOOLEAN,
     },
-    is_active: {
+    isActive: {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
-    last_login: {
+    lastLogin: {
       type: Sequelize.DATE,
     },
   }, {

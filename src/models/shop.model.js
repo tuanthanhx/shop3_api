@@ -1,34 +1,42 @@
 module.exports = function (sequelize, Sequelize) {
   const Shop = sequelize.define('shop', {
-    shop_name: {
+    shopName: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    registration_document_1: {
+    sellerBusinessTypeId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    registrationDocument1: {
       type: Sequelize.STRING,
     },
-    registration_document_2: {
+    registrationDocument2: {
       type: Sequelize.STRING,
     },
-    registration_document_3: {
+    registrationDocument3: {
       type: Sequelize.STRING,
     },
-    identity_card_front: {
+    identityCardFront: {
       type: Sequelize.STRING,
     },
-    identity_card_back: {
+    identityCardBack: {
       type: Sequelize.STRING,
     },
-    registration_business_name: {
+    registrationBusinessName: {
       type: Sequelize.STRING,
     },
-    registration_business_number: {
+    registrationBusinessNumber: {
       type: Sequelize.STRING,
     },
-    registration_owner_name: {
+    registrationOwnerName: {
       type: Sequelize.STRING,
     },
-    registration_owner_id: {
+    registrationOwnerId: {
       type: Sequelize.STRING,
     },
   }, {

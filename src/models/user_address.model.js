@@ -1,14 +1,14 @@
 module.exports = function (sequelize, Sequelize) {
   const UserAddress = sequelize.define('user_address', {
-    user_id: {
+    userId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    address_line1: {
+    addressLine1: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    address_line2: {
+    addressLine2: {
       type: Sequelize.STRING,
     },
     city: {
@@ -17,10 +17,10 @@ module.exports = function (sequelize, Sequelize) {
     postcode: {
       type: Sequelize.STRING,
     },
-    country_code: {
+    countryCode: {
       type: Sequelize.STRING(2),
     },
-    is_default: {
+    isDefault: {
       type: Sequelize.BOOLEAN,
     },
   }, {

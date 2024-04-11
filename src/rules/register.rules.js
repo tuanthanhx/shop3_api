@@ -9,12 +9,12 @@ exports.registerByEmail = [
   body('password')
     .notEmpty()
     .withMessage('password is required'),
-  body('password_confirm')
+  body('passwordConfirm')
     .notEmpty()
-    .withMessage('password_confirm is required'),
-  body('verification_code')
+    .withMessage('passwordConfirm is required'),
+  body('verificationCode')
     .notEmpty()
-    .withMessage('verification_code is required'),
+    .withMessage('verificationCode is required'),
   validateRules,
 ];
 
@@ -25,11 +25,11 @@ exports.registerByPhone = [
   body('password')
     .notEmpty()
     .withMessage('password is required'),
-  body('password_confirm')
+  body('passwordConfirm')
     .notEmpty()
-    .withMessage('password_confirm is required'),
-  body('verification_code')
+    .withMessage('passwordConfirm is required'),
+  body('verificationCode')
     .notEmpty()
-    .withMessage('verification_code is required'),
+    .withMessage('verificationCode is required'),
   validateRules,
 ];

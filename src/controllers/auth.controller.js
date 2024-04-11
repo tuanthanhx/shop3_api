@@ -36,11 +36,11 @@ exports.loginByEmail = async (req, res) => {
     const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
     const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
 
-    const findToken = await UserRefreshToken.findOne({ where: { user_id: user.id } });
+    const findToken = await UserRefreshToken.findOne({ where: { userId: user.id } });
     if (findToken) {
       findToken.update({ token: refreshToken });
     } else {
-      await UserRefreshToken.create({ token: refreshToken, user_id: user.id });
+      await UserRefreshToken.create({ token: refreshToken, userId: user.id });
     }
 
     res.json({
@@ -64,11 +64,11 @@ exports.loginByPhone = async (req, res) => {
     const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
     const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
 
-    const findToken = await UserRefreshToken.findOne({ where: { user_id: user.id } });
+    const findToken = await UserRefreshToken.findOne({ where: { userId: user.id } });
     if (findToken) {
       findToken.update({ token: refreshToken });
     } else {
-      await UserRefreshToken.create({ token: refreshToken, user_id: user.id });
+      await UserRefreshToken.create({ token: refreshToken, userId: user.id });
     }
 
     res.json({
@@ -82,13 +82,13 @@ exports.loginByPhone = async (req, res) => {
 
 exports.logout = async (req, res) => {
   if (req.user?.id) {
-    await UserRefreshToken.destroy({ where: { user_id: req.user.id } });
+    await UserRefreshToken.destroy({ where: { userId: req.user.id } });
   }
   res.status(204).end();
 };
 
 exports.refreshToken = async (req, res) => {
-  const { refresh_token: refreshToken } = req.body;
+  const { refreshToken } = req.body;
 
   if (!refreshToken) {
     res.status(401).json({ error: 'Refresh token is invalid' });
@@ -119,8 +119,8 @@ exports.refreshToken = async (req, res) => {
 
 exports.resetPasswordByEmail = async (req, res) => {
   if (
-    (!req.body.password && !req.body.password_confirm)
-    || (req.body.password !== req.body.password_confirm)
+    (!req.body.password && !req.body.passwordConfirm)
+    || (req.body.password !== req.body.passwordConfirm)
   ) {
     res.status(400).send({
       message: 'Password and confirm password does not match',
@@ -131,7 +131,7 @@ exports.resetPasswordByEmail = async (req, res) => {
   const {
     email,
     password,
-    verification_code: verificationCode,
+    verificationCode,
   } = req.body;
 
   const findUser = await User.findOne({ where: { email } });
@@ -170,8 +170,8 @@ exports.resetPasswordByEmail = async (req, res) => {
 
 exports.resetPasswordByPhone = async (req, res) => {
   if (
-    (!req.body.password && !req.body.password_confirm)
-    || (req.body.password !== req.body.password_confirm)
+    (!req.body.password && !req.body.passwordConfirm)
+    || (req.body.password !== req.body.passwordConfirm)
   ) {
     res.status(400).send({
       message: 'Password and confirm password does not match',
@@ -182,7 +182,7 @@ exports.resetPasswordByPhone = async (req, res) => {
   const {
     phone,
     password,
-    verification_code: verificationCode,
+    verificationCode,
   } = req.body;
 
   const findUser = await User.findOne({ where: { phone } });

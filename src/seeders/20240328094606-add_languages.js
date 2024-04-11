@@ -14,8 +14,8 @@ module.exports = {
     ];
     const languageObjects = languages.map((language) => ({
       name: language,
-      created_at: new Date(),
-      updated_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('languages', languageObjects, {});
   },

@@ -6,8 +6,8 @@ const Verification = db.verification;
 
 exports.registerByEmail = async (req, res) => {
   if (
-    (!req.body.password && !req.body.password_confirm)
-    || (req.body.password !== req.body.password_confirm)
+    (!req.body.password && !req.body.passwordConfirm)
+    || (req.body.password !== req.body.passwordConfirm)
   ) {
     res.status(400).send({
       message: 'Password and confirm password does not match',
@@ -18,7 +18,7 @@ exports.registerByEmail = async (req, res) => {
   const {
     email,
     password,
-    verification_code: verificationCode,
+    verificationCode,
   } = req.body;
 
   if (verificationCode.toString() !== process.env.OTP_SECRET) {
@@ -56,8 +56,8 @@ exports.registerByEmail = async (req, res) => {
 
 exports.registerByPhone = async (req, res) => {
   if (
-    (!req.body.password && !req.body.password_confirm)
-    || (req.body.password !== req.body.password_confirm)
+    (!req.body.password && !req.body.passwordConfirm)
+    || (req.body.password !== req.body.passwordConfirm)
   ) {
     res.status(400).send({
       message: 'Password and confirm password does not match',
@@ -68,7 +68,7 @@ exports.registerByPhone = async (req, res) => {
   const {
     phone,
     password,
-    verification_code: verificationCode,
+    verificationCode,
   } = req.body;
 
   if (verificationCode.toString() !== process.env.OTP_SECRET) {

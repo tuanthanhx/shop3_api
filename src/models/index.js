@@ -17,9 +17,6 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
     acquire: dbConfig.pool.acquire,
     idle: dbConfig.pool.idle,
   },
-  define: {
-    underscored: true,
-  },
 });
 
 const db = {};
@@ -38,22 +35,22 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-db.user.belongsTo(db.language, { foreignKey: 'language_id' });
-db.user.belongsTo(db.currency, { foreignKey: 'currency_id' });
+db.user.belongsTo(db.language, { foreignKey: 'languageId' });
+db.user.belongsTo(db.currency, { foreignKey: 'currencyId' });
 
 db.user.hasMany(db.user_refresh_token);
 db.user_refresh_token.belongsTo(db.user);
 
-db.user_verification.belongsTo(db.user, { foreignKey: 'user_id' });
-db.user.hasMany(db.user_verification, { foreignKey: 'user_id' });
+db.user_verification.belongsTo(db.user, { foreignKey: 'userId' });
+db.user.hasMany(db.user_verification, { foreignKey: 'userId' });
 
-db.user_address.belongsTo(db.country, { foreignKey: 'country_code' });
-db.country.hasMany(db.user_address, { foreignKey: 'country_code' });
+db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
+db.country.hasMany(db.user_address, { foreignKey: 'countryCode' });
 
 db.user.hasOne(db.shop);
-db.shop.belongsTo(db.user, { foreignKey: 'user_id' });
+db.shop.belongsTo(db.user, { foreignKey: 'userId' });
 
-db.shop.belongsTo(db.seller_business_type, { foreignKey: 'seller_business_type_id' });
+db.shop.belongsTo(db.seller_business_type, { foreignKey: 'sellerBusinessTypeId' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
