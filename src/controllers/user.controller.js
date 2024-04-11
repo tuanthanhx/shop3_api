@@ -1,6 +1,7 @@
 const db = require('../models');
 
 const User = db.user;
+const Shops = db.shop;
 const { Op } = db.Sequelize;
 
 exports.findAll = (req, res) => {
@@ -71,24 +72,34 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.findMe = (req, res) => {
+exports.findMe = async (req, res) => {
   const { id } = req.user;
-  User.findByPk(id)
-    .then((data) => {
-      if (data) {
-        res.send(data);
-      } else {
-        res.status(404).send({
-          message: `Cannot find User with id=${id}`,
-        });
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({
-        message: `Error retrieving User with id=${id}`,
+
+  try {
+    const foundUser = await User.findByPk(id);
+    if (!foundUser) {
+      res.status(404).send({
+        message: 'Cannot find user with the provided ID',
       });
+      return;
+    }
+
+    const userObject = foundUser.toJSON();
+
+    const foundShop = await Shops.findOne({ where: { userId: id } });
+    if (foundShop) {
+      userObject.shop = {
+        shopId: foundShop.id,
+        shopName: foundShop.shopName,
+      };
+    }
+
+    res.send(userObject);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
     });
+  }
 };
 
 exports.create = (req, res) => {
