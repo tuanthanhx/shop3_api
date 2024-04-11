@@ -1051,7 +1051,7 @@ components:
           example: 1
         shopId:
           type: integer
-          format: 1
+          example: 1
         isPhoneValidated:
           type: boolean
         isEmailValidated:
