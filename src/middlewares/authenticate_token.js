@@ -16,15 +16,11 @@ exports.authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ error: 'No access token' });
-  }
-
-  jwt.verify(token, accessTokenSecret, (err, user) => {
-    if (err) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
+  try {
+    const user = jwt.verify(token, accessTokenSecret);
     req.user = user;
     return next();
-  });
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
 };

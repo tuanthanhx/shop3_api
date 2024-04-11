@@ -8,7 +8,6 @@ require('dotenv').config();
 const User = db.user;
 const Verification = db.verification;
 const UserRefreshToken = db.user_refresh_token;
-const { Op } = db.Sequelize;
 
 const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;

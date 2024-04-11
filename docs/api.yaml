@@ -881,7 +881,7 @@ paths:
   #     security:
   #       - bearerAuth: []
 
-  /seller/business_type:
+  /sellers/business_types:
     get:
       summary: Get a list of business types
       tags:
@@ -895,70 +895,62 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: integer
-                          example: "Household"
-                        description:
-                          type: integer
-                          example: "Dummy"
+                    type: object
+                    $ref: "#/components/schemas/SellerBusinessTypesResponse"
       security:
         - bearerAuth: []
 
 components:
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        uuid:
-          type: string
-          format: uuid
-          example: 6252290c-1a4e-4556-a8cd-e3e32e316fd7
-        name:
-          type: string
-          example: John Smith
-        email:
-          type: string
-          example: johnsm@gmail.com
-        phone:
-          type: string
-          example: "0123456789"
-        avatar:
-          type: string
-          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
-        gender:
-          type: integer
-          example: 1
-        dob:
-          type: string
-          format: date-time
-        language_id:
-          type: integer
-          example: 1
-        currency_id:
-          type: integer
-          example: 1
-        is_email_validated:
-          type: boolean
-        is_phone_validated:
-          type: boolean
-        is_active:
-          type: boolean
-        last_login:
-          type: string
-          format: date-time
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+    # User:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       example: 1
+    #     uuid:
+    #       type: string
+    #       format: uuid
+    #       example: 6252290c-1a4e-4556-a8cd-e3e32e316fd7
+    #     name:
+    #       type: string
+    #       example: John Smith
+    #     email:
+    #       type: string
+    #       example: johnsm@gmail.com
+    #     phone:
+    #       type: string
+    #       example: "0123456789"
+    #     avatar:
+    #       type: string
+    #       example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+    #     gender:
+    #       type: integer
+    #       example: 1
+    #     dob:
+    #       type: string
+    #       format: date-time
+    #     language_id:
+    #       type: integer
+    #       example: 1
+    #     currency_id:
+    #       type: integer
+    #       example: 1
+    #     is_email_validated:
+    #       type: boolean
+    #     is_phone_validated:
+    #       type: boolean
+    #     is_active:
+    #       type: boolean
+    #     last_login:
+    #       type: string
+    #       format: date-time
+    #     created_at:
+    #       type: string
+    #       format: date-time
+    #     updated_at:
+    #       type: string
+    #       format: date-time
 
     LoginResponse:
       type: object
@@ -969,6 +961,18 @@ components:
         refresh_token:
           type: string
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEyODA4ODA2LCJleHAiOjE3MTU0MDA4MDZ9.q5nQpO8LJjAsR0DGZwGqpcpAT1nBQQ73XvsiXckLAOo"
+
+    SellerBusinessTypesResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            example: "Household"
+          description:
+            type: string
+            example: "Dummy"
 
     # UserAddRequest:
     #   type: object

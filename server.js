@@ -10,6 +10,7 @@ const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
 
 require('dotenv').config();
+
 const env = process.env.NODE_ENV || 'development';
 
 let corsOptions = {};
