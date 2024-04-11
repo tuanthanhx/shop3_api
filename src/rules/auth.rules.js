@@ -1,11 +1,22 @@
 const { body } = require('express-validator');
 const { validateRules } = require('../middlewares/validators');
 
-exports.login = [
+exports.loginByEmail = [
   body('email')
-    .optional()
+    .notEmpty()
+    .withMessage('email is required')
     .isEmail()
     .withMessage('email is invalid format'),
+  body('password')
+    .notEmpty()
+    .withMessage('password is required'),
+  validateRules,
+];
+
+exports.loginByPhone = [
+  body('phone')
+    .notEmpty()
+    .withMessage('phone is required'),
   body('password')
     .notEmpty()
     .withMessage('password is required'),
@@ -19,11 +30,28 @@ exports.refreshToken = [
   validateRules,
 ];
 
-exports.resetPassword = [
+exports.resetPasswordByEmail = [
   body('email')
-    .optional()
+    .notEmpty()
+    .withMessage('email is required')
     .isEmail()
     .withMessage('email is invalid format'),
+  body('password')
+    .notEmpty()
+    .withMessage('password is required'),
+  body('password_confirm')
+    .notEmpty()
+    .withMessage('password_confirm is required'),
+  body('verification_code')
+    .notEmpty()
+    .withMessage('verification_code is required'),
+  validateRules,
+];
+
+exports.resetPasswordByPhone = [
+  body('phone')
+    .notEmpty()
+    .withMessage('phone is required'),
   body('password')
     .notEmpty()
     .withMessage('password is required'),

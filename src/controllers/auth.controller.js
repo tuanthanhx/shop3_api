@@ -15,7 +15,7 @@ const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 
 exports.isLogin = async (req, res) => {
   if (req.user) {
-    res.status(200).send({
+    res.send({
       data: true,
     });
     return;
@@ -25,30 +25,17 @@ exports.isLogin = async (req, res) => {
   });
 };
 
-exports.login = async (req, res) => {
-  if (!req.body.email && !req.body.phone) {
-    return res.status(400).json({ error: 'Either email or phone is required' });
-  }
-
-  const { email, phone, password } = req.body;
-
-  let whereCondition = {};
-  if (email && phone) {
-    whereCondition = { [Op.or]: [{ email }, { phone }] };
-  } else if (email) {
-    whereCondition = { email };
-  } else if (phone) {
-    whereCondition = { phone };
-  }
+exports.loginByEmail = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: whereCondition, attributes: { include: ['password'] } });
+    const user = await User.findOne({ where: { email }, attributes: { include: ['password'] } });
     if (!user || !user.validPassword(password)) {
       res.status(401).json({ error: 'Invalid email or password' });
       return;
     }
-    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: '30d' });
+    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
 
     const findToken = await UserRefreshToken.findOne({ where: { user_id: user.id } });
     if (findToken) {
@@ -57,7 +44,37 @@ exports.login = async (req, res) => {
       await UserRefreshToken.create({ token: refreshToken, user_id: user.id });
     }
 
-    res.json({ accessToken, refreshToken });
+    res.json({
+      data: { accessToken, refreshToken },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+};
+
+exports.loginByPhone = async (req, res) => {
+  const { phone, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { phone }, attributes: { include: ['password'] } });
+    if (!user || !user.validPassword(password)) {
+      res.status(401).json({ error: 'Invalid phone or password' });
+      return;
+    }
+    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
+
+    const findToken = await UserRefreshToken.findOne({ where: { user_id: user.id } });
+    if (findToken) {
+      findToken.update({ token: refreshToken });
+    } else {
+      await UserRefreshToken.create({ token: refreshToken, user_id: user.id });
+    }
+
+    res.json({
+      data: { accessToken, refreshToken },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Login failed' });
@@ -90,8 +107,10 @@ exports.refreshToken = async (req, res) => {
       if (err) {
         return res.status(403).json({ error: 'Refresh token is invalid' });
       }
-      const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: '15m' });
-      return res.json({ accessToken });
+      const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+      return res.json({
+        data: { accessToken },
+      });
     });
   } catch (error) {
     console.error(error);
@@ -99,14 +118,7 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-exports.resetPassword = async (req, res) => {
-  if (!req.body.email && !req.body.phone) {
-    res.status(400).send({
-      message: 'Either email or phone is required',
-    });
-    return;
-  }
-
+exports.resetPasswordByEmail = async (req, res) => {
   if (
     (!req.body.password && !req.body.password_confirm)
     || (req.body.password !== req.body.password_confirm)
@@ -119,30 +131,20 @@ exports.resetPassword = async (req, res) => {
 
   const {
     email,
-    phone,
     password,
     verification_code: verificationCode,
   } = req.body;
 
-  let whereCondition = {};
-  if (email && phone) {
-    whereCondition = { [Op.or]: [{ email }, { phone }] };
-  } else if (email) {
-    whereCondition = { email };
-  } else if (phone) {
-    whereCondition = { phone };
-  }
-
-  const findUser = await User.findOne({ where: whereCondition });
+  const findUser = await User.findOne({ where: { email } });
   if (!findUser) {
     res.status(400).send({
-      message: 'Cannot find an account with the provided email or phone number',
+      message: 'Cannot find an account with the provided email',
     });
     return;
   }
 
   if (verificationCode.toString() !== process.env.OTP_SECRET) {
-    const findCode = await Verification.findOne({ where: { receiver: email || phone } });
+    const findCode = await Verification.findOne({ where: { receiver: email } });
     if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
       res.status(400).send({
         message: 'The provided verification code is incorrect',
@@ -155,18 +157,67 @@ exports.resetPassword = async (req, res) => {
     password: findUser.generateHash(password),
   };
 
-  findUser.update(object)
-    .then((data) => {
-      res.send({
-        data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred',
-      });
+  try {
+    await findUser.update(object);
+    res.send({
+      data: true,
     });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.resetPasswordByPhone = async (req, res) => {
+  if (
+    (!req.body.password && !req.body.password_confirm)
+    || (req.body.password !== req.body.password_confirm)
+  ) {
+    res.status(400).send({
+      message: 'Password and confirm password does not match',
+    });
+    return;
+  }
+
+  const {
+    phone,
+    password,
+    verification_code: verificationCode,
+  } = req.body;
+
+  const findUser = await User.findOne({ where: { phone } });
+  if (!findUser) {
+    res.status(400).send({
+      message: 'Cannot find an account with the provided phone',
+    });
+    return;
+  }
+
+  if (verificationCode.toString() !== process.env.OTP_SECRET) {
+    const findCode = await Verification.findOne({ where: { receiver: phone } });
+    if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
+      res.status(400).send({
+        message: 'The provided verification code is incorrect',
+      });
+      return;
+    }
+  }
+
+  const object = {
+    password: findUser.generateHash(password),
+  };
+
+  try {
+    await findUser.update(object);
+    res.send({
+      data: true,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
 };
 
 exports.generateOtpByEmail = async (req, res) => {

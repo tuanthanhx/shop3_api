@@ -10,7 +10,6 @@ const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
 
 require('dotenv').config();
-
 const env = process.env.NODE_ENV || 'development';
 
 let corsOptions = {};
@@ -30,7 +29,7 @@ const options = {
     },
     servers: [
       {
-        url: env === 'development' ? process.env.APP_URL_DEV : process.env.APP_URL_PROD,
+        url: env === 'development' ? `${process.env.APP_URL_DEV}/${process.env.VERSION}` : `${process.env.APP_URL_PROD}/${process.env.VERSION}`,
       },
     ],
   },
@@ -45,8 +44,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(authenticateToken);
-app.use(handleQueries);
-app.use(validateRules);
+app.use([handleQueries, validateRules]);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: `${process.env.TITLE} Docs` }));
 

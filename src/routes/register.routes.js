@@ -1,7 +1,6 @@
 module.exports = (app) => {
   const router = require('express').Router();
   const register = require('../controllers/register.controller');
-
   const rules = require('../rules/register.rules');
 
   require('dotenv').config();

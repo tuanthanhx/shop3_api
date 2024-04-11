@@ -4,13 +4,12 @@ info:
   description: Documentation for Shop3 API.
   version: 1.0.0
 servers:
-  - url: http://127.0.0.1:3000/v1
+  - url: http://127.0.0.1:3000/api/v1
 
 paths:
-  /register:
+  /register/email:
     post:
-      summary: Register a new user.
-      description: This API requires either an email or a phone field.
+      summary: Register a new user by email
       tags:
         - Registration
       requestBody:
@@ -19,6 +18,11 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - verification_code
+                - password
+                - password_confirm
               properties:
                 email:
                   type: string
@@ -29,49 +33,10 @@ paths:
                   example: "123456"
                 password:
                   type: string
-                  example: abc123
+                  example: securePassword
                 password_confirm:
                   type: string
-                  example: abc123
-              oneOf:
-                - required: ["email"]
-                - required: ["phone"]
-      responses:
-        "200":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: "#/components/schemas/User"
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal Server Error
-
-  /auth/login:
-    post:
-      summary: Login.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  example: johnsm@gmail.com
-                password:
-                  type: string
-                  example: abc123
-              oneOf:
-                - required: ["email"]
-                - required: ["phone"]
+                  example: securePassword
       responses:
         "200":
           description: OK
@@ -82,24 +47,60 @@ paths:
                 properties:
                   data:
                     type: object
-                    properties:
-                      access_token:
-                        type: string
-                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
-                      refresh_token:
-                        type: string
-                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
-                      expires_in:
-                        type: integer
-                        example: 900
+                    $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /register/phone:
+    post:
+      summary: Register a new user by phone number
+      tags:
+        - Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - verification_code
+                - password
+                - password_confirm
+              properties:
+                phone:
+                  type: string
+                  example: "0123456789"
+                verification_code:
+                  type: string
+                  example: "123456"
+                password:
+                  type: string
+                  example: securePassword
+                password_confirm:
+                  type: string
+                  example: securePassword
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/LoginResponse"
         "400":
           description: Bad Request
         "500":
           description: Internal Server Error
 
   /auth/is_login:
-    post:
-      summary: Check if user is logged in or not.
+    get:
+      summary: Check if user is logged in or not
       tags:
         - Authentication
       responses:
@@ -118,52 +119,9 @@ paths:
         "500":
           description: Internal Server Error
 
-  /auth/reset_password:
-    post:
-      summary: Recover password for users.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: johnsm@gmail.com
-                verification_code:
-                  type: string
-                  example: "123456"
-                password:
-                  type: string
-                  example: abc123
-                password_confirm:
-                  type: string
-                  example: abc123
-              oneOf:
-                - required: ["email"]
-                - required: ["phone"]
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: "#/components/schemas/User"
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal Server Error
-
   /auth/refresh_token:
     post:
-      summary: Refresh token.
+      summary: Refresh the access token
       tags:
         - Authentication
       requestBody:
@@ -175,7 +133,7 @@ paths:
               properties:
                 refresh_token:
                   type: string
-                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEyODA4ODA2LCJleHAiOjE3MTU0MDA4MDZ9.q5nQpO8LJjAsR0DGZwGqpcpAT1nBQQ73XvsiXckLAOo"
       responses:
         "200":
           description: OK
@@ -187,20 +145,19 @@ paths:
                   data:
                     type: object
                     properties:
-                      accessToken:
+                      access_token:
                         type: string
-                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.swEwdu5b40qxtlAlCBhALr4hmKTAwC-XasausNz9-Wk"
-                      expires_in:
-                        type: integer
-                        example: 900
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEyODA4OTc2LCJleHAiOjE3MTI4MDk4NzZ9.n1h2ue1hn8j5ZfSwtqtpOokDyMp8dPEu-K5Luw4aiwY"
         "400":
           description: Bad Request
+        "401":
+          description: Unauthorized
         "500":
           description: Internal Server Error
 
-  /auth/generate_otp:
+  /auth/login/email:
     post:
-      summary: Generate OTP code by email or phone.
+      summary: Login by email
       tags:
         - Authentication
       requestBody:
@@ -209,13 +166,16 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - password
               properties:
                 email:
                   type: string
-                  example: "johnsm@gmail.com"
-              oneOf:
-                - required: ["email"]
-                - required: ["phone"]
+                  example: johnsm@gmail.com
+                password:
+                  type: string
+                  example: securePassword
       responses:
         "200":
           description: OK
@@ -226,7 +186,201 @@ paths:
                 properties:
                   data:
                     type: object
-                    example: null
+                    $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/login/phone:
+    post:
+      summary: Login by phone
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+              properties:
+                phone:
+                  type: string
+                  example: "0123456789"
+                password:
+                  type: string
+                  example: securePassword
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/reset_password/email:
+    post:
+      summary: Reset password by email
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - password_confirm
+                - verification_code
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+                password:
+                  type: string
+                  example: securePassword
+                password_confirm:
+                  type: string
+                  example: securePassword
+                verification_code:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: true
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/reset_password/phone:
+    post:
+      summary: Reset password by phone
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - password
+                - password_confirm
+                - verification_code
+              properties:
+                phone:
+                  type: string
+                  example: "0123456789"
+                password:
+                  type: string
+                  example: securePassword
+                password_confirm:
+                  type: string
+                  example: securePassword
+                verification_code:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: true
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/generate_otp/email:
+    post:
+      summary: Generate OTP code by email
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: "johnsm@gmail.com"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: true
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
+  /auth/generate_otp/phone:
+    post:
+      summary: Generate OTP code by phone
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+              properties:
+                phone:
+                  type: string
+                  example: "0123456789"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: true
         "400":
           description: Bad Request
         "500":
@@ -234,7 +388,7 @@ paths:
 
   /auth/logout:
     post:
-      summary: Logout.
+      summary: Logout
       tags:
         - Authentication
       responses:
@@ -334,7 +488,7 @@ paths:
 
   /users/me:
     get:
-      summary: Returns the current user.
+      summary: Get the current user data
       tags:
         - Users
       responses:
@@ -729,9 +883,9 @@ paths:
 
   /seller/business_type:
     get:
-      summary: Returns a list of business types.
+      summary: Get a list of business types
       tags:
-        - Seller
+        - Sellers
       responses:
         "200":
           description: A JSON array of business types
@@ -806,6 +960,16 @@ components:
           type: string
           format: date-time
 
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEyODA4OTc2LCJleHAiOjE3MTI4MDk4NzZ9.n1h2ue1hn8j5ZfSwtqtpOokDyMp8dPEu-K5Luw4aiwY"
+        refresh_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEyODA4ODA2LCJleHAiOjE3MTU0MDA4MDZ9.q5nQpO8LJjAsR0DGZwGqpcpAT1nBQQ73XvsiXckLAOo"
+
     # UserAddRequest:
     #   type: object
     #   properties:
@@ -814,7 +978,7 @@ components:
     #       example: John Smith
     #     password:
     #       type: string
-    #       example: abc123
+    #       example: securePassword
     #     phone:
     #       type: string
     #       example: "0123456789"

@@ -1,8 +1,8 @@
 const db = require('../models');
+const auth = require('./auth.controller');
 
 const User = db.user;
 const Verification = db.verification;
-const { Op } = db.Sequelize;
 
 exports.registerByEmail = async (req, res) => {
   if (
@@ -44,18 +44,14 @@ exports.registerByEmail = async (req, res) => {
     password,
   };
 
-  User.create(object)
-    .then((data) => {
-      res.send({
-        data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred',
-      });
+  try {
+    await User.create(object);
+    await auth.loginByEmail(req, res);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
     });
+  }
 };
 
 exports.registerByPhone = async (req, res) => {
@@ -98,16 +94,12 @@ exports.registerByPhone = async (req, res) => {
     password,
   };
 
-  User.create(object)
-    .then((data) => {
-      res.send({
-        data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred',
-      });
+  try {
+    await User.create(object);
+    await auth.loginByPhone(req, res);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
     });
+  }
 };
