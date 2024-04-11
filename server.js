@@ -1,4 +1,7 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+// const multer = require('multer');
+// const upload = multer();
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -6,12 +9,25 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const db = require('./src/models');
 
+// const { upload } = require('./src/utils/uploader');
+// upload.array('files', 5)
+
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
 
 require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/');
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+//   },
+// });
+// const upload = multer({ storage });
 
 let corsOptions = {};
 if (env !== 'development') {
@@ -44,6 +60,9 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(upload.array());
 app.use(authenticateToken);
 app.use([handleQueries, validateRules]);
 

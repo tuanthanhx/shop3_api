@@ -50,6 +50,11 @@ db.user.hasMany(db.user_verification, { foreignKey: 'user_id' });
 db.user_address.belongsTo(db.country, { foreignKey: 'country_code' });
 db.country.hasMany(db.user_address, { foreignKey: 'country_code' });
 
+db.user.hasOne(db.shop);
+db.shop.belongsTo(db.user, { foreignKey: 'user_id' });
+
+db.shop.belongsTo(db.seller_business_type, { foreignKey: 'seller_business_type_id' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

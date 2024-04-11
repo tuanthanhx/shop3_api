@@ -4,3 +4,5 @@ exports.generateRandomNumber = (numDigits) => {
   const paddedNumber = randomNumber.toString().padStart(numDigits, '0');
   return paddedNumber;
 };
+
+exports.getExtension = (filename) => filename.split('.').pop();
