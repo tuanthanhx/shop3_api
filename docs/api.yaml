@@ -497,7 +497,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserResponse"
       security:
         - bearerAuth: []
 
@@ -1015,7 +1015,7 @@ paths:
 
 components:
   schemas:
-    User:
+    UserResponse:
       type: object
       properties:
         id:
@@ -1036,7 +1036,7 @@ components:
           example: "0123456789"
         avatar:
           type: string
-          example: https://s3.amazon-aws.com/example-bucket/user-media/dummy_0001.jpg
+          example: https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg
         gender:
           type: integer
           example: 1
@@ -1049,6 +1049,9 @@ components:
         currencyId:
           type: integer
           example: 1
+        shopId:
+          type: integer
+          format: 1
         isPhoneValidated:
           type: boolean
         isEmailValidated:

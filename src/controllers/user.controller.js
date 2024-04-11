@@ -88,10 +88,7 @@ exports.findMe = async (req, res) => {
 
     const foundShop = await Shops.findOne({ where: { userId: id } });
     if (foundShop) {
-      userObject.shop = {
-        shopId: foundShop.id,
-        shopName: foundShop.shopName,
-      };
+      userObject.shopId = foundShop.id;
     }
 
     res.send(userObject);
