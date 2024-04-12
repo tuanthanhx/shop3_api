@@ -52,6 +52,9 @@ db.shop.belongsTo(db.user, { foreignKey: 'userId' });
 
 db.shop.belongsTo(db.seller_business_type, { foreignKey: 'sellerBusinessTypeId' });
 
+db.product.belongsTo(db.category, { foreignKey: 'categoryId' });
+db.category.hasMany(db.product, { foreignKey: 'categoryId' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
