@@ -37,6 +37,9 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       defaultValue: 1,
     },
+    subscribeMailingList: {
+      type: Sequelize.BOOLEAN,
+    },
     isPhoneValidated: {
       type: Sequelize.BOOLEAN,
     },

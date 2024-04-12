@@ -1,8 +1,8 @@
+const { checkOtp, removeOtp } = require('../utils/otp');
 const db = require('../models');
 const auth = require('./auth.controller');
 
 const User = db.user;
-const Verification = db.verification;
 
 exports.registerByEmail = async (req, res) => {
   if (
@@ -21,30 +21,27 @@ exports.registerByEmail = async (req, res) => {
     verificationCode,
   } = req.body;
 
-  if (verificationCode.toString() !== process.env.OTP_SECRET) {
-    const findCode = await Verification.findOne({ where: { receiver: email } });
-    if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
+  try {
+    const verifyOtpResult = await checkOtp(email, verificationCode);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code' });
+      return;
+    }
+    await removeOtp(email);
+
+    const foundUser = await User.findOne({ where: { email } });
+    if (foundUser) {
       res.status(400).send({
-        message: 'The provided verification code is incorrect',
+        message: 'An user with the provided email already exists',
       });
       return;
     }
-  }
 
-  const findUser = await User.findOne({ where: { email } });
-  if (findUser) {
-    res.status(400).send({
-      message: 'An user with the provided email already exists',
-    });
-    return;
-  }
+    const object = {
+      email,
+      password,
+    };
 
-  const object = {
-    email,
-    password,
-  };
-
-  try {
     await User.create(object);
     await auth.loginByEmail(req, res);
   } catch (err) {
@@ -71,30 +68,27 @@ exports.registerByPhone = async (req, res) => {
     verificationCode,
   } = req.body;
 
-  if (verificationCode.toString() !== process.env.OTP_SECRET) {
-    const findCode = await Verification.findOne({ where: { receiver: phone } });
-    if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
+  try {
+    const verifyOtpResult = await checkOtp(phone, verificationCode);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code' });
+      return;
+    }
+    await removeOtp(phone);
+
+    const foundUser = await User.findOne({ where: { phone } });
+    if (foundUser) {
       res.status(400).send({
-        message: 'The provided verification code is incorrect',
+        message: 'An user with the provided phone already exists',
       });
       return;
     }
-  }
 
-  const findUser = await User.findOne({ where: { phone } });
-  if (findUser) {
-    res.status(400).send({
-      message: 'An user with the provided phone already exists',
-    });
-    return;
-  }
+    const object = {
+      phone,
+      password,
+    };
 
-  const object = {
-    phone,
-    password,
-  };
-
-  try {
     await User.create(object);
     await auth.loginByPhone(req, res);
   } catch (err) {

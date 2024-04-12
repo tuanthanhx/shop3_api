@@ -79,3 +79,13 @@ exports.generateOtpByPhone = [
     .withMessage('phone is required'),
   validateRules,
 ];
+
+exports.confirmOtp = [
+  body('receiver')
+    .notEmpty()
+    .withMessage('receiver is required'),
+  body('code')
+    .notEmpty()
+    .withMessage('code is required'),
+  validateRules,
+];

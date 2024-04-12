@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken');
-const { generateRandomNumber } = require('../utils/utils');
+const { createOtp, checkOtp, removeOtp } = require('../utils/otp');
 const { sendEmail } = require('../utils/email');
 const db = require('../models');
 
 require('dotenv').config();
 
 const User = db.user;
-const Verification = db.verification;
 const UserRefreshToken = db.user_refresh_token;
 
 const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
@@ -117,6 +116,41 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
+exports.generateOtpByEmail = async (req, res) => {
+  const { email } = req.body;
+  const code = await createOtp(email);
+  if (!code) {
+    res.status(500).json({ data: 'Cannot generate a verification code' });
+    return;
+  }
+  sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+  res.send({ data: true });
+};
+
+exports.generateOtpByPhone = async (req, res) => {
+  const { phone } = req.body;
+  const code = await createOtp(phone);
+  if (!code) {
+    res.status(500).json({ data: 'Cannot generate a verification code' });
+    return;
+  }
+  // TODO: Make SMS feature later
+  // sendSms(phone, 'Verification Code', `Your verification code is: ${code}`);
+  res.send({ data: true });
+};
+
+exports.confirmOtp = async (req, res) => {
+  const { receiver, code, remove } = req.body;
+  const verifyOtpResult = await checkOtp(receiver, code);
+  if (!verifyOtpResult) {
+    res.status(400).json({ data: 'Invalid verification code' });
+  }
+  if (remove) {
+    await removeOtp(receiver);
+  }
+  res.send({ data: true });
+};
+
 exports.resetPasswordByEmail = async (req, res) => {
   if (
     (!req.body.password && !req.body.passwordConfirm)
@@ -134,30 +168,26 @@ exports.resetPasswordByEmail = async (req, res) => {
     verificationCode,
   } = req.body;
 
-  const findUser = await User.findOne({ where: { email } });
-  if (!findUser) {
-    res.status(400).send({
-      message: 'Cannot find an account with the provided email',
-    });
-    return;
-  }
+  try {
+    const verifyOtpResult = await checkOtp(email, verificationCode);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code' });
+      return;
+    }
+    await removeOtp(email);
 
-  if (verificationCode.toString() !== process.env.OTP_SECRET) {
-    const findCode = await Verification.findOne({ where: { receiver: email } });
-    if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
-      res.status(400).send({
-        message: 'The provided verification code is incorrect',
+    const foundUser = await User.findOne({ where: { email } });
+    if (!foundUser) {
+      res.status(404).send({
+        message: 'Cannot find an account with the provided email',
       });
       return;
     }
-  }
 
-  const object = {
-    password: findUser.generateHash(password),
-  };
+    await foundUser.update({
+      password: foundUser.generateHash(password),
+    });
 
-  try {
-    await findUser.update(object);
     res.send({
       data: true,
     });
@@ -185,30 +215,26 @@ exports.resetPasswordByPhone = async (req, res) => {
     verificationCode,
   } = req.body;
 
-  const findUser = await User.findOne({ where: { phone } });
-  if (!findUser) {
-    res.status(400).send({
-      message: 'Cannot find an account with the provided phone',
-    });
-    return;
-  }
+  try {
+    const verifyOtpResult = await checkOtp(phone, verificationCode);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code' });
+      return;
+    }
+    await removeOtp(phone);
 
-  if (verificationCode.toString() !== process.env.OTP_SECRET) {
-    const findCode = await Verification.findOne({ where: { receiver: phone } });
-    if (!findCode || verificationCode.toString() !== findCode?.dataValues?.code?.toString()) {
-      res.status(400).send({
-        message: 'The provided verification code is incorrect',
+    const foundUser = await User.findOne({ where: { phone } });
+    if (!foundUser) {
+      res.status(404).send({
+        message: 'Cannot find an account with the provided phone',
       });
       return;
     }
-  }
 
-  const object = {
-    password: findUser.generateHash(password),
-  };
+    await foundUser.update({
+      password: foundUser.generateHash(password),
+    });
 
-  try {
-    await findUser.update(object);
     res.send({
       data: true,
     });
@@ -217,59 +243,4 @@ exports.resetPasswordByPhone = async (req, res) => {
       message: err.message || 'Some error occurred',
     });
   }
-};
-
-exports.generateOtpByEmail = async (req, res) => {
-  const { email } = req.body;
-  const code = generateRandomNumber(6);
-
-  const object = {
-    code,
-    receiver: email,
-  };
-
-  Verification.findOne({ where: { receiver: email } })
-    .then((verification) => {
-      if (verification) {
-        return verification.update({ code });
-      }
-      return Verification.create(object);
-    })
-    .then(async () => {
-      sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
-      res.send({ data: true });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred',
-      });
-    });
-};
-
-exports.generateOtpByPhone = async (req, res) => {
-  const { phone } = req.body;
-  const code = generateRandomNumber(6);
-
-  const object = {
-    code,
-    receiver: phone,
-  };
-
-  Verification.findOne({ where: { receiver: phone } })
-    .then((verification) => {
-      if (verification) {
-        return verification.update({ code });
-      }
-      return Verification.create(object);
-    })
-    .then(async () => {
-      // TODO: Make SMS feature later
-      // sendSms(phone, 'Verification Code', `Your verification code is: ${code}`);
-      res.send({ data: true });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred',
-      });
-    });
 };

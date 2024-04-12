@@ -39,6 +39,15 @@ module.exports = function (sequelize, Sequelize) {
     registrationOwnerId: {
       type: Sequelize.STRING,
     },
+    email: {
+      type: Sequelize.STRING,
+    },
+    phone: {
+      type: Sequelize.STRING,
+    },
+    subscribeMailingList: {
+      type: Sequelize.BOOLEAN,
+    },
   }, {
     paranoid: true,
   });

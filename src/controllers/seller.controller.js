@@ -1,6 +1,8 @@
+const { checkOtp, removeOtp } = require('../utils/otp');
 const gcs = require('../utils/gcs');
 const db = require('../models');
 
+const Users = db.user;
 const Shops = db.shop;
 const SellerBusinessTypes = db.seller_business_type;
 
@@ -18,6 +20,7 @@ exports.getBusinessTypes = async (req, res) => {
 };
 
 exports.createShop = async (req, res) => {
+  const files = req.files?.slice(0, 3);
   const {
     businessType,
     shopName,
@@ -25,21 +28,86 @@ exports.createShop = async (req, res) => {
     registrationBusinessNumber,
     registrationOwnerName,
     registrationOwnerId,
+    subscribeMailingList,
+    useCurrentEmail,
+    newEmail,
+    newEmailOtp,
+    useCurrentPhone,
+    newPhone,
+    newPhoneOtp,
   } = req.body;
 
   const { id: userId } = req.user;
+
+  const foundUser = await Users.findByPk(userId);
+  if (!foundUser) {
+    res.status(400).send({
+      message: 'Cannot find data with the current user',
+    });
+    return;
+  }
 
   const object = {
     sellerBusinessTypeId: businessType,
     shopName,
     userId,
+    subscribeMailingList,
   };
+
+  if (useCurrentEmail) {
+    object.email = foundUser.email;
+  } else if (newEmail) {
+    const verifyOtpResult = await checkOtp(newEmail, newEmailOtp);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code for the new email' });
+      return;
+    }
+    object.email = newEmail;
+  } else {
+    res.status(400).json({ data: 'No email provided' });
+    return;
+  }
+
+  if (useCurrentPhone) {
+    object.phone = foundUser.phone;
+  } else if (newPhone) {
+    const verifyOtpResult = await checkOtp(newPhone, newPhoneOtp);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code for the new phone' });
+      return;
+    }
+    object.phone = newPhone;
+  } else {
+    res.status(400).json({ data: 'No phone provided' });
+    return;
+  }
 
   if (businessType === 1) { // Household
     object.registrationBusinessName = registrationBusinessName;
     object.registrationBusinessNumber = registrationBusinessNumber;
     object.registrationOwnerName = registrationOwnerName;
     object.registrationOwnerId = registrationOwnerId;
+
+    if (files.length < 3) {
+      res.status(400).send({
+        message: 'Not providing enough document files',
+      });
+      return;
+    }
+  } else if (businessType === 2) { // Individual
+    if (files.length < 2) {
+      res.status(400).send({
+        message: 'Not providing enough document files',
+      });
+      return;
+    }
+  } else if (businessType === 3) { // Corporate
+    if (files.length < 3) {
+      res.status(400).send({
+        message: 'Not providing enough document files',
+      });
+      return;
+    }
   }
 
   try {
@@ -61,7 +129,6 @@ exports.createShop = async (req, res) => {
       return;
     }
 
-    const files = req.files?.slice(0, 3);
     let uploadedFiles = [];
     if (files.length) {
       uploadedFiles = await gcs.upload(files, 'public/seller/files');
@@ -79,17 +146,13 @@ exports.createShop = async (req, res) => {
           object.registrationDocument2 = registrationDocument2;
           object.registrationDocument3 = registrationDocument3;
         }
-      }
-
-      if (businessType === 2) { // Individual
+      } else if (businessType === 2) { // Individual
         if (uploadedFiles.length >= 2) {
           const [identityCardFront, identityCardBack] = uploadedFiles;
           object.identityCardFront = identityCardFront;
           object.identityCardBack = identityCardBack;
         }
-      }
-
-      if (businessType === 3) { // Corporate
+      } else if (businessType === 3) { // Corporate
         if (uploadedFiles.length >= 3) {
           const [registrationDocument1, registrationDocument2, registrationDocument3] = uploadedFiles;
           object.registrationDocument1 = registrationDocument1;
@@ -100,6 +163,11 @@ exports.createShop = async (req, res) => {
     }
 
     const data = await Shops.create(object);
+
+    if (data) {
+      await removeOtp(newEmail);
+      await removeOtp(newPhone);
+    }
 
     res.send({
       data,

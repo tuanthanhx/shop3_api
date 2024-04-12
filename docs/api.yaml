@@ -386,6 +386,50 @@ paths:
         "500":
           description: Internal Server Error
 
+  /auth/confirm_otp:
+    post:
+      summary: Confirm if the OTP code is valid
+      description: |
+        1. `reciever` parameter can be an email address or a phone number
+        2. `remove` parameter is optional, send it as `true` if you want to remove that OTP after the confirmation
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - receiver
+                - code
+              properties:
+                receiver:
+                  type: string
+                  example: johnsm@gmail.com
+                code:
+                  type: string
+                  example: 123456
+                remove:
+                  type: boolean
+                  default: false
+                  example: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: true
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+
   /auth/logout:
     post:
       summary: Logout
@@ -944,6 +988,27 @@ paths:
                 registrationOwnerId:
                   type: string
                   example: "ID123456"
+                subscribeMailingList:
+                  type: boolean
+                  example: true
+                useCurrentEmail:
+                  type: boolean
+                newEmail:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+                newEmailOtp:
+                  type: boolean
+                useCurrentPhone:
+                  type: string
+                  example: 123456
+                newPhone:
+                  type: string
+                  format: phone
+                  example: "0123456789"
+                newPhoneOtp:
+                  type: string
+                  example: 123456
                 files:
                   type: array
                   maxItems: 3
@@ -973,6 +1038,17 @@ paths:
                       userId:
                         type: integer
                         example: 1
+                      email:
+                        type: string
+                        format: email
+                        example: johnsm@gmail.com
+                      phone:
+                        type: string
+                        format: phone
+                        example: "0123456789"
+                      subscribeMailingList:
+                        type: boolean
+                        example: true
                       registrationBusinessName:
                         type: string
                         example: AAA LTD
@@ -1052,6 +1128,8 @@ components:
         shopId:
           type: integer
           example: 1
+        subscribeMailingList:
+          type: boolean
         isPhoneValidated:
           type: boolean
         isEmailValidated:
