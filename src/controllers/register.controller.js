@@ -40,6 +40,7 @@ exports.registerByEmail = async (req, res) => {
     const object = {
       email,
       password,
+      userGroupId: 2,
     };
 
     await User.create(object);
@@ -87,6 +88,7 @@ exports.registerByPhone = async (req, res) => {
     const object = {
       phone,
       password,
+      userGroupId: 2,
     };
 
     await User.create(object);

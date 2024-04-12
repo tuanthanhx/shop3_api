@@ -47,6 +47,9 @@ db.user.hasMany(db.user_verification, { foreignKey: 'userId' });
 db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
 db.country.hasMany(db.user_address, { foreignKey: 'countryCode' });
 
+db.user.belongsTo(db.user_group, { foreignKey: 'userGroupId' });
+db.user_group.hasMany(db.user, { foreignKey: 'userGroupId' });
+
 db.user.hasOne(db.shop);
 db.shop.belongsTo(db.user, { foreignKey: 'userId' });
 
@@ -54,6 +57,18 @@ db.shop.belongsTo(db.seller_business_type, { foreignKey: 'sellerBusinessTypeId' 
 
 db.product.belongsTo(db.category, { foreignKey: 'categoryId' });
 db.category.hasMany(db.product, { foreignKey: 'categoryId' });
+
+db.product.belongsTo(db.product_status, { foreignKey: 'productStatusId' });
+db.product_status.hasMany(db.product, { foreignKey: 'productStatusId' });
+
+db.product_image.belongsTo(db.product, { foreignKey: 'productId' });
+db.product.hasMany(db.product_image, { foreignKey: 'productId' });
+
+db.product_video.belongsTo(db.product, { foreignKey: 'productId' });
+db.product.hasMany(db.product_video, { foreignKey: 'productId' });
+
+db.product.belongsTo(db.shop, { foreignKey: 'shopId' });
+db.shop.hasMany(db.product, { foreignKey: 'shopId' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

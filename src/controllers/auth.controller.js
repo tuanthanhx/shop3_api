@@ -29,11 +29,17 @@ exports.loginByEmail = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email }, attributes: { include: ['password'] } });
     if (!user || !user.validPassword(password)) {
-      res.status(401).json({ error: 'Invalid email or password' });
+      res.status(401).send({ error: 'Invalid email or password' });
       return;
     }
-    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
-    const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
+
+    const userIdentity = {
+      id: user.id,
+      uuid: user.uuid,
+      userGroupId: user.userGroupId,
+    };
+    const accessToken = jwt.sign(userIdentity, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign(userIdentity, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
 
     const findToken = await UserRefreshToken.findOne({ where: { userId: user.id } });
     if (findToken) {
@@ -57,11 +63,17 @@ exports.loginByPhone = async (req, res) => {
   try {
     const user = await User.findOne({ where: { phone }, attributes: { include: ['password'] } });
     if (!user || !user.validPassword(password)) {
-      res.status(401).json({ error: 'Invalid phone or password' });
+      res.status(401).send({ error: 'Invalid phone or password' });
       return;
     }
-    const accessToken = jwt.sign({ id: user.id }, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
-    const refreshToken = jwt.sign({ id: user.id }, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
+
+    const userIdentity = {
+      id: user.id,
+      uuid: user.uuid,
+      userGroupId: user.userGroupId,
+    };
+    const accessToken = jwt.sign(userIdentity, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign(userIdentity, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
 
     const findToken = await UserRefreshToken.findOne({ where: { userId: user.id } });
     if (findToken) {
@@ -90,14 +102,14 @@ exports.refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    res.status(401).json({ error: 'Refresh token is invalid' });
+    res.status(401).send({ error: 'Refresh token is invalid' });
     return;
   }
 
   try {
     const findRefreshToken = await UserRefreshToken.findOne({ where: { token: refreshToken } });
     if (!findRefreshToken) {
-      res.status(401).json({ error: 'Refresh token is invalid' });
+      res.status(401).send({ error: 'Refresh token is invalid' });
       return;
     }
 

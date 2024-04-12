@@ -11,6 +11,10 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    userGroupId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     name: {
       type: Sequelize.STRING,
     },

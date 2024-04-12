@@ -1,5 +1,10 @@
 module.exports = function (sequelize, Sequelize) {
   const Product = sequelize.define('product', {
+    uniqueId: {
+      type: Sequelize.STRING(20),
+      allowNull: false,
+      unique: true,
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -14,6 +19,20 @@ module.exports = function (sequelize, Sequelize) {
     },
     price: {
       type: Sequelize.FLOAT,
+      allowNull: false,
+    },
+    productStatusId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    mainImageId: {
+      type: Sequelize.INTEGER,
+    },
+    mainVideoId: {
+      type: Sequelize.INTEGER,
+    },
+    shopId: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
   }, {

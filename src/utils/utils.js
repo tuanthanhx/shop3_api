@@ -5,4 +5,10 @@ exports.generateRandomNumber = (numDigits) => {
   return paddedNumber;
 };
 
+exports.generateProductId = () => {
+  const timestamp = Date.now().toString();
+  const randomPart = Math.random().toString().slice(2, 9);
+  return timestamp + randomPart;
+};
+
 exports.getExtension = (filename) => filename.split('.').pop();
