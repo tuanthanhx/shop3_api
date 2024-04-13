@@ -62,10 +62,10 @@ db.product.belongsTo(db.product_status, { foreignKey: 'productStatusId' });
 db.product_status.hasMany(db.product, { foreignKey: 'productStatusId' });
 
 db.product_image.belongsTo(db.product, { foreignKey: 'productId' });
-db.product.hasMany(db.product_image, { foreignKey: 'productId' });
+db.product.hasMany(db.product_image, { foreignKey: 'productId', as: 'productImages' });
 
 db.product_video.belongsTo(db.product, { foreignKey: 'productId' });
-db.product.hasMany(db.product_video, { foreignKey: 'productId' });
+db.product.hasMany(db.product_video, { foreignKey: 'productId', as: 'productVideos' });
 
 db.product.belongsTo(db.shop, { foreignKey: 'shopId' });
 db.shop.hasMany(db.product, { foreignKey: 'shopId' });

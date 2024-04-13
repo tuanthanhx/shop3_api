@@ -1,4 +1,5 @@
 const { query, validationResult } = require('express-validator');
+const multer = require('multer');
 
 exports.validateRules = (req, res, next) => {
   const errors = validationResult(req);
@@ -21,3 +22,11 @@ exports.handleQueries = [
   query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be a positive integer'),
 ];
+
+exports.handleMulterErrors = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    console.error('Multer error:', err.message);
+    return res.status(400).json({ errors: err.message });
+  }
+  return next();
+};

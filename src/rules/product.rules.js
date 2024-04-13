@@ -1,5 +1,5 @@
 const { param, query, body } = require('express-validator');
-const { validateRules } = require('../middlewares/validators');
+const { validateRules, handleMulterErrors } = require('../middlewares/validators');
 
 exports.findAll = [
   query('name')
@@ -73,6 +73,7 @@ exports.create = [
     return true;
   }),
   validateRules,
+  handleMulterErrors,
 ];
 
 exports.update = [

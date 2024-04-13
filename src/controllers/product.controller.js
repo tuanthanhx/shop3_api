@@ -48,13 +48,16 @@ exports.findAll = async (req, res) => {
       where: condition,
       limit: limitPerPage,
       offset,
+      distinct: true,
       include: [
         {
           model: db.product_image,
+          as: 'productImages',
           attributes: ['id', 'file'],
         },
         {
           model: db.product_video,
+          as: 'productVideos',
           attributes: ['id', 'file'],
         },
       ],
@@ -140,10 +143,12 @@ exports.create = async (req, res) => {
       include: [
         {
           model: db.product_image,
+          as: 'productImages',
           attributes: ['id', 'file'],
         },
         {
           model: db.product_video,
+          as: 'productVideos',
           attributes: ['id', 'file'],
         },
       ],
