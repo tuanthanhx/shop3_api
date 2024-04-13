@@ -5,23 +5,13 @@ const auth = require('./auth.controller');
 const User = db.user;
 
 exports.registerByEmail = async (req, res) => {
-  if (
-    (!req.body.password && !req.body.passwordConfirm)
-    || (req.body.password !== req.body.passwordConfirm)
-  ) {
-    res.status(400).send({
-      message: 'Password and confirm password does not match',
-    });
-    return;
-  }
-
-  const {
-    email,
-    password,
-    verificationCode,
-  } = req.body;
-
   try {
+    const {
+      email,
+      password,
+      verificationCode,
+    } = req.body;
+
     const verifyOtpResult = await checkOtp(email, verificationCode);
     if (!verifyOtpResult) {
       res.status(400).json({ data: 'Invalid verification code' });
@@ -53,23 +43,13 @@ exports.registerByEmail = async (req, res) => {
 };
 
 exports.registerByPhone = async (req, res) => {
-  if (
-    (!req.body.password && !req.body.passwordConfirm)
-    || (req.body.password !== req.body.passwordConfirm)
-  ) {
-    res.status(400).send({
-      message: 'Password and confirm password does not match',
-    });
-    return;
-  }
-
-  const {
-    phone,
-    password,
-    verificationCode,
-  } = req.body;
-
   try {
+    const {
+      phone,
+      password,
+      verificationCode,
+    } = req.body;
+
     const verifyOtpResult = await checkOtp(phone, verificationCode);
     if (!verifyOtpResult) {
       res.status(400).json({ data: 'Invalid verification code' });

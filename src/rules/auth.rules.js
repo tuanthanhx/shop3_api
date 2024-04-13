@@ -38,10 +38,18 @@ exports.resetPasswordByEmail = [
     .withMessage('email is invalid format'),
   body('password')
     .notEmpty()
-    .withMessage('password is required'),
+    .withMessage('password is required')
+    .isLength({ min: 6 })
+    .withMessage('password must be at least 6 characters'),
   body('passwordConfirm')
     .notEmpty()
-    .withMessage('passwordConfirm is required'),
+    .withMessage('passwordConfirm is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('passwordConfirm does not match password');
+      }
+      return true;
+    }),
   body('verificationCode')
     .notEmpty()
     .withMessage('verificationCode is required'),
@@ -54,10 +62,18 @@ exports.resetPasswordByPhone = [
     .withMessage('phone is required'),
   body('password')
     .notEmpty()
-    .withMessage('password is required'),
+    .withMessage('password is required')
+    .isLength({ min: 6 })
+    .withMessage('password must be at least 6 characters'),
   body('passwordConfirm')
     .notEmpty()
-    .withMessage('passwordConfirm is required'),
+    .withMessage('passwordConfirm is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('passwordConfirm does not match password');
+      }
+      return true;
+    }),
   body('verificationCode')
     .notEmpty()
     .withMessage('verificationCode is required'),
