@@ -49,8 +49,14 @@ exports.findAll = async (req, res) => {
       limit: limitPerPage,
       offset,
       include: [
-        { model: db.product_image },
-        { model: db.product_video },
+        {
+          model: db.product_image,
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_video,
+          attributes: ['id', 'file'],
+        },
       ],
     });
 
@@ -131,9 +137,16 @@ exports.create = async (req, res) => {
     await newProduct.save();
 
     const foundProduct = await Products.findByPk(newProduct.id, {
-      include: [{
-        model: ProductImages,
-      }],
+      include: [
+        {
+          model: db.product_image,
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_video,
+          attributes: ['id', 'file'],
+        },
+      ],
     });
     res.status(201).json({
       data: foundProduct,

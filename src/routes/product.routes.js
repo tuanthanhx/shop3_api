@@ -10,11 +10,11 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/', rules.findAll, products.findAll);
-  router.post('/', rules.create, upload.fields([
+  router.post('/', upload.fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'mainVideo', maxCount: 1 },
     { name: 'otherImages', maxCount: 9 },
-  ]), products.create);
+  ]), rules.create, products.create);
   router.delete('/:id', rules.delete, products.delete);
 
   app.use(`/api/${apiVersion}/products`, router);
