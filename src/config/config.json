@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "shop3db_dev1",
+    "database": "shop3db_dev",
     "host": "127.0.0.1",
     "dialect": "mariadb",
     "pool": {

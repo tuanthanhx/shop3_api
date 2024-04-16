@@ -13,6 +13,7 @@ const { handleQueries, validateRules } = require('./src/middlewares/validators')
 require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
+const port = process.env.PORT || 3000;
 
 let corsOptions = {};
 if (env !== 'development') {
@@ -54,7 +55,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { cu
 
 db.sequelize.sync()
   .then(() => {
-    console.info('Synced DB.');
+    if (env === 'development') {
+      console.info('Synced DB.');
+    }
   })
   .catch((err) => {
     console.error(`Failed to sync DB: ${err.message}`);
@@ -76,8 +79,30 @@ fs.readdirSync(routesDir)
     routes(app);
   });
 
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-app.listen(PORT, () => {
-  console.info(`Server is running by ${NODE_ENV} mode on port ${PORT}`);
+const startServer = () => new Promise((resolve) => {
+  const server = app.listen(port, () => {
+    if (env === 'development' || env === 'production') {
+      console.info(`Server is running by ${env} mode on port ${port}`);
+    }
+    resolve(server);
+  });
 });
+
+const closeServer = (server) => new Promise((resolve, reject) => {
+  server.close((err) => {
+    if (err) {
+      reject(err);
+    } else {
+      if (env === 'development' || env === 'production') {
+        console.info('Server closed');
+      }
+      resolve();
+    }
+  });
+});
+
+if (env === 'development' || env === 'production') {
+  startServer();
+}
+
+module.exports = { app, startServer, closeServer };
