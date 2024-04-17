@@ -70,6 +70,21 @@ db.product.hasMany(db.product_video, { foreignKey: 'productId', as: 'productVide
 db.product.belongsTo(db.shop, { foreignKey: 'shopId' });
 db.shop.hasMany(db.product, { foreignKey: 'shopId' });
 
+db.product.hasMany(db.variant);
+db.variant.belongsTo(db.product);
+
+db.product.hasMany(db.option);
+db.option.belongsTo(db.product);
+
+db.product.hasMany(db.product_variant);
+db.product_variant.belongsTo(db.product);
+
+db.variant.hasMany(db.option);
+db.option.belongsTo(db.variant);
+
+db.product_variant.belongsToMany(db.option, { through: 'product_variants_maps' });
+db.option.belongsToMany(db.product_variant, { through: 'product_variants_maps' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

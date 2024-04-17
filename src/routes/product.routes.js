@@ -15,6 +15,11 @@ module.exports = (app) => {
     { name: 'mainVideo', maxCount: 1 },
     { name: 'otherImages', maxCount: 9 },
   ]), rules.create, products.create);
+  router.put('/:id', upload.fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'mainVideo', maxCount: 1 },
+    { name: 'otherImages', maxCount: 9 },
+  ]), rules.update, products.update);
   router.delete('/:id', rules.delete, products.delete);
 
   app.use(`/api/${apiVersion}/products`, router);

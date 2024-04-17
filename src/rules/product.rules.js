@@ -24,8 +24,8 @@ exports.create = [
     .optional()
     .trim(),
   body('price')
-    .notEmpty()
-    .withMessage('price is required')
+    // .notEmpty() // TODO: No need to require due to using variants
+    // .withMessage('price is required')
     .toFloat(),
   body('mainImage').custom((value, { req }) => {
     if (!req.files || !req.files.mainImage) {
@@ -72,6 +72,9 @@ exports.create = [
     }
     return true;
   }),
+  body('variants')
+    .optional()
+    .trim(), // .toArray(), // TODO: Validate if it is a valid array later
   validateRules,
   handleMulterErrors,
 ];
