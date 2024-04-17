@@ -76,7 +76,7 @@ db.variant.belongsTo(db.product);
 db.product.hasMany(db.option);
 db.option.belongsTo(db.product);
 
-db.product.hasMany(db.product_variant);
+db.product.hasMany(db.product_variant, { as: 'productVariants' });
 db.product_variant.belongsTo(db.product);
 
 db.variant.hasMany(db.option);

@@ -64,17 +64,67 @@ exports.findAll = async (req, res) => {
           as: 'productVideos',
           attributes: ['id', 'file'],
         },
+        {
+          model: db.variant,
+          include: {
+            model: db.option,
+          },
+        },
+        {
+          model: db.product_variant,
+          as: 'productVariants',
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            }
+          ]
+        }
       ],
     });
 
     const { count, rows } = data;
     const totalPages = Math.ceil(count / limitPerPage);
 
+    const formattedRows = rows.map((row) => {
+      const rowData = row.toJSON();
+
+      const variants = rowData.variants.map((variant) => ({
+        name: variant.name,
+        options: variant.options.map(option => option.name)
+      }));
+
+      const productVariants = rowData.productVariants.map((variant) => {
+        const options = variant.options.map(option => ({
+          name: option.variant.name,
+          value: option.name
+        }));
+
+        return {
+          options,
+          price: variant.price,
+          sku: variant.sku,
+          quantity: variant.quantity
+        };
+      });
+
+      delete rowData.variants;
+      delete rowData.productVariants;
+
+      return {
+        ...rowData,
+        variants,
+        productVariants
+      };
+    });
+
     res.json({
       totalItems: count,
       totalPages,
       currentPage: pageNo,
-      data: rows,
+      data: formattedRows,
     });
   } catch (err) {
     res.status(500).send({
@@ -154,18 +204,71 @@ exports.create = async (req, res) => {
     }
 
     const foundProduct = await Products.findByPk(createdProduct.id, {
-      include: {
-        model: db.variant,
-        include: {
-          model: db.option,
+      include: [
+        {
+          model: db.product_image,
+          as: 'productImages',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_video,
+          as: 'productVideos',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.variant,
+          attributes: ['id', 'name'],
           include: {
-            model: db.product_variant,
+            model: db.option,
+            attributes: ['id', 'name'],
           },
         },
-      }
+        {
+          model: db.product_variant,
+          as: 'productVariants',
+          attributes: ['id', 'price', 'sku', 'quantity'],
+          include: {
+            model: db.option,
+            attributes: ['id', 'variantId', 'name'],
+          }
+        }
+      ],
     });
+
+    // Format variants
+    const formattedVariants = foundProduct.variants.map(variant => ({
+      name: variant.name,
+      options: variant.options.map(option => option.name)
+    }));
+
+    // Format productVariants
+    const formattedProductVariants = foundProduct.productVariants.map(variant => {
+      const options = variant.options.map(option => ({
+        name: option.name,
+        variantId: option.variantId,
+      }));
+
+      return {
+        id: variant.id,
+        price: variant.price,
+        sku: variant.sku,
+        quantity: variant.quantity,
+        options: options,
+      };
+    });
+
+    const productObject = foundProduct.toJSON();
+    delete productObject.variants;
+    delete productObject.productVariants;
+
+    const responseObject = {
+      ...productObject,
+      variants: formattedVariants,
+      productVariants: formattedProductVariants,
+    };
+
     res.status(201).json({
-      data: foundProduct,
+      data: responseObject,
     });
   } catch (err) {
     res.status(500).send({

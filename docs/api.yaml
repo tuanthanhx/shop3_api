@@ -1288,7 +1288,7 @@ paths:
                   format: email
                   example: johnsm@gmail.com
                 newEmailOtp:
-                  type: boolean
+                  type: string
                 useCurrentPhone:
                   type: string
                   example: 123456
