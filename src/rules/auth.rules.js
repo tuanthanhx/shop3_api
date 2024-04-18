@@ -99,9 +99,11 @@ exports.generateOtpByPhone = [
 exports.confirmOtp = [
   body('receiver')
     .notEmpty()
-    .withMessage('receiver is required'),
+    .withMessage('receiver is required')
+    .trim(),
   body('code')
     .notEmpty()
-    .withMessage('code is required'),
+    .withMessage('code is required')
+    .trim(),
   validateRules,
 ];

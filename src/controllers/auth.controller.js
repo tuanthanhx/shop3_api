@@ -152,15 +152,22 @@ exports.generateOtpByPhone = async (req, res) => {
 };
 
 exports.confirmOtp = async (req, res) => {
-  const { receiver, code, remove } = req.body;
-  const verifyOtpResult = await checkOtp(receiver, code);
-  if (!verifyOtpResult) {
-    res.status(400).json({ data: 'Invalid verification code' });
+  try {
+    const { receiver, code, remove } = req.body;
+    const verifyOtpResult = await checkOtp(receiver, code);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid verification code' });
+      return;
+    }
+    if (remove) {
+      await removeOtp(receiver);
+    }
+    res.send({ data: true });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
   }
-  if (remove) {
-    await removeOtp(receiver);
-  }
-  res.send({ data: true });
 };
 
 exports.resetPasswordByEmail = async (req, res) => {

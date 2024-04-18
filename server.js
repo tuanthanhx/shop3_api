@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bodyParserErrorHandler = require('express-body-parser-error-handler');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -48,6 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParserErrorHandler());
 app.use(authenticateToken);
 app.use([handleQueries, validateRules]);
 
