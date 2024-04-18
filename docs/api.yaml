@@ -1702,10 +1702,10 @@ components:
           example: "AB100000"
         isSubmitted:
           type: boolean
-          example: false,
+          example: false
         isVerified:
           type: boolean
-          example: false,
+          example: false
         createdAt:
           type: string
           format: date-time
