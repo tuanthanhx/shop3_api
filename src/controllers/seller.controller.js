@@ -52,7 +52,7 @@ exports.updateVerification = async (req, res) => {
       individualResidentialAddress,
       individualProductCategoryId,
       corporateCompanyName,
-      corporateEnterpiseCodeNumber,
+      corporateEnterpriseCodeNumber,
 
       subscribeMailingList,
       useCurrentEmail,
@@ -145,7 +145,7 @@ exports.updateVerification = async (req, res) => {
     object.corporateCompanyRegistrationDocument2 = null;
     object.corporateCompanyRegistrationDocument3 = null;
     object.corporateCompanyName = null;
-    object.corporateEnterpiseCodeNumber = null;
+    object.corporateEnterpriseCodeNumber = null;
 
     // Append new shop data
     if (businessType === 1) { // Household
@@ -196,7 +196,7 @@ exports.updateVerification = async (req, res) => {
         [object.corporateCompanyRegistrationDocument3] = uploadedCorporateCompanyRegistrationDocument3;
       }
       object.corporateCompanyName = corporateCompanyName;
-      object.corporateEnterpiseCodeNumber = corporateEnterpiseCodeNumber;
+      object.corporateEnterpriseCodeNumber = corporateEnterpriseCodeNumber;
     }
 
     let shop = await db.shop.findOne({ where: { userId } });

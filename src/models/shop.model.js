@@ -66,7 +66,7 @@ module.exports = function (sequelize, Sequelize) {
     corporateCompanyName: {
       type: Sequelize.STRING,
     },
-    corporateEnterpiseCodeNumber: {
+    corporateEnterpriseCodeNumber: {
       type: Sequelize.STRING,
     },
     email: {
