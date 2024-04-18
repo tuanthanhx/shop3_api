@@ -1325,7 +1325,7 @@ paths:
                         example: 1
                       shopName:
                         type: string
-                        example: Sample
+                        example: My Shop
                       userId:
                         type: integer
                         example: 1
@@ -1615,7 +1615,7 @@ components:
           example: 1
         shopName:
           type: string
-          example: Sample
+          example: "My Shop"
         userId:
           type: integer
           example: 1
@@ -1632,13 +1632,13 @@ components:
           example: true
         householdBusinessRegistrationDocument1:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         householdBusinessRegistrationDocument2:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         householdBusinessRegistrationDocument3:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         householdBusinessName:
           type: string
           example: "My Company"
@@ -1653,10 +1653,10 @@ components:
           example: "123456789"
         individualIdentityCardFront:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         individualIdentityCardBack:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         individualIdentityCardNumber:
           type: string
           example: "123456789"
@@ -1674,13 +1674,13 @@ components:
           example: 1
         corporateCompanyRegistrationDocument1:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         corporateCompanyRegistrationDocument2:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         corporateCompanyRegistrationDocument3:
           type: string
-          format: binary
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         corporateCompanyName:
           type: string
           example: "My Company"
