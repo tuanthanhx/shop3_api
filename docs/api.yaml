@@ -1124,6 +1124,12 @@ paths:
                   type: number
                   format: float
                   example: 100000
+                sku:
+                  type: string
+                  example: SKU0001
+                quantity:
+                  type: integer
+                  example: 100
                 mainImage:
                   type: string
                   format: binary
@@ -1136,10 +1142,17 @@ paths:
                 mainVideo:
                   type: string
                   format: binary
+                variants:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Variant'
+                variantsData:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProductVariant'
               required:
                 - name
                 - categoryId
-                - price
                 - mainImage
       responses:
         '201':
@@ -1700,6 +1713,54 @@ components:
           type: string
           format: date-time
 
+    Variant:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the variant category, such as size or color.
+          example: Size
+        options:
+          type: array
+          items:
+            type: string
+            example: Medium
+          description: A list of available options for the variant category.
+
+    Option:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the option, such as 'Size' or 'Color'.
+          example: Size
+        value:
+          type: string
+          description: The value corresponding to the option name, such as 'Medium' or 'Red'.
+          example: Medium
+
+    ProductVariant:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+          description: A list of option objects defining the characteristics of the product variant.
+        price:
+          type: integer
+          format: float
+          description: The price of the product variant.
+          example: 100000
+        sku:
+          type: string
+          description: The stock keeping unit identifier for the product variant.
+          example: SKU001
+        quantity:
+          type: integer
+          description: The available quantity of the product variant.
+          example: 100
+
     ProductResponse:
       type: object
       properties:
@@ -1709,9 +1770,6 @@ components:
         uniqueId:
           type: string
           example: "17129807205638693702"
-        shopId:
-          type: integer
-          example: 1
         name:
           type: string
           example: Sample Product
@@ -1722,6 +1780,15 @@ components:
           type: number
           format: float
           example: 100000
+        sku:
+          type: string
+          example: SKU0001
+        quantity:
+          type: integer
+          example: 100
+        shopId:
+          type: integer
+          example: 1
         productStatusId:
           type: integer
           example: 1
@@ -1753,6 +1820,14 @@ components:
               file:
                 type: string
                 example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4"
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+        productVariants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariant'
         createdAt:
           type: string
           format: date-time

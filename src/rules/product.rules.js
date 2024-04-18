@@ -20,13 +20,21 @@ exports.create = [
     .notEmpty()
     .withMessage('categoryId is required')
     .toInt(),
+  body('productStatusId')
+    .optional()
+    .toInt(),
   body('description')
     .optional()
     .trim(),
   body('price')
-    // .notEmpty() // TODO: No need to require due to using variants
-    // .withMessage('price is required')
+    .optional()
     .toFloat(),
+  body('sku')
+    .optional()
+    .trim(),
+  body('quantity')
+    .optional()
+    .toInt(),
   body('mainImage').custom((value, { req }) => {
     if (!req.files || !req.files.mainImage) {
       throw new Error('mainImage is required');

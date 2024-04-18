@@ -1,15 +1,7 @@
-/* eslint-disable */
-const { generateProductId } = require('../utils/utils');
+const { generateProductId, isValidJson } = require('../utils/utils');
 const gcs = require('../utils/gcs');
 const db = require('../models');
 
-const Products = db.product;
-const ProductImages = db.product_image;
-const ProductVideos = db.product_video;
-const ProductVariants = db.product_variant;
-const Variants = db.variant;
-const VariantOptions = db.variant_option;
-const Shops = db.shop;
 const { Op } = db.Sequelize;
 
 exports.findAll = async (req, res) => {
@@ -26,7 +18,7 @@ exports.findAll = async (req, res) => {
 
     const condition = {};
     if (!isAdministrator) {
-      const foundShop = await Shops.findOne({ where: { userId: user.id } });
+      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
       if (!foundShop) {
         res.status(404).send({
           message: 'Shop not found',
@@ -48,7 +40,7 @@ exports.findAll = async (req, res) => {
     const limitPerPage = parseInt(limit, 10) || 10;
     const offset = (pageNo - 1) * limitPerPage;
 
-    const data = await Products.findAndCountAll({
+    const data = await db.product.findAndCountAll({
       where: condition,
       limit: limitPerPage,
       offset,
@@ -79,9 +71,9 @@ exports.findAll = async (req, res) => {
               include: {
                 model: db.variant,
               },
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
     });
 
@@ -93,20 +85,20 @@ exports.findAll = async (req, res) => {
 
       const variants = rowData.variants.map((variant) => ({
         name: variant.name,
-        options: variant.options.map(option => option.name)
+        options: variant.options.map((option) => option.name),
       }));
 
       const productVariants = rowData.productVariants.map((variant) => {
-        const options = variant.options.map(option => ({
+        const options = variant.options.map((option) => ({
           name: option.variant.name,
-          value: option.name
+          value: option.name,
         }));
 
         return {
           options,
           price: variant.price,
           sku: variant.sku,
-          quantity: variant.quantity
+          quantity: variant.quantity,
         };
       });
 
@@ -116,7 +108,7 @@ exports.findAll = async (req, res) => {
       return {
         ...rowData,
         variants,
-        productVariants
+        productVariants,
       };
     });
 
@@ -137,7 +129,7 @@ exports.create = async (req, res) => {
   try {
     const { user } = req;
 
-    const foundShop = await Shops.findOne({ where: { userId: user.id } });
+    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
     if (!foundShop) {
       res.status(404).send({
         message: 'Shop not found',
@@ -151,6 +143,8 @@ exports.create = async (req, res) => {
       categoryId,
       description,
       price,
+      sku,
+      quantity,
       productStatusId,
       variants,
       variantsData,
@@ -162,76 +156,71 @@ exports.create = async (req, res) => {
       categoryId,
       description,
       price,
-      productStatusId: productStatusId || 5,
+      sku,
+      quantity,
+      productStatusId: productStatusId || 5, // 5 is Draft
       shopId,
     };
 
-    const createdProduct = await Products.create(object);
+    const createdProduct = await db.product.create(object);
 
-    // const { mainImage, mainVideo, otherImages } = req.files;
-    // if (mainImage?.length) {
-    //   uploadedMainImage = await gcs.upload(mainImage, 'public/product/images');
-    //   const newMainImage = await ProductImages.create({
-    //     file: uploadedMainImage[0],
-    //     productId: createdProduct.id,
-    //   });
-    //   createdProduct.mainImageId = newMainImage.id;
-    // }
-    // if (mainVideo?.length) {
-    //   uploadedMainVideo = await gcs.upload(mainVideo, 'public/product/videos');
-    //   const newMainVideo = await ProductVideos.create({
-    //     file: uploadedMainVideo[0],
-    //     productId: createdProduct.id,
-    //   });
-    //   createdProduct.mainVideoId = newMainVideo.id;
-    // }
-    // if (otherImages?.length) {
-    //   uploadedOtherImages = await gcs.upload(otherImages, 'public/product/images');
-    //   const otherImagesArray = uploadedOtherImages.map((file) => ({
-    //     file,
-    //     productId: createdProduct.id,
-    //   }));
-    //   await ProductImages.bulkCreate(otherImagesArray);
-    // }
-
-    // await createdProduct.save();
-
-    // Create variants and associate with the product
-    const parsedVariants = JSON.parse(variants);
-    for (const variantData of parsedVariants) {
-      const { name: variantName } = variantData;
-      const variant = await db.variant.create({ name: variantName, productId: createdProduct.id });
-
-      for (const optionName of variantData.options) {
-        await db.option.create({ name: optionName, variantId: variant.id, productId: createdProduct.id });
-      }
-
-      await createdProduct.addVariant(variant);
-    }
-
-    // Create variant data
-    const parsedVariantsData = JSON.parse(variantsData);
-    for (const variantData of parsedVariantsData) {
-      const variantOptions = [];
-
-      // Find options for each variant
-      for (const optionData of variantData.options) {
-        const variant = await db.variant.findOne({ where: { name: optionData.name, productId: createdProduct.id } });
-        const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
-        variantOptions.push(option);
-      }
-
-      const productVariant = await db.product_variant.create({
-        price: variantData.price,
-        sku: variantData.SKU,
-        quantity: variantData.quantity,
+    // Handle files
+    const { mainImage, mainVideo, otherImages } = req.files;
+    if (mainImage?.length) {
+      uploadedMainImage = await gcs.upload(mainImage, 'public/product/images');
+      const newMainImage = await db.product_image.create({
+        file: uploadedMainImage[0],
         productId: createdProduct.id,
       });
-
-      await productVariant.setOptions(variantOptions);
+      createdProduct.mainImageId = newMainImage.id;
+    }
+    if (mainVideo?.length) {
+      uploadedMainVideo = await gcs.upload(mainVideo, 'public/product/videos');
+      const newMainVideo = await db.product_video.create({
+        file: uploadedMainVideo[0],
+        productId: createdProduct.id,
+      });
+      createdProduct.mainVideoId = newMainVideo.id;
+    }
+    if (otherImages?.length) {
+      uploadedOtherImages = await gcs.upload(otherImages, 'public/product/images');
+      const otherImagesArray = uploadedOtherImages.map((file) => ({
+        file,
+        productId: createdProduct.id,
+      }));
+      await db.product_image.bulkCreate(otherImagesArray);
     }
 
-    const foundProduct = await Products.findByPk(createdProduct.id, {
+    await createdProduct.save();
+
+    if (isValidJson(variants) && isValidJson(variantsData)) {
+      // Create variants and associate with the product
+      const parsedVariants = JSON.parse(variants);
+      await Promise.all(parsedVariants.map(async (variantData) => {
+        const { name: variantName } = variantData;
+        const variant = await db.variant.create({ name: variantName, productId: createdProduct.id });
+        await Promise.all(variantData.options.map((optionName) => db.option.create({ name: optionName, variantId: variant.id, productId: createdProduct.id })));
+        await createdProduct.addVariant(variant);
+      }));
+
+      // Create variant data
+      const parsedVariantsData = JSON.parse(variantsData);
+      await Promise.all(parsedVariantsData.map(async (variantData) => {
+        const variantOptions = await Promise.all(variantData.options.map(async (optionData) => {
+          const variant = await db.variant.findOne({ where: { name: optionData.name, productId: createdProduct.id } });
+          return db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
+        }));
+        const productVariant = await db.product_variant.create({
+          price: variantData.price,
+          sku: variantData.sku,
+          quantity: variantData.quantity,
+          productId: createdProduct.id,
+        });
+        await productVariant.setOptions(variantOptions);
+      }));
+    }
+
+    const foundProduct = await db.product.findByPk(createdProduct.id, {
       include: [
         {
           model: db.product_image,
@@ -245,43 +234,43 @@ exports.create = async (req, res) => {
         },
         {
           model: db.variant,
-          attributes: ['id', 'name'],
           include: {
             model: db.option,
-            attributes: ['id', 'name'],
           },
         },
         {
           model: db.product_variant,
           as: 'productVariants',
-          attributes: ['id', 'price', 'sku', 'quantity'],
-          include: {
-            model: db.option,
-            attributes: ['id', 'variantId', 'name'],
-          }
-        }
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            },
+          ],
+        },
       ],
     });
 
     // Format variants
-    const formattedVariants = foundProduct.variants.map(variant => ({
+    const formattedVariants = foundProduct.variants.map((variant) => ({
       name: variant.name,
-      options: variant.options.map(option => option.name)
+      options: variant.options.map((option) => option.name),
     }));
 
     // Format productVariants
-    const formattedProductVariants = foundProduct.productVariants.map(variant => {
-      const options = variant.options.map(option => ({
-        name: option.name,
-        variantId: option.variantId,
+    const formattedProductVariants = foundProduct.productVariants.map((variant) => {
+      const options = variant.options.map((option) => ({
+        // name: foundProduct.variants.find((obj) => obj.id === option.variantId)?.name,
+        name: option.variant.name,
+        value: option.name,
       }));
-
       return {
-        id: variant.id,
+        options,
         price: variant.price,
         sku: variant.sku,
         quantity: variant.quantity,
-        options: options,
       };
     });
 
@@ -307,10 +296,9 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-
     const { user } = req;
 
-    const foundShop = await Shops.findOne({ where: { userId: user.id } });
+    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
     if (!foundShop) {
       res.status(404).send({
         message: 'Shop not found',
@@ -325,7 +313,7 @@ exports.update = async (req, res) => {
       name,
       categoryId,
       description,
-      price,
+      // price,
       productStatusId,
       variants,
       variantsData,
@@ -341,12 +329,13 @@ exports.update = async (req, res) => {
     const product = await db.product.findOne({
       where: {
         id: productId,
-        shopId
-      }
+        shopId,
+      },
     });
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      res.status(404).json({ error: 'Product not found' });
+      return;
     }
 
     // Update the product details
@@ -359,42 +348,41 @@ exports.update = async (req, res) => {
 
       // Create variants and associate with the product
       const parsedVariants = JSON.parse(variants);
-      for (const variantData of parsedVariants) {
+      parsedVariants.forEach(async (variantData) => {
         const { name: variantName } = variantData;
         const variant = await db.variant.create({ name: variantName, productId: product.id });
 
-        for (const optionName of variantData.options) {
+        variantData.options.forEach(async (optionName) => {
           await db.option.create({ name: optionName, variantId: variant.id, productId: product.id });
-        }
+        });
 
         await product.addVariant(variant);
-      }
+      });
 
-      // Create variant data
+      // Create variant combination
       const parsedVariantsData = JSON.parse(variantsData);
-      for (const variantData of parsedVariantsData) {
+      parsedVariantsData.forEach(async (variantData) => {
         const variantOptions = [];
 
         // Find options for each variant
-        for (const optionData of variantData.options) {
+        variantData.options.forEach(async (optionData) => {
           const variant = await db.variant.findOne({ where: { name: optionData.name, productId: product.id } });
           const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
           variantOptions.push(option);
-        }
+        });
 
         const productVariant = await db.product_variant.create({
           price: variantData.price,
-          sku: variantData.SKU,
+          sku: variantData.sku,
           quantity: variantData.quantity,
           productId: product.id,
         });
 
         await productVariant.setOptions(variantOptions);
-      }
-
+      });
     }
 
-    const foundProduct = await Products.findByPk(product.id, {
+    const foundProduct = await db.product.findByPk(product.id, {
       include: {
         model: db.variant,
         include: {
@@ -403,7 +391,7 @@ exports.update = async (req, res) => {
             model: db.product_variant,
           },
         },
-      }
+      },
     });
 
     res.status(200).json({
@@ -414,14 +402,14 @@ exports.update = async (req, res) => {
       message: err.message || 'Some error occurred',
     });
   }
-}
+};
 
 exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
     const { user } = req;
 
-    const product = await Products.findByPk(id);
+    const product = await db.product.findByPk(id);
     if (!product) {
       res.status(404).send({
         message: 'Product not found',
@@ -431,7 +419,7 @@ exports.delete = async (req, res) => {
 
     const isAdministrator = user.userGroupId === 6;
     if (!isAdministrator) {
-      const foundShop = await Shops.findOne({ where: { userId: user.id } });
+      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
       if (!foundShop) {
         res.status(404).send({
           message: 'Shop not found',

@@ -21,6 +21,14 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.FLOAT,
       allowNull: false,
     },
+    sku: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
+    quantity: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     productStatusId: {
       type: Sequelize.INTEGER,
       allowNull: false,
