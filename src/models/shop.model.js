@@ -12,31 +12,61 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    registrationDocument1: {
+    householdBusinessRegistrationDocument1: {
       type: Sequelize.STRING,
     },
-    registrationDocument2: {
+    householdBusinessRegistrationDocument2: {
       type: Sequelize.STRING,
     },
-    registrationDocument3: {
+    householdBusinessRegistrationDocument3: {
       type: Sequelize.STRING,
     },
-    identityCardFront: {
+    householdBusinessName: {
       type: Sequelize.STRING,
     },
-    identityCardBack: {
+    householdBusinessRegistrationNumber: {
       type: Sequelize.STRING,
     },
-    registrationBusinessName: {
+    householdBusinessOwnerName: {
       type: Sequelize.STRING,
     },
-    registrationBusinessNumber: {
+    householdBusinessOwnerIdNumber: {
       type: Sequelize.STRING,
     },
-    registrationOwnerName: {
+    individualIdentityCardFront: {
       type: Sequelize.STRING,
     },
-    registrationOwnerId: {
+    individualIdentityCardBack: {
+      type: Sequelize.STRING,
+    },
+    individualIdentityCardNumber: {
+      type: Sequelize.STRING,
+    },
+    individualBusinessOwnerName: {
+      type: Sequelize.STRING,
+    },
+    individualOwnerDob: {
+      type: Sequelize.STRING,
+    },
+    individualResidentialAddress: {
+      type: Sequelize.STRING,
+    },
+    individualProductCategoryId: {
+      type: Sequelize.INTEGER,
+    },
+    corporateCompanyRegistrationDocument1: {
+      type: Sequelize.STRING,
+    },
+    corporateCompanyRegistrationDocument2: {
+      type: Sequelize.STRING,
+    },
+    corporateCompanyRegistrationDocument3: {
+      type: Sequelize.STRING,
+    },
+    corporateCompanyName: {
+      type: Sequelize.STRING,
+    },
+    corporateEnterpiseCodeNumber: {
       type: Sequelize.STRING,
     },
     email: {
@@ -47,6 +77,13 @@ module.exports = function (sequelize, Sequelize) {
     },
     subscribeMailingList: {
       type: Sequelize.BOOLEAN,
+    },
+    isSubmitted: {
+      type: Sequelize.BOOLEAN,
+    },
+    isVerified: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
     },
   }, {
     paranoid: true,

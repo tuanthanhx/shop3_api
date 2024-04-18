@@ -10,7 +10,17 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/business_types', sellers.getBusinessTypes);
-  router.post('/create_shop', upload.array('files'), rules.createShop, sellers.createShop);
+  router.get('/verification', sellers.getVerification);
+  router.post('/verification', upload.fields([
+    { name: 'householdBusinessRegistrationDocument1', maxCount: 1 },
+    { name: 'householdBusinessRegistrationDocument2', maxCount: 1 },
+    { name: 'householdBusinessRegistrationDocument3', maxCount: 1 },
+    { name: 'individualIdentityCardFront', maxCount: 1 },
+    { name: 'individualIdentityCardBack', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument1', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument2', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument3', maxCount: 1 },
+  ]), rules.updateVerification, sellers.updateVerification);
 
   app.use(`/api/${apiVersion}/sellers`, router);
 };

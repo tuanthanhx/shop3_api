@@ -168,6 +168,34 @@ exports.create = async (req, res) => {
 
     const createdProduct = await Products.create(object);
 
+    // const { mainImage, mainVideo, otherImages } = req.files;
+    // if (mainImage?.length) {
+    //   uploadedMainImage = await gcs.upload(mainImage, 'public/product/images');
+    //   const newMainImage = await ProductImages.create({
+    //     file: uploadedMainImage[0],
+    //     productId: createdProduct.id,
+    //   });
+    //   createdProduct.mainImageId = newMainImage.id;
+    // }
+    // if (mainVideo?.length) {
+    //   uploadedMainVideo = await gcs.upload(mainVideo, 'public/product/videos');
+    //   const newMainVideo = await ProductVideos.create({
+    //     file: uploadedMainVideo[0],
+    //     productId: createdProduct.id,
+    //   });
+    //   createdProduct.mainVideoId = newMainVideo.id;
+    // }
+    // if (otherImages?.length) {
+    //   uploadedOtherImages = await gcs.upload(otherImages, 'public/product/images');
+    //   const otherImagesArray = uploadedOtherImages.map((file) => ({
+    //     file,
+    //     productId: createdProduct.id,
+    //   }));
+    //   await ProductImages.bulkCreate(otherImagesArray);
+    // }
+
+    // await createdProduct.save();
+
     // Create variants and associate with the product
     const parsedVariants = JSON.parse(variants);
     for (const variantData of parsedVariants) {
