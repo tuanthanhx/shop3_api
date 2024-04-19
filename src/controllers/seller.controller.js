@@ -216,6 +216,14 @@ exports.updateVerification = async (req, res) => {
       individualProductCategoryId,
       corporateCompanyName,
       corporateEnterpriseCodeNumber,
+      removeHouseholdBusinessRegistrationDocument1,
+      removeHouseholdBusinessRegistrationDocument2,
+      removeHouseholdBusinessRegistrationDocument3,
+      removeIndividualIdentityCardFront,
+      removeIndividualIdentityCardBack,
+      removeCorporateCompanyRegistrationDocument1,
+      removeCorporateCompanyRegistrationDocument2,
+      removeCorporateCompanyRegistrationDocument3,
       subscribeMailingList,
       newEmail,
       newEmailOtp,
@@ -310,6 +318,11 @@ exports.updateVerification = async (req, res) => {
 
     // Append new shop data
     if (businessType === 1) { // Household
+      // Remove current docs
+      if (removeHouseholdBusinessRegistrationDocument1) object.householdBusinessRegistrationDocument1 = null;
+      if (removeHouseholdBusinessRegistrationDocument2) object.householdBusinessRegistrationDocument2 = null;
+      if (removeHouseholdBusinessRegistrationDocument3) object.householdBusinessRegistrationDocument3 = null;
+
       const { householdBusinessRegistrationDocument1, householdBusinessRegistrationDocument2, householdBusinessRegistrationDocument3 } = req.files;
       if (householdBusinessRegistrationDocument1?.length) {
         const uploadedHouseholdBusinessRegistrationDocument1 = await gcs.upload(householdBusinessRegistrationDocument1, 'private/seller/verification');
@@ -328,6 +341,10 @@ exports.updateVerification = async (req, res) => {
       if (householdBusinessOwnerName) object.householdBusinessOwnerName = householdBusinessOwnerName;
       if (householdBusinessOwnerIdNumber) object.householdBusinessOwnerIdNumber = householdBusinessOwnerIdNumber;
     } else if (businessType === 2) { // Individual
+      // Remove current docs
+      if (removeIndividualIdentityCardFront) object.individualIdentityCardFront = null;
+      if (removeIndividualIdentityCardBack) object.individualIdentityCardBack = null;
+
       const { individualIdentityCardFront, individualIdentityCardBack } = req.files;
       if (individualIdentityCardFront?.length) {
         const uploadedIndividualIdentityCardFront = await gcs.upload(individualIdentityCardFront, 'private/seller/verification');
@@ -343,6 +360,11 @@ exports.updateVerification = async (req, res) => {
       if (individualResidentialAddress) object.individualResidentialAddress = individualResidentialAddress;
       if (individualProductCategoryId) object.individualProductCategoryId = individualProductCategoryId;
     } else if (businessType === 3) { // Corporate
+      // Remove current docs
+      if (removeCorporateCompanyRegistrationDocument1) object.corporateCompanyRegistrationDocument1 = null;
+      if (removeCorporateCompanyRegistrationDocument2) object.corporateCompanyRegistrationDocument2 = null;
+      if (removeCorporateCompanyRegistrationDocument3) object.corporateCompanyRegistrationDocument3 = null;
+
       const { corporateCompanyRegistrationDocument1, corporateCompanyRegistrationDocument2, corporateCompanyRegistrationDocument3 } = req.files;
       if (corporateCompanyRegistrationDocument1?.length) {
         const uploadedCorporateCompanyRegistrationDocument1 = await gcs.upload(corporateCompanyRegistrationDocument1, 'private/seller/verification');

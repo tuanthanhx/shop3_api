@@ -151,6 +151,30 @@ exports.updateVerification = [
   body('isSubmitted')
     .optional()
     .toBoolean(),
+  body('removeHouseholdBusinessRegistrationDocument1')
+    .optional()
+    .toBoolean(),
+  body('removeHouseholdBusinessRegistrationDocument2')
+    .optional()
+    .toBoolean(),
+  body('removeHouseholdBusinessRegistrationDocument3')
+    .optional()
+    .toBoolean(),
+  body('removeIndividualIdentityCardFront')
+    .optional()
+    .toBoolean(),
+  body('removeIndividualIdentityCardBack')
+    .optional()
+    .toBoolean(),
+  body('removeCorporateCompanyRegistrationDocument1')
+    .optional()
+    .toBoolean(),
+  body('removeCorporateCompanyRegistrationDocument2')
+    .optional()
+    .toBoolean(),
+  body('removeCorporateCompanyRegistrationDocument3')
+    .optional()
+    .toBoolean(),
   body('householdBusinessRegistrationDocument1').custom((value, { req }) => {
     if (req.files && req.files.householdBusinessRegistrationDocument1) {
       const file = req.files.householdBusinessRegistrationDocument1[0];
