@@ -20,6 +20,16 @@ module.exports = (app) => {
     { name: 'corporateCompanyRegistrationDocument1', maxCount: 1 },
     { name: 'corporateCompanyRegistrationDocument2', maxCount: 1 },
     { name: 'corporateCompanyRegistrationDocument3', maxCount: 1 },
+  ]), rules.createVerification, sellers.createVerification);
+  router.put('/verification', upload.fields([
+    { name: 'householdBusinessRegistrationDocument1', maxCount: 1 },
+    { name: 'householdBusinessRegistrationDocument2', maxCount: 1 },
+    { name: 'householdBusinessRegistrationDocument3', maxCount: 1 },
+    { name: 'individualIdentityCardFront', maxCount: 1 },
+    { name: 'individualIdentityCardBack', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument1', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument2', maxCount: 1 },
+    { name: 'corporateCompanyRegistrationDocument3', maxCount: 1 },
   ]), rules.updateVerification, sellers.updateVerification);
 
   app.use(`/api/${apiVersion}/sellers`, router);

@@ -1251,148 +1251,6 @@ paths:
       security:
         - bearerAuth: []
 
-  /sellers/create_shop:
-    post:
-      deprecated: true
-      summary: Create a new shop
-      description: |
-        1. shopName and businessType are mandatory required fields.
-        2. If businessType is 1 (Household), please provide registrationBusinessName, registrationBusinessNumber, registrationOwnerName, registrationOwnerId, and 3 files.
-        3. If businessType is 2 (Individual), please provide 2 files.
-        4. If businessType is 3 (Corporate), please provide registrationBusinessName, registrationBusinessNumber, and 3 files.
-      tags:
-        - Sellers
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - shopName
-                - businessType
-                - files
-              properties:
-                shopName:
-                  type: string
-                  example: "Sample"
-                businessType:
-                  type: number
-                  enum: [1, 2, 3]
-                  example: 1
-                registrationBusinessName:
-                  type: string
-                  example: "AAA LTD"
-                registrationBusinessNumber:
-                  type: string
-                  example: "B123456"
-                registrationOwnerName:
-                  type: string
-                  example: "John Smith"
-                registrationOwnerId:
-                  type: string
-                  example: "ID123456"
-                subscribeMailingList:
-                  type: boolean
-                  example: true
-                useCurrentEmail:
-                  type: boolean
-                newEmail:
-                  type: string
-                  format: email
-                  example: johnsm@gmail.com
-                newEmailOtp:
-                  type: string
-                useCurrentPhone:
-                  type: string
-                  example: 123456
-                newPhone:
-                  type: string
-                  format: phone
-                  example: "0123456789"
-                newPhoneOtp:
-                  type: string
-                  example: 123456
-                files:
-                  type: array
-                  maxItems: 3
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      sellerBusinessTypeId:
-                        type: integer
-                        example: 1
-                      shopName:
-                        type: string
-                        example: My Shop
-                      userId:
-                        type: integer
-                        example: 1
-                      email:
-                        type: string
-                        format: email
-                        example: johnsm@gmail.com
-                      phone:
-                        type: string
-                        format: phone
-                        example: "0123456789"
-                      subscribeMailingList:
-                        type: boolean
-                        example: true
-                      registrationBusinessName:
-                        type: string
-                        example: AAA LTD
-                      registrationBusinessNumber:
-                        type: string
-                        example: B123456
-                      registrationOwnerName:
-                        type: string
-                        example: 1
-                      registrationOwnerId:
-                        type: string
-                        example: ID123456
-                      registrationDocument1:
-                        type: string
-                        example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.pdf"
-                      registrationDocument2:
-                        type: string
-                        example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.pdf"
-                      registrationDocument3:
-                        type: string
-                        example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.pdf"
-                      identityCardFront:
-                        type: string
-                        example: https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.pdf
-                      identityCardBack:
-                        type: string
-                        example: https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.pdf
-                      updatedAt:
-                        type: string
-                        format: date-time
-                      createdAt:
-                        type: string
-                        format: date-time
-        "400":
-          description: Bad Request
-        "500":
-          description: Internal Server Error
-      security:
-        - bearerAuth: []
-
   /sellers/verification:
     get:
       summary: Get current verification data
@@ -1412,7 +1270,7 @@ paths:
       security:
         - bearerAuth: []
     post:
-      summary: Save / submit a new shop verification data
+      summary: Create a new shop verification data
       description: |
         1. To "Save", set `isSubmitted` as `false`
         2. To "Submit", set `isSubmitted` as `true`
@@ -1430,7 +1288,129 @@ paths:
               required:
                 - shopName
                 - businessType
-                - files
+              properties:
+                businessType:
+                  type: number
+                  enum: [1, 2, 3]
+                  example: 1
+                shopName:
+                  type: string
+                  example: "Sample"
+                householdBusinessRegistrationDocument1:
+                  type: string
+                  format: binary
+                householdBusinessRegistrationDocument2:
+                  type: string
+                  format: binary
+                householdBusinessRegistrationDocument3:
+                  type: string
+                  format: binary
+                householdBusinessName:
+                  type: string
+                  example: "My Company"
+                householdBusinessRegistrationNumber:
+                  type: string
+                  example: "AB100000"
+                householdBusinessOwnerName:
+                  type: string
+                  example: "John Smith"
+                householdBusinessOwnerIdNumber:
+                  type: string
+                  example: "123456789"
+                individualIdentityCardFront:
+                  type: string
+                  format: binary
+                individualIdentityCardBack:
+                  type: string
+                  format: binary
+                individualIdentityCardNumber:
+                  type: string
+                  example: "123456789"
+                individualOwnerDob:
+                  type: string
+                  format: date-time
+                individualBusinessOwnerName:
+                  type: string
+                  example: "John Smith"
+                individualResidentialAddress:
+                  type: string
+                  example: "206 Lorem Ipsum st."
+                individualProductCategoryId:
+                  type: integer
+                  example: 1
+                corporateCompanyRegistrationDocument1:
+                  type: string
+                  format: binary
+                corporateCompanyRegistrationDocument2:
+                  type: string
+                  format: binary
+                corporateCompanyRegistrationDocument3:
+                  type: string
+                  format: binary
+                corporateCompanyName:
+                  type: string
+                  example: "My Company"
+                corporateEnterpiseCodeNumber:
+                  type: string
+                  example: "AB100000"
+                useCurrentEmail:
+                  type: boolean
+                newEmail:
+                  type: string
+                  format: email
+                  example: johnsm@gmail.com
+                newEmailOtp:
+                  type: string
+                useCurrentPhone:
+                  type: string
+                  example: 123456
+                newPhone:
+                  type: string
+                  format: phone
+                  example: "0123456789"
+                newPhoneOtp:
+                  type: string
+                  example: 123456
+                subscribeMailingList:
+                  type: boolean
+                  example: true
+                isSubmitted:
+                  type: boolean
+                  example: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/ShopResponse"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
+    put:
+      summary: Update a new shop verification data
+      description: |
+        1. To "Save", set `isSubmitted` as `false`
+        2. To "Submit", set `isSubmitted` as `true`
+        3. If `businessType` is 1, fields start with `household*` are required
+        3. If `businessType` is 2, fields start with `individual*` are required
+        3. If `businessType` is 3, fields start with `corporate*` are required
+      tags:
+        - Sellers
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
               properties:
                 businessType:
                   type: number
