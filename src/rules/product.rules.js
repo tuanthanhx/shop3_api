@@ -35,46 +35,46 @@ exports.create = [
   body('quantity')
     .optional()
     .toInt(),
-  body('mainImage').custom((value, { req }) => {
-    if (!req.files || !req.files.mainImage) {
-      throw new Error('mainImage is required');
+  body('thumbnailImage').custom((value, { req }) => {
+    if (!req.files || !req.files.thumbnailImage) {
+      throw new Error('thumbnailImage is required');
     }
-    const file = req.files.mainImage[0];
+    const file = req.files.thumbnailImage[0];
     const fileSize = file.size;
     const fileType = file.mimetype;
     if (fileSize > 10485760) {
-      throw new Error('mainImage must be less than 10MB');
+      throw new Error('thumbnailImage must be less than 10MB');
     }
     if (!['image/jpeg', 'image/png'].includes(fileType)) {
-      throw new Error('mainImage must be in JPEG or PNG format');
+      throw new Error('thumbnailImage must be in JPEG or PNG format');
     }
     return true;
   }),
-  body('mainVideo').custom((value, { req }) => {
-    if (req.files && req.files.mainVideo) {
-      const file = req.files.mainVideo[0];
+  body('thumbnailVideo').custom((value, { req }) => {
+    if (req.files && req.files.thumbnailVideo) {
+      const file = req.files.thumbnailVideo[0];
       const fileSize = file.size;
       const fileType = file.mimetype;
       if (fileSize > 104857600) {
-        throw new Error('mainVideo must be less than 100MB');
+        throw new Error('thumbnailVideo must be less than 100MB');
       }
       if (!['video/mp4', 'video/quicktime'].includes(fileType)) {
-        throw new Error('mainVideo must be in MP4 or QuickTime format');
+        throw new Error('thumbnailVideo must be in MP4 or QuickTime format');
       }
     }
     return true;
   }),
-  body('otherImages').custom((value, { req }) => {
-    if (req.files && req.files.otherImages) {
-      const { otherImages } = req.files;
-      otherImages.forEach((file) => {
+  body('images').custom((value, { req }) => {
+    if (req.files && req.files.images) {
+      const { images } = req.files;
+      images.forEach((file) => {
         const fileSize = file.size;
         const fileType = file.mimetype;
         if (fileSize > 10485760) {
-          throw new Error('Each file in otherImages must be less than 10MB');
+          throw new Error('Each image file must be less than 10MB');
         }
         if (!['image/jpeg', 'image/png'].includes(fileType)) {
-          throw new Error('Each file in otherImages must be in JPEG or PNG format');
+          throw new Error('Each image file must be in JPEG or PNG format');
         }
       });
     }
@@ -88,17 +88,15 @@ exports.create = [
 ];
 
 exports.update = [
-  //   param('id')
-  //     .notEmpty()
-  //     .withMessage('id is required')
-  //     .toInt(),
-  //   body('name')
-  //     .optional()
-  //     .trim(),
-  //   query('parentId')
-  //     .optional()
-  //     .toInt(),
-  //   validateRules,
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .toInt(),
+  body('name')
+    .notEmpty()
+    .withMessage('name is required')
+    .trim(),
+  validateRules,
 ];
 
 exports.delete = [

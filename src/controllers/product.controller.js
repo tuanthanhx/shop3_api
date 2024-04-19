@@ -147,7 +147,7 @@ exports.create = async (req, res) => {
       quantity,
       productStatusId,
       variants,
-      variantsData,
+      productVariants,
     } = req.body;
 
     const object = {
@@ -162,38 +162,40 @@ exports.create = async (req, res) => {
       shopId,
     };
 
+    const foundCategory = await db.category.findByPk(categoryId);
+    if (!foundCategory) {
+      res.status(404).send({
+        message: 'Category not found',
+      });
+      return;
+    }
+
     const createdProduct = await db.product.create(object);
 
     // Handle files
-    const { mainImage, mainVideo, otherImages } = req.files;
-    if (mainImage?.length) {
-      uploadedMainImage = await gcs.upload(mainImage, 'public/product/images');
-      const newMainImage = await db.product_image.create({
-        file: uploadedMainImage[0],
-        productId: createdProduct.id,
-      });
-      createdProduct.mainImageId = newMainImage.id;
+    const { thumbnailImage, thumbnailVideo, images } = req.files;
+    if (thumbnailImage?.length) {
+      uploadedthumbnailImage = await gcs.upload(thumbnailImage, 'public/product/images');
+      const [thumbnailImageFile] = uploadedthumbnailImage;
+      createdProduct.thumbnailImage = thumbnailImageFile;
     }
-    if (mainVideo?.length) {
-      uploadedMainVideo = await gcs.upload(mainVideo, 'public/product/videos');
-      const newMainVideo = await db.product_video.create({
-        file: uploadedMainVideo[0],
-        productId: createdProduct.id,
-      });
-      createdProduct.mainVideoId = newMainVideo.id;
+    if (thumbnailVideo?.length) {
+      uploadedthumbnailVideo = await gcs.upload(thumbnailVideo, 'public/product/videos');
+      const [thumbnailVideoFile] = uploadedthumbnailVideo;
+      createdProduct.thumbnailVideo = thumbnailVideoFile;
     }
-    if (otherImages?.length) {
-      uploadedOtherImages = await gcs.upload(otherImages, 'public/product/images');
-      const otherImagesArray = uploadedOtherImages.map((file) => ({
+    if (images?.length) {
+      uploadedimages = await gcs.upload(images, 'public/product/images');
+      const imagesArray = uploadedimages.map((file) => ({
         file,
         productId: createdProduct.id,
       }));
-      await db.product_image.bulkCreate(otherImagesArray);
+      await db.product_image.bulkCreate(imagesArray);
     }
 
     await createdProduct.save();
 
-    if (isValidJson(variants) && isValidJson(variantsData)) {
+    if (isValidJson(variants) && isValidJson(productVariants)) {
       // Create variants and associate with the product
       const parsedVariants = JSON.parse(variants);
       await Promise.all(parsedVariants.map(async (variantData) => {
@@ -203,9 +205,9 @@ exports.create = async (req, res) => {
         await createdProduct.addVariant(variant);
       }));
 
-      // Create variant data
-      const parsedVariantsData = JSON.parse(variantsData);
-      await Promise.all(parsedVariantsData.map(async (variantData) => {
+      // Create product variants
+      const parsedProductVariants = JSON.parse(productVariants);
+      await Promise.all(parsedProductVariants.map(async (variantData) => {
         const variantOptions = await Promise.all(variantData.options.map(async (optionData) => {
           const variant = await db.variant.findOne({ where: { name: optionData.name, productId: createdProduct.id } });
           return db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
@@ -313,17 +315,22 @@ exports.update = async (req, res) => {
       name,
       categoryId,
       description,
-      // price,
+      price,
+      sku,
+      quantity,
       productStatusId,
       variants,
-      variantsData,
+      productVariants,
     } = req.body;
 
     const object = {
       name,
       categoryId,
       description,
-      productStatusId: productStatusId || 5,
+      price,
+      sku,
+      quantity,
+      productStatusId: productStatusId || 5, // 5 is Draft
     };
 
     const product = await db.product.findOne({
@@ -338,60 +345,111 @@ exports.update = async (req, res) => {
       return;
     }
 
+    const foundCategory = await db.category.findByPk(categoryId);
+    if (!foundCategory) {
+      res.status(404).send({
+        message: 'Category not found',
+      });
+      return;
+    }
+
+    // Handle files
+    const { thumbnailImage, thumbnailVideo, images } = req.files;
+    if (thumbnailImage?.length) {
+      uploadedthumbnailImage = await gcs.upload(thumbnailImage, 'public/product/images');
+      const [thumbnailImageFile] = uploadedthumbnailImage;
+      object.thumbnailImage = thumbnailImageFile;
+    }
+    if (thumbnailVideo?.length) {
+      uploadedthumbnailVideo = await gcs.upload(thumbnailVideo, 'public/product/videos');
+      const [thumbnailVideoFile] = uploadedthumbnailVideo;
+      object.thumbnailVideo = thumbnailVideoFile;
+    }
+    if (images?.length) {
+      await db.product_image.destroy({ where: { productId: product.id } });
+      uploadedimages = await gcs.upload(images, 'public/product/images');
+      const imagesArray = uploadedimages.map((file) => ({
+        file,
+        productId: product.id,
+      }));
+      await db.product_image.bulkCreate(imagesArray);
+    }
+
     // Update the product details
     await product.update(object);
 
-    if (variants && variantsData) {
-      await db.variant.destroy({ where: { productId: product.id } });
-      await db.option.destroy({ where: { productId: product.id } });
-      await db.product_variant.destroy({ where: { productId: product.id } });
+    // if (variants && productVariants) {
+    //   await db.variant.destroy({ where: { productId: product.id } });
+    //   await db.option.destroy({ where: { productId: product.id } });
+    //   await db.product_variant.destroy({ where: { productId: product.id } });
 
-      // Create variants and associate with the product
-      const parsedVariants = JSON.parse(variants);
-      parsedVariants.forEach(async (variantData) => {
-        const { name: variantName } = variantData;
-        const variant = await db.variant.create({ name: variantName, productId: product.id });
+    //   // Create variants and associate with the product
+    //   const parsedVariants = JSON.parse(variants);
+    //   parsedVariants.forEach(async (variantData) => {
+    //     const { name: variantName } = variantData;
+    //     const variant = await db.variant.create({ name: variantName, productId: product.id });
 
-        variantData.options.forEach(async (optionName) => {
-          await db.option.create({ name: optionName, variantId: variant.id, productId: product.id });
-        });
+    //     variantData.options.forEach(async (optionName) => {
+    //       await db.option.create({ name: optionName, variantId: variant.id, productId: product.id });
+    //     });
 
-        await product.addVariant(variant);
-      });
+    //     await product.addVariant(variant);
+    //   });
 
-      // Create variant combination
-      const parsedVariantsData = JSON.parse(variantsData);
-      parsedVariantsData.forEach(async (variantData) => {
-        const variantOptions = [];
+    //   // Create variant combination
+    //   const parsedProductVariants = JSON.parse(productVariants);
+    //   parsedProductVariants.forEach(async (variantData) => {
+    //     const variantOptions = [];
 
-        // Find options for each variant
-        variantData.options.forEach(async (optionData) => {
-          const variant = await db.variant.findOne({ where: { name: optionData.name, productId: product.id } });
-          const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
-          variantOptions.push(option);
-        });
+    //     // Find options for each variant
+    //     variantData.options.forEach(async (optionData) => {
+    //       const variant = await db.variant.findOne({ where: { name: optionData.name, productId: product.id } });
+    //       const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
+    //       variantOptions.push(option);
+    //     });
 
-        const productVariant = await db.product_variant.create({
-          price: variantData.price,
-          sku: variantData.sku,
-          quantity: variantData.quantity,
-          productId: product.id,
-        });
+    //     const productVariant = await db.product_variant.create({
+    //       price: variantData.price,
+    //       sku: variantData.sku,
+    //       quantity: variantData.quantity,
+    //       productId: product.id,
+    //     });
 
-        await productVariant.setOptions(variantOptions);
-      });
-    }
+    //     await productVariant.setOptions(variantOptions);
+    //   });
+    // }
 
     const foundProduct = await db.product.findByPk(product.id, {
-      include: {
-        model: db.variant,
-        include: {
-          model: db.option,
+      include: [
+        {
+          model: db.product_image,
+          as: 'productImages',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_video,
+          as: 'productVideos',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.variant,
           include: {
-            model: db.product_variant,
+            model: db.option,
           },
         },
-      },
+        {
+          model: db.product_variant,
+          as: 'productVariants',
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            },
+          ],
+        },
+      ],
     });
 
     res.status(200).json({

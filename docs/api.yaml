@@ -1130,30 +1130,30 @@ paths:
                 quantity:
                   type: integer
                   example: 100
-                mainImage:
+                thumbnailImage:
                   type: string
                   format: binary
-                otherImages:
+                thumbnailVideo:
+                  type: string
+                  format: binary
+                images:
                   type: array
                   maxItems: 9
                   items:
                     type: string
                     format: binary
-                mainVideo:
-                  type: string
-                  format: binary
                 variants:
                   type: array
                   items:
                     $ref: '#/components/schemas/Variant'
-                variantsData:
+                productVariants:
                   type: array
                   items:
                     $ref: '#/components/schemas/ProductVariant'
               required:
                 - name
                 - categoryId
-                - mainImage
+                - thumbnailImage
       responses:
         '201':
           description: The newly created product
@@ -1792,12 +1792,12 @@ components:
         productStatusId:
           type: integer
           example: 1
-        mainImageId:
-          type: integer
-          example: 1
-        mainVideoId:
-          type: integer
-          example: 1
+        thumbnailImage:
+          type: string
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+        thumbnailVideo:
+          type: string
+          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
         productImages:
           type: array
           items:

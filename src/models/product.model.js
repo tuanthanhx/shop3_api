@@ -22,7 +22,7 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
     },
     sku: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     quantity: {
@@ -33,11 +33,11 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    mainImageId: {
-      type: Sequelize.INTEGER,
+    thumbnailImage: {
+      type: Sequelize.STRING,
     },
-    mainVideoId: {
-      type: Sequelize.INTEGER,
+    thumbnailVideo: {
+      type: Sequelize.STRING,
     },
     shopId: {
       type: Sequelize.INTEGER,
