@@ -92,27 +92,30 @@ exports.findAll = async (req, res) => {
         })),
       }));
 
-      // const productVariants = rowData.productVariants.map((variant) => {
-      //   const options = variant.options.map((option) => ({
-      //     name: option.variant.name,
-      //     value: option.name,
-      //   }));
+      const productVariants = rowData.productVariants.map((pv) => {
+        const options = pv.options.map((option) => ({
+          variantId: option.variantId,
+          name: option.variant.name,
+          optionId: option.id,
+          value: option.name,
+        }));
 
-      //   return {
-      //     options,
-      //     price: variant.price,
-      //     sku: variant.sku,
-      //     quantity: variant.quantity,
-      //   };
-      // });
+        return {
+          options,
+          id: pv.id,
+          price: pv.price,
+          sku: pv.sku,
+          quantity: pv.quantity,
+        };
+      });
 
       delete rowData.variants;
-      // delete rowData.productVariants;
+      delete rowData.productVariants;
 
       return {
         ...rowData,
         variants,
-        // productVariants,
+        productVariants,
       };
     });
 
@@ -240,39 +243,6 @@ exports.create = async (req, res) => {
       }));
     }
 
-    // const foundProduct = await db.product.findByPk(createdProduct.id, {
-    //   include: [
-    //     {
-    //       model: db.product_image,
-    //       as: 'productImages',
-    //       attributes: ['id', 'file'],
-    //     },
-    //     {
-    //       model: db.product_video,
-    //       as: 'productVideos',
-    //       attributes: ['id', 'file'],
-    //     },
-    //     {
-    //       model: db.variant,
-    //       include: {
-    //         model: db.option,
-    //       },
-    //     },
-    //     {
-    //       model: db.product_variant,
-    //       as: 'productVariants',
-    //       include: [
-    //         {
-    //           model: db.option,
-    //           include: {
-    //             model: db.variant,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // });
-
     res.status(201).json({
       data: {
         message: 'Product created successfully',
@@ -365,9 +335,6 @@ exports.update = async (req, res) => {
     }
 
     if (variants) {
-      // await db.variant.destroy({ where: { productId: product.id } });
-      // await db.option.destroy({ where: { productId: product.id } });
-
       // Create variants and associate with the product
       const parsedVariants = JSON.parse(variants);
       if (parsedVariants.length > 3) {
@@ -391,18 +358,6 @@ exports.update = async (req, res) => {
         return acc;
       }, {});
 
-      /*
-      const updatePromises = existingVariants.map(async (variant) => {
-        if (updatedVariants[variant.id]) {
-          return variant.update({
-            name: updatedVariants[variant.id].name,
-          });
-        }
-        await db.option.destroy({ where: { variantId: variant.id } });
-        // TODO: Remove product_variant and product_variant_map that related to that deleted variant too later.
-        return variant.destroy();
-      });
-      */
       const updatePromises = existingVariants.map(async (variant) => {
         if (updatedVariants[variant.id]) {
           // Update the variant itself
@@ -411,7 +366,6 @@ exports.update = async (req, res) => {
           });
 
           // Collect option IDs from the payload for comparison
-          // const updatedOptionIds = updatedVariants[variant.id].options.map((option) => option.id);
           const updatedOptionIds = updatedVariants[variant.id].options.filter((option) => option.id).map((option) => option.id);
           console.log('updatedOptionIds:', updatedOptionIds);
 
@@ -461,42 +415,39 @@ exports.update = async (req, res) => {
       });
 
       await Promise.all([...updatePromises, ...addPromises]);
-
-      // parsedVariants.forEach(async (variantData) => {
-      //   const { name: variantName } = variantData;
-      //   const variant = await db.variant.create({ name: variantName, productId: product.id });
-
-      //   variantData.options.forEach(async (optionName) => {
-      //     await db.option.create({ name: optionName, variantId: variant.id, productId: product.id });
-      //   });
-
-      //   await product.addVariant(variant);
-      // });
     }
 
     if (productVariants) {
-      // await db.product_variant.destroy({ where: { productId: product.id } });
-      // // Create variant combination
-      // const parsedProductVariants = JSON.parse(productVariants);
-      // parsedProductVariants.forEach(async (variantData) => {
-      //   const variantOptions = [];
+      const parsedProductVariants = JSON.parse(productVariants);
 
-      //   // Find options for each variant
-      //   variantData.options.forEach(async (optionData) => {
-      //     const variant = await db.variant.findOne({ where: { name: optionData.name, productId: product.id } });
-      //     const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
-      //     variantOptions.push(option);
+      // TODO: If only updates
+      // await Promise.all(parsedProductVariants.map(async (pv) => {
+      //   const pvInstance = await db.product_variant.findByPk(pv.id);
+      //   await pvInstance.update({
+      //     price: pv.price,
+      //     sku: pv.sku,
+      //     quantity: pv.quantity,
       //   });
+      // }));
 
-      //   const productVariant = await db.product_variant.create({
-      //     price: variantData.price,
-      //     sku: variantData.sku,
-      //     quantity: variantData.quantity,
-      //     productId: product.id,
-      //   });
+      await db.product_variant.destroy({ where: { productId: product.id } });
+      await Promise.all(parsedProductVariants.map(async (variantData) => {
+        const variantOptions = await variantData.options.reduce(async (prevPromise, optionData) => {
+          const accum = await prevPromise;
+          const variant = await db.variant.findOne({ where: { name: optionData.name, productId: product.id } });
+          const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
+          accum.push(option);
+          return accum;
+        }, Promise.resolve([]));
 
-      //   await productVariant.setOptions(variantOptions);
-      // });
+        const productVariant = await db.product_variant.create({
+          price: variantData.price,
+          sku: variantData.sku,
+          quantity: variantData.quantity,
+          productId: product.id,
+        });
+        await productVariant.setOptions(variantOptions);
+      }));
     }
 
     // const foundProduct = await db.product.findByPk(product.id, {
