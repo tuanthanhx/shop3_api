@@ -200,7 +200,6 @@ exports.create = async (req, res) => {
     await createdProduct.save();
 
     if (isValidJson(variants) && isValidJson(productVariants)) {
-      // Create variants and associate with the product
       const parsedVariants = JSON.parse(variants);
       if (parsedVariants.length > 3) {
         res.status(400).send({
@@ -208,20 +207,29 @@ exports.create = async (req, res) => {
         });
         return;
       }
+
+      // Create variants and associate with the product
       await Promise.all(parsedVariants.map(async (variantData) => {
         const { name: variantName } = variantData;
         const variant = await db.variant.create({ name: variantName, productId: createdProduct.id });
-        await Promise.all(variantData.options.map((optionName) => db.option.create({ name: optionName, variantId: variant.id, productId: createdProduct.id })));
+        await variantData.options.reduce(async (prevPromise, optionName) => {
+          await prevPromise;
+          return db.option.create({ name: optionName, variantId: variant.id, productId: createdProduct.id });
+        }, Promise.resolve());
         await createdProduct.addVariant(variant);
       }));
 
       // Create product variants
       const parsedProductVariants = JSON.parse(productVariants);
       await Promise.all(parsedProductVariants.map(async (variantData) => {
-        const variantOptions = await Promise.all(variantData.options.map(async (optionData) => {
+        const variantOptions = await variantData.options.reduce(async (prevPromise, optionData) => {
+          const accum = await prevPromise;
           const variant = await db.variant.findOne({ where: { name: optionData.name, productId: createdProduct.id } });
-          return db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
-        }));
+          const option = await db.option.findOne({ where: { name: optionData.value, variantId: variant.id } });
+          accum.push(option);
+          return accum;
+        }, Promise.resolve([]));
+
         const productVariant = await db.product_variant.create({
           price: variantData.price,
           sku: variantData.sku,
@@ -403,7 +411,9 @@ exports.update = async (req, res) => {
           });
 
           // Collect option IDs from the payload for comparison
-          const updatedOptionIds = updatedVariants[variant.id].options.map((option) => option.id);
+          // const updatedOptionIds = updatedVariants[variant.id].options.map((option) => option.id);
+          const updatedOptionIds = updatedVariants[variant.id].options.filter((option) => option.id).map((option) => option.id);
+          console.log('updatedOptionIds:', updatedOptionIds);
 
           // Delete options not present in the updated variant
           const deleteOptionsPromise = db.option.destroy({
