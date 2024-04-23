@@ -7,6 +7,9 @@ module.exports = function (sequelize, Sequelize) {
     description: {
       type: Sequelize.TEXT,
     },
+    userId: {
+      type: Sequelize.INTEGER,
+    }
   }, {
     paranoid: true,
   });

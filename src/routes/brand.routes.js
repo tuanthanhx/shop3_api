@@ -6,6 +6,7 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/', brands.findAll);
+  router.post('/', brands.create);
 
   app.use(`/api/${apiVersion}/brands`, router);
 };

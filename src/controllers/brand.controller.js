@@ -12,3 +12,37 @@ exports.findAll = async (req, res) => {
     });
   }
 };
+
+exports.create = async (req, res) => {
+  try {
+    const { user } = req;
+
+    const {
+      name,
+      description,
+    } = req.body;
+
+    const object = {
+      name,
+      description,
+      userId: user.id,
+    };
+
+    const foundBrand = await db.brand.findOne({ where: { name } });
+    if (foundBrand) {
+      res.status(400).send({
+        message: 'Brand exists',
+      });
+      return;
+    }
+
+    const createdBrand = await db.brand.create(object);
+    res.status(200).json({
+      data: createdBrand,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

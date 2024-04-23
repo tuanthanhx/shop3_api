@@ -4,18 +4,21 @@ module.exports = {
       {
         name: 'Nike',
         description: null,
+        userId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'Adidas',
         description: null,
+        userId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         name: 'Puma',
         description: null,
+        userId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
