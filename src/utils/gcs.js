@@ -1,6 +1,5 @@
 const { Storage } = require('@google-cloud/storage');
-const { v4: uuidv4 } = require('uuid');
-const { getExtension } = require('./utils');
+const { getFilename, getExtension } = require('./utils');
 
 require('dotenv').config();
 
@@ -12,7 +11,9 @@ const bucket = storage.bucket(process.env.GCS_BUCKET_NAME || '');
 
 exports.upload = async (files, uploadPath) => {
   const uploadPromises = files.map(async (uploadedFile) => {
-    const fileName = `${uploadedFile.fieldname}_${uuidv4()}.${getExtension(uploadedFile.originalname)}`;
+    const timestamp = Date.now().toString();
+    const randomPart = Math.random().toString().slice(2, 9);
+    const fileName = `${timestamp}${randomPart}_${getFilename(uploadedFile.originalname)}.${getExtension(uploadedFile.originalname)}`;
     const filePath = `${uploadPath}/${fileName}`;
 
     const file = bucket.file(filePath);

@@ -925,6 +925,117 @@ paths:
   #     security:
   #       - bearerAuth: []
 
+  /media/product_images:
+    post:
+      summary: Upload Product Images
+      tags:
+        - Media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  maxItems: 9
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - files
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    maxItems: 9
+                    items:
+                      type: string
+                      example: https://storage.googleapis.com/dummy.jpg
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
+  /media/product_video:
+    post:
+      summary: Upload Product Video
+      tags:
+        - Media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: https://storage.googleapis.com/dummy.jpg
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
+  /media/product_variant_image:
+    post:
+      summary: Upload Product Variant Image
+      tags:
+        - Media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: https://storage.googleapis.com/dummy.jpg
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
   /categories:
     get:
       summary: Get all categories

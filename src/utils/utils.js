@@ -11,6 +11,8 @@ exports.generateProductId = () => {
   return timestamp + randomPart;
 };
 
+exports.getFilename = (filename) => filename.split('.')[0];
+
 exports.getExtension = (filename) => filename.split('.').pop();
 
 exports.isValidJson = (jsonString) => {
