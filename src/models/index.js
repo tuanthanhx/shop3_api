@@ -58,6 +58,9 @@ db.shop.belongsTo(db.seller_business_type, { foreignKey: 'sellerBusinessTypeId' 
 db.product.belongsTo(db.category, { foreignKey: 'categoryId' });
 db.category.hasMany(db.product, { foreignKey: 'categoryId' });
 
+db.product.belongsTo(db.brand, { foreignKey: 'brandId' });
+db.brand.hasMany(db.product, { foreignKey: 'brandId' });
+
 db.product.belongsTo(db.product_status, { foreignKey: 'productStatusId' });
 db.product_status.hasMany(db.product, { foreignKey: 'productStatusId' });
 

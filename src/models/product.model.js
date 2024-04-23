@@ -9,39 +9,34 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    categoryId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
     description: {
       type: Sequelize.TEXT,
-      allowNull: false,
     },
-    price: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-    },
-    sku: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    quantity: {
+    categoryId: {
       type: Sequelize.INTEGER,
-      allowNull: false,
     },
     productStatusId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    thumbnailImage: {
-      type: Sequelize.STRING,
-    },
-    thumbnailVideo: {
-      type: Sequelize.STRING,
-    },
     shopId: {
       type: Sequelize.INTEGER,
       allowNull: false,
+    },
+    brandId: {
+      type: Sequelize.INTEGER,
+    },
+    packageWeight: {
+      type: Sequelize.INTEGER,
+    },
+    packageWidth: {
+      type: Sequelize.INTEGER,
+    },
+    packageHeight: {
+      type: Sequelize.INTEGER,
+    },
+    packageLength: {
+      type: Sequelize.INTEGER,
     },
   }, {
     paranoid: true,

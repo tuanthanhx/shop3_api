@@ -1,15 +1,15 @@
 module.exports = function (sequelize, Sequelize) {
-  const Option = sequelize.define('option', {
+  const Brand = sequelize.define('brand', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    image: {
-      type: Sequelize.STRING,
+    description: {
+      type: Sequelize.TEXT,
     },
   }, {
-    paranoid: false,
+    paranoid: true,
   });
 
-  return Option;
+  return Brand;
 };

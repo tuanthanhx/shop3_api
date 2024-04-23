@@ -4,12 +4,8 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    productId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return ProductImage;

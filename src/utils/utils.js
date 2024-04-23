@@ -15,11 +15,18 @@ exports.getFilename = (filename) => filename.split('.')[0];
 
 exports.getExtension = (filename) => filename.split('.').pop();
 
-exports.isValidJson = (jsonString) => {
-  try {
-    JSON.parse(jsonString);
-    return true;
-  } catch (error) {
+// exports.isValidJson = (jsonString) => {
+//   try {
+//     JSON.parse(jsonString);
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// };
+
+exports.isOnlyUpdateProductVariants = (productVariants) => productVariants.every((product) => {
+  if (typeof product.id === 'undefined') {
     return false;
   }
-};
+  return product.options.every((option) => typeof option.variantId !== 'undefined' && typeof option.optionId !== 'undefined');
+});

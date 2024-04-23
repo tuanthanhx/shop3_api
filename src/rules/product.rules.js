@@ -1,5 +1,5 @@
 const { param, query, body } = require('express-validator');
-const { validateRules, handleMulterErrors } = require('../middlewares/validators');
+const { validateRules } = require('../middlewares/validators');
 
 exports.findAll = [
   query('name')
@@ -16,75 +16,35 @@ exports.create = [
     .notEmpty()
     .withMessage('name is required')
     .trim(),
+  body('description')
+    .optional()
+    .trim(),
   body('categoryId')
-    .notEmpty()
-    .withMessage('categoryId is required')
+    .optional()
     .toInt(),
   body('productStatusId')
     .optional()
     .toInt(),
-  body('description')
-    .optional()
-    .trim(),
-  body('price')
-    .optional()
-    .toFloat(),
-  body('sku')
-    .optional()
-    .trim(),
-  body('quantity')
+  body('brandId')
     .optional()
     .toInt(),
-  body('thumbnailImage').custom((value, { req }) => {
-    if (!req.files || !req.files.thumbnailImage) {
-      throw new Error('thumbnailImage is required');
-    }
-    const file = req.files.thumbnailImage[0];
-    const fileSize = file.size;
-    const fileType = file.mimetype;
-    if (fileSize > 10485760) {
-      throw new Error('thumbnailImage must be less than 10MB');
-    }
-    if (!['image/jpeg', 'image/png'].includes(fileType)) {
-      throw new Error('thumbnailImage must be in JPEG or PNG format');
-    }
-    return true;
-  }),
-  body('thumbnailVideo').custom((value, { req }) => {
-    if (req.files && req.files.thumbnailVideo) {
-      const file = req.files.thumbnailVideo[0];
-      const fileSize = file.size;
-      const fileType = file.mimetype;
-      if (fileSize > 104857600) {
-        throw new Error('thumbnailVideo must be less than 100MB');
-      }
-      if (!['video/mp4', 'video/quicktime'].includes(fileType)) {
-        throw new Error('thumbnailVideo must be in MP4 or QuickTime format');
-      }
-    }
-    return true;
-  }),
-  body('images').custom((value, { req }) => {
-    if (req.files && req.files.images) {
-      const { images } = req.files;
-      images.forEach((file) => {
-        const fileSize = file.size;
-        const fileType = file.mimetype;
-        if (fileSize > 10485760) {
-          throw new Error('Each image file must be less than 10MB');
-        }
-        if (!['image/jpeg', 'image/png'].includes(fileType)) {
-          throw new Error('Each image file must be in JPEG or PNG format');
-        }
-      });
-    }
-    return true;
-  }),
-  body('variants')
+  body('variants') // TODO: Add a custom validate later
+    .optional(),
+  body('productVariants') // TODO: Add a custom validate later
+    .optional(),
+  body('packageWeight')
     .optional()
-    .trim(), // .toArray(), // TODO: Validate if it is a valid array later
+    .toInt(),
+  body('packageWidth')
+    .optional()
+    .toInt(),
+  body('packageHeight')
+    .optional()
+    .toInt(),
+  body('packageLength')
+    .optional()
+    .toInt(),
   validateRules,
-  handleMulterErrors,
 ];
 
 exports.update = [
@@ -96,6 +56,34 @@ exports.update = [
     .notEmpty()
     .withMessage('name is required')
     .trim(),
+  body('description')
+    .optional()
+    .trim(),
+  body('categoryId')
+    .optional()
+    .toInt(),
+  body('productStatusId')
+    .optional()
+    .toInt(),
+  body('brandId')
+    .optional()
+    .toInt(),
+  body('variants') // TODO: Add a custom validate later
+    .optional(),
+  body('productVariants') // TODO: Add a custom validate later
+    .optional(),
+  body('packageWeight')
+    .optional()
+    .toInt(),
+  body('packageWidth')
+    .optional()
+    .toInt(),
+  body('packageHeight')
+    .optional()
+    .toInt(),
+  body('packageLength')
+    .optional()
+    .toInt(),
   validateRules,
 ];
 
