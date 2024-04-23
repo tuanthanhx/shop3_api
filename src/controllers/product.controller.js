@@ -135,6 +135,119 @@ exports.findAll = async (req, res) => {
   }
 };
 
+exports.findOne = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+
+    const product = await db.product.findByPk(id, {
+      include: [
+        {
+          model: db.product_image,
+          as: 'productImages',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_video,
+          as: 'productVideos',
+          attributes: ['id', 'file'],
+        },
+        {
+          model: db.variant,
+          include: {
+            model: db.option,
+          },
+        },
+        {
+          model: db.product_variant,
+          as: 'productVariants',
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!product) {
+      res.status(404).send({
+        message: 'Product not found',
+      });
+      return;
+    }
+
+    const isAdministrator = user.userGroupId === 6;
+    if (!isAdministrator) {
+      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
+      if (!foundShop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+
+      const shopId = foundShop.id;
+      if (product.shopId !== shopId) {
+        res.status(403).send({
+          message: 'You do not have permission to see it',
+        });
+        return;
+      }
+    }
+
+    // Format variants
+    const formattedVariants = product.variants.map((variant) => ({
+      id: variant.id,
+      name: variant.name,
+      options: variant.options.map((option) => ({
+        id: option.id,
+        name: option.name,
+        image: option.image,
+      })),
+    }));
+
+    // Format productVariants
+    const formattedProductVariants = product.productVariants.map((pv) => {
+      const options = pv.options.map((option) => ({
+        variantId: option.variantId,
+        name: option.variant.name,
+        optionId: option.id,
+        value: option.name,
+      }));
+
+      return {
+        options,
+        id: pv.id,
+        price: pv.price,
+        sku: pv.sku,
+        quantity: pv.quantity,
+      };
+    });
+
+    const productObject = product.toJSON();
+    delete productObject.variants;
+    delete productObject.productVariants;
+
+    const responseObject = {
+      ...productObject,
+      variants: formattedVariants,
+      productVariants: formattedProductVariants,
+    };
+
+    res.status(200).json({
+      data: responseObject,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.create = async (req, res) => {
   try {
     const { user } = req;

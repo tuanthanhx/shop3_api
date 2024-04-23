@@ -11,6 +11,14 @@ exports.findAll = [
   validateRules,
 ];
 
+exports.findOne = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .toInt(),
+  validateRules,
+];
+
 exports.create = [
   body('name')
     .notEmpty()
