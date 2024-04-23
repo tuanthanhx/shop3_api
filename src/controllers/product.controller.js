@@ -362,13 +362,13 @@ exports.update = async (req, res) => {
       }
 
       const existingVariants = await db.variant.findAll({ where: { productId: product.id } });
-      const existingVariantIds = existingVariants.map((variant) => variant.id);
+      // const existingVariantIds = existingVariants.map((variant) => variant.id);
 
-      const existingOptions = await db.option.findAll({ where: { productId: product.id } });
-      const existingOptionIds = existingOptions.map((option) => option.id);
+      // const existingOptions = await db.option.findAll({ where: { productId: product.id } });
+      // const existingOptionIds = existingOptions.map((option) => option.id);
 
-      console.log(existingVariantIds);
-      console.log(existingOptionIds);
+      // console.log(existingVariantIds);
+      // console.log(existingOptionIds);
 
       const updatedVariants = variants.reduce((acc, variant) => {
         if (variant.id) acc[variant.id] = variant;
