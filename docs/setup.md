@@ -12,6 +12,7 @@ npx sequelize db:seed --seed 20240412141602-add_category.js
 npx sequelize db:seed --seed 20240412154951-add_user_groups.js
 npx sequelize db:seed --seed 20240412163634-add_product_statuses.js
 npx sequelize db:seed --seed 20240423103941-add_brands.js
+npx sequelize db:seed --seed 20240426073727-add_attributes.js
 
 TODO:
 

@@ -11,5 +11,7 @@ module.exports = (app) => {
   router.put('/:id', rules.update, categories.update);
   router.delete('/:id', rules.delete, categories.delete);
 
+  router.get('/:id/attributes', categories.findAllAttributes);
+
   app.use(`/api/${apiVersion}/categories`, router);
 };

@@ -88,3 +88,34 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+exports.findAllAttributes = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await db.category.findByPk(id, {
+      include: {
+        model: db.attribute,
+        through: { attributes: [] },
+        attributes: ['id', 'name'],
+        include: {
+          model: db.attribute_value,
+          attributes: ['id', 'name'],
+        },
+      },
+    });
+
+    if (!category) {
+      res.status(404).send('Category not found');
+      return;
+    }
+
+    res.json({
+      data: category.attributes,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
