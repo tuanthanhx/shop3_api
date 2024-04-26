@@ -38,11 +38,11 @@ Object.keys(db).forEach((modelName) => {
 db.user.belongsTo(db.language, { foreignKey: 'languageId' });
 db.user.belongsTo(db.currency, { foreignKey: 'currencyId' });
 
-db.user.hasMany(db.user_refresh_token);
+db.user.hasMany(db.user_refresh_token, { onDelete: 'CASCADE' });
 db.user_refresh_token.belongsTo(db.user);
 
 db.user_verification.belongsTo(db.user, { foreignKey: 'userId' });
-db.user.hasMany(db.user_verification, { foreignKey: 'userId' });
+db.user.hasMany(db.user_verification, { foreignKey: 'userId', onDelete: 'CASCADE' });
 
 db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
 db.country.hasMany(db.user_address, { foreignKey: 'countryCode' });
@@ -64,22 +64,25 @@ db.brand.hasMany(db.product, { foreignKey: 'brandId' });
 db.product.belongsTo(db.product_status, { foreignKey: 'productStatusId' });
 db.product_status.hasMany(db.product, { foreignKey: 'productStatusId' });
 
-db.product_image.belongsTo(db.product, { foreignKey: 'productId' });
-db.product.hasMany(db.product_image, { foreignKey: 'productId', as: 'productImages' });
+db.product.hasMany(db.product_image, { as: 'productImages', onDelete: 'CASCADE' });
+db.product_image.belongsTo(db.product);
 
-db.product_video.belongsTo(db.product, { foreignKey: 'productId' });
-db.product.hasMany(db.product_video, { foreignKey: 'productId', as: 'productVideos' });
+db.product.hasMany(db.product_video, { as: 'productVideos', onDelete: 'CASCADE' });
+db.product_video.belongsTo(db.product);
 
 db.product.belongsTo(db.shop, { foreignKey: 'shopId' });
 db.shop.hasMany(db.product, { foreignKey: 'shopId' });
 
-db.product.hasMany(db.variant);
+db.product.hasMany(db.product_attribute, { as: 'productAttributes', onDelete: 'CASCADE' });
+db.product_attribute.belongsTo(db.product);
+
+db.product.hasMany(db.variant, { onDelete: 'CASCADE' });
 db.variant.belongsTo(db.product);
 
-db.product.hasMany(db.option);
+db.product.hasMany(db.option, { onDelete: 'CASCADE' });
 db.option.belongsTo(db.product);
 
-db.product.hasMany(db.product_variant, { as: 'productVariants' });
+db.product.hasMany(db.product_variant, { as: 'productVariants', onDelete: 'CASCADE' });
 db.product_variant.belongsTo(db.product);
 
 db.variant.hasMany(db.option);

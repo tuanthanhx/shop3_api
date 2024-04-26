@@ -10,7 +10,7 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return Country;

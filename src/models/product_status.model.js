@@ -8,7 +8,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.TEXT,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return ProductStatus;

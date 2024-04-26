@@ -39,7 +39,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return Product;

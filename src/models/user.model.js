@@ -58,7 +58,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.DATE,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
     defaultScope: {
       attributes: { exclude: ['password'] },
     },

@@ -10,7 +10,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return Currency;

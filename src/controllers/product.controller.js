@@ -59,6 +59,11 @@ exports.findAll = async (req, res) => {
           attributes: ['id', 'file'],
         },
         {
+          model: db.product_attribute,
+          as: 'productAttributes',
+          attributes: ['name', 'value'],
+        },
+        {
           model: db.variant,
           include: {
             model: db.option,
@@ -151,6 +156,11 @@ exports.findOne = async (req, res) => {
           model: db.product_video,
           as: 'productVideos',
           attributes: ['id', 'file'],
+        },
+        {
+          model: db.product_attribute,
+          as: 'productAttributes',
+          attributes: ['name', 'value'],
         },
         {
           model: db.variant,
@@ -269,6 +279,7 @@ exports.create = async (req, res) => {
       brandId,
       images,
       video,
+      attributes,
       variants,
       productVariants,
       packageWeight,
@@ -317,6 +328,15 @@ exports.create = async (req, res) => {
         file: video,
         productId: createdProduct.id,
       });
+    }
+
+    // Handle attributes
+    if (attributes) {
+      const attributeValues = attributes.map((attribute) => ({
+        ...attribute,
+        productId: createdProduct.id,
+      }));
+      await db.product_attribute.bulkCreate(attributeValues);
     }
 
     // Handle variants
@@ -405,6 +425,7 @@ exports.update = async (req, res) => {
       brandId,
       images,
       video,
+      attributes,
       variants,
       productVariants,
       packageWeight,
@@ -463,6 +484,16 @@ exports.update = async (req, res) => {
         file: video,
         productId: product.id,
       });
+    }
+
+    // Handle attributes
+    if (attributes) {
+      const attributeValues = attributes.map((attribute) => ({
+        ...attribute,
+        productId: product.id,
+      }));
+      await db.product_attribute.destroy({ where: { productId: product.id } });
+      await db.product_attribute.bulkCreate(attributeValues);
     }
 
     if (variants) {

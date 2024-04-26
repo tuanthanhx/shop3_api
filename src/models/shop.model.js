@@ -86,7 +86,7 @@ module.exports = function (sequelize, Sequelize) {
       defaultValue: false,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return Shop;

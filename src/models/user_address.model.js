@@ -24,7 +24,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.BOOLEAN,
     },
   }, {
-    paranoid: true,
+    paranoid: false,
   });
 
   return UserAddress;
