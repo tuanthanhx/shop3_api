@@ -100,6 +100,7 @@ exports.findAllAttributes = async (req, res) => {
         attributes: ['id', 'name'],
         include: {
           model: db.attribute_value,
+          as: 'attributeValues',
           attributes: ['id', 'name'],
         },
       },

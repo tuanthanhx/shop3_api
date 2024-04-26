@@ -91,7 +91,7 @@ db.option.belongsToMany(db.product_variant, { through: 'product_variants_maps' }
 db.category.belongsToMany(db.attribute, { through: 'category_attribute_maps' });
 db.attribute.belongsToMany(db.category, { through: 'category_attribute_maps' });
 
-db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId' });
+db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attributeValues' });
 db.attribute_value.belongsTo(db.attribute, { foreignKey: 'attributeId' });
 
 db.Sequelize = Sequelize;
