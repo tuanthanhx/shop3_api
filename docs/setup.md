@@ -16,6 +16,7 @@ npx sequelize db:seed --seed 20240426073727-add_attributes.js
 npx sequelize db:seed --seed 20240503104630-add_logistics_services.js
 npx sequelize db:seed --seed 20240503111032-add_logistics_providers.js
 npx sequelize db:seed --seed 20240503153321-add_logistics_providers_options.js
+npx sequelize db:seed --seed 20240503164651-add_logistics_services__providers_maps.js
 
 TODO:
 

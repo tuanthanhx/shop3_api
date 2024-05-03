@@ -1724,6 +1724,31 @@ paths:
       security:
         - bearerAuth: []
 
+  /shipping/services:
+    get:
+      summary: Get a list of shipping services
+      tags:
+        - Shipping
+      responses:
+        "200":
+          description: A JSON array of shipping services
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#/components/schemas/LogisticsService"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
 components:
   schemas:
     UserResponse:
@@ -2123,6 +2148,95 @@ components:
     #     updated_at:
     #       type: string
     #       format: date-time
+
+    LogisticsService:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          format: int32
+          description: The unique identifier of the logistics service.
+        name:
+          type: string
+          example: Bulky shipping
+          description: The name of the logistics service.
+        description:
+          type: string
+          example: dummy
+          nullable: true
+          description: The detailed description of the logistics service.
+        logisticsProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogisticsProvider'
+      description: Represents a logistics service with associated logistics providers.
+
+    LogisticsProvider:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          format: int32
+          description: The unique identifier of the logistics provider.
+        name:
+          type: string
+          example: GHN
+          description: The name of the logistics provider.
+        description:
+          type: string
+          example: dummy
+          nullable: true
+          description: The detailed description of the logistics provider.
+        logo:
+          type: string
+          example: https://storage.googleapis.com/dummy.png
+          format: uri
+          description: The URL to the logo of the logistics provider.
+        logisticsProvidersOptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogisticsProviderOption'
+      description: Represents a logistics provider with its options.
+
+    LogisticsProviderOption:
+      type: object
+      properties:
+        packageWeightMin:
+          type: integer
+          format: int32
+          example: 0
+          description: The minimum weight of the package in grams.
+        packageWeightMax:
+          type: integer
+          format: int32
+          example: 2000
+          description: The maximum weight of the package in grams.
+        packageWidthMax:
+          type: integer
+          format: int32
+          example: 100
+          description: The maximum width of the package in centimeters.
+        packageHeightMax:
+          type: integer
+          format: int32
+          example: 100
+          description: The maximum height of the package in centimeters.
+        packageLengthMax:
+          type: integer
+          format: int32
+          example: 100
+          description: The maximum length of the package in centimeters.
+        codSupported:
+          type: boolean
+          example: true
+          description: Indicates if cash on delivery is supported.
+        cpSupported:
+          type: boolean
+          example: false
+          description: Indicates if card payment is supported.
+      description: Represents the options provided by the logistics provider for handling packages.
 
   securitySchemes:
     bearerAuth:

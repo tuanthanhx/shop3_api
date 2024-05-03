@@ -104,12 +104,12 @@ db.logistics_service.belongsToMany(db.product, { through: 'logistics_services_pr
 db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_products_maps' });
 
 db.logistics_provider.belongsToMany(db.logistics_service, { through: 'logistics_services_providers_maps' });
-db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_services_providers_maps' });
+db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_services_providers_maps', as: 'logisticsProviders' });
 
 db.logistics_provider_option.belongsTo(db.logistics_service);
 db.logistics_service.hasMany(db.logistics_provider_option);
 db.logistics_provider_option.belongsTo(db.logistics_provider);
-db.logistics_provider.hasMany(db.logistics_provider_option);
+db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProvidersOptions' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
