@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const LogisticsService = sequelize.define('logistics_service', {
+  return sequelize.define('logistics_service', {
     uniqueId: {
       type: Sequelize.STRING(20),
       allowNull: false,
@@ -12,9 +12,11 @@ module.exports = function (sequelize, Sequelize) {
     description: {
       type: Sequelize.TEXT,
     },
+    isEnabled: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true,
+    }
   }, {
     paranoid: false,
   });
-
-  return LogisticsService;
 };

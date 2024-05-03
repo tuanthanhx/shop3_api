@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const LogisticsProvider = sequelize.define('logistics_provider', {
+  return sequelize.define('logistics_provider', {
     uniqueId: {
       type: Sequelize.STRING(20),
       allowNull: false,
@@ -15,30 +15,32 @@ module.exports = function (sequelize, Sequelize) {
     logo: {
       type: Sequelize.STRING,
     },
-    packageWeightMin: {
-      type: Sequelize.INTEGER,
-    },
-    packageWeightMax: {
-      type: Sequelize.INTEGER,
-    },
-    packageWidthMax: {
-      type: Sequelize.INTEGER,
-    },
-    packageHeightMax: {
-      type: Sequelize.INTEGER,
-    },
-    packageLengthMax: {
-      type: Sequelize.INTEGER,
-    },
-    codSupported: {
+    isEnabled: {
       type: Sequelize.BOOLEAN,
+      defaultValue: true,
     },
-    cpSupported: {
-      type: Sequelize.BOOLEAN,
-    },
+    // packageWeightMin: {
+    //   type: Sequelize.INTEGER,
+    // },
+    // packageWeightMax: {
+    //   type: Sequelize.INTEGER,
+    // },
+    // packageWidthMax: {
+    //   type: Sequelize.INTEGER,
+    // },
+    // packageHeightMax: {
+    //   type: Sequelize.INTEGER,
+    // },
+    // packageLengthMax: {
+    //   type: Sequelize.INTEGER,
+    // },
+    // codSupported: {
+    //   type: Sequelize.BOOLEAN,
+    // },
+    // cpSupported: {
+    //   type: Sequelize.BOOLEAN,
+    // },
   }, {
     paranoid: false,
   });
-
-  return LogisticsProvider;
 };

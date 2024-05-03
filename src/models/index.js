@@ -97,8 +97,19 @@ db.attribute.belongsToMany(db.category, { through: 'category_attribute_maps' });
 db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attributeValues' });
 db.attribute_value.belongsTo(db.attribute, { foreignKey: 'attributeId' });
 
-db.logistics_service.hasMany(db.logistics_provider);
-db.logistics_provider.belongsTo(db.logistics_service);
+db.logistics_service.belongsToMany(db.shop, { through: 'logistics_services_shops_maps' });
+db.shop.belongsToMany(db.logistics_service, { through: 'logistics_services_shops_maps' });
+
+db.logistics_service.belongsToMany(db.product, { through: 'logistics_services_products_maps' });
+db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_products_maps' });
+
+db.logistics_provider.belongsToMany(db.logistics_service, { through: 'logistics_services_providers_maps' });
+db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_services_providers_maps' });
+
+db.logistics_provider_option.belongsTo(db.logistics_service);
+db.logistics_service.hasMany(db.logistics_provider_option);
+db.logistics_provider_option.belongsTo(db.logistics_provider);
+db.logistics_provider.hasMany(db.logistics_provider_option);
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
