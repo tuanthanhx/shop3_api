@@ -1,4 +1,4 @@
-const { generateProductId, isOnlyUpdateProductVariants } = require('../utils/utils');
+const { generateUniqueId, isOnlyUpdateProductVariants } = require('../utils/utils');
 const db = require('../models');
 
 const { Op } = db.Sequelize;
@@ -289,7 +289,7 @@ exports.create = async (req, res) => {
     } = req.body;
 
     const object = {
-      uniqueId: generateProductId(),
+      uniqueId: generateUniqueId(),
       name,
       description,
       categoryId,

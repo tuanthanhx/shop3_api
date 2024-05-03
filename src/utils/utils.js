@@ -5,7 +5,7 @@ exports.generateRandomNumber = (numDigits) => {
   return paddedNumber;
 };
 
-exports.generateProductId = () => {
+exports.generateUniqueId = () => {
   const timestamp = Date.now().toString();
   const randomPart = Math.random().toString().slice(2, 9);
   return timestamp + randomPart;

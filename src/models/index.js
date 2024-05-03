@@ -97,6 +97,9 @@ db.attribute.belongsToMany(db.category, { through: 'category_attribute_maps' });
 db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attributeValues' });
 db.attribute_value.belongsTo(db.attribute, { foreignKey: 'attributeId' });
 
+db.logistics_service.hasMany(db.logistics_provider);
+db.logistics_provider.belongsTo(db.logistics_service);
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
