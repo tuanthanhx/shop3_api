@@ -2,15 +2,12 @@ const dayjs = require('dayjs');
 const { generateRandomNumber } = require('./utils');
 const db = require('../models');
 
-const { Op } = db.Sequelize;
-const Verification = db.verification;
-
 require('dotenv').config();
 
 exports.createOtp = async (receiver) => {
   const code = generateRandomNumber(6);
   try {
-    const [foundOtp, created] = await Verification.findOrCreate({
+    const [foundOtp, created] = await db.verification.findOrCreate({
       where: { receiver },
       defaults: { code },
     });
@@ -33,12 +30,12 @@ exports.checkOtp = async (receiver, code) => {
   }
 
   try {
-    const foundOtp = await Verification.findOne({
+    const foundOtp = await db.verification.findOne({
       where: {
         receiver,
         code,
         updatedAt: {
-          [Op.gte]: dayjs().subtract(1, 'hour').toDate(),
+          [db.Sequelize.Op.gte]: dayjs().subtract(1, 'hour').toDate(),
         },
       },
     });
@@ -55,7 +52,7 @@ exports.removeOtp = async (receiver) => {
   if (!receiver) return false;
 
   try {
-    const foundOtp = await Verification.findOne({
+    const foundOtp = await db.verification.findOne({
       where: {
         receiver,
       },

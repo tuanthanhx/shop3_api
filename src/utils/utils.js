@@ -1,7 +1,7 @@
-exports.generateRandomNumber = (numDigits) => {
-  const maxNumber = 10 ** numDigits - 1;
+exports.generateRandomNumber = (length) => {
+  const maxNumber = 10 ** length - 1;
   const randomNumber = Math.floor(Math.random() * (maxNumber + 1));
-  const paddedNumber = randomNumber.toString().padStart(numDigits, '0');
+  const paddedNumber = randomNumber.toString().padStart(length, '0');
   return paddedNumber;
 };
 
