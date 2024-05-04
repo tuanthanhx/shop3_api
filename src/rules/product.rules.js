@@ -52,6 +52,11 @@ exports.create = [
   body('packageLength')
     .optional()
     .toInt(),
+  body('logisticsServiceIds')
+    .optional(), // TODO: Validate if it is a undifined, null, empty array, something array later
+  body('cod')
+    .optional()
+    .toBoolean(),
   validateRules,
 ];
 
@@ -92,6 +97,11 @@ exports.update = [
   body('packageLength')
     .optional()
     .toInt(),
+  body('logisticsServiceIds')
+    .optional(), // TODO: Validate if it is a undifined, null, empty array, something array later
+  body('cod')
+    .optional()
+    .toBoolean(),
   validateRules,
 ];
 

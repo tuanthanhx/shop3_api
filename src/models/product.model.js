@@ -38,6 +38,9 @@ module.exports = function (sequelize, Sequelize) {
     packageLength: {
       type: Sequelize.INTEGER,
     },
+    cod: {
+      type: Sequelize.BOOLEAN,
+    },
   }, {
     paranoid: false,
   });

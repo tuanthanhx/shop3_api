@@ -303,6 +303,7 @@ exports.create = async (req, res) => {
       packageWidth,
       packageHeight,
       packageLength,
+      cod,
     } = req.body;
 
     const object = {
@@ -317,6 +318,7 @@ exports.create = async (req, res) => {
       packageWidth,
       packageHeight,
       packageLength,
+      cod,
     };
 
     const foundCategory = await db.category.findByPk(categoryId);
@@ -466,6 +468,7 @@ exports.update = async (req, res) => {
       packageWidth,
       packageHeight,
       packageLength,
+      cod,
     } = req.body;
 
     const object = {
@@ -478,6 +481,7 @@ exports.update = async (req, res) => {
       packageWidth,
       packageHeight,
       packageLength,
+      cod,
     };
 
     const product = await db.product.findOne({
