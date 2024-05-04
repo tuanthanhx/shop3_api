@@ -540,3 +540,39 @@ exports.unsubscribeLogisticsServices = async (req, res) => {
     });
   }
 };
+
+exports.estimateShippingFee = async (req, res) => {
+  const baseFee = (serviceId) => {
+    if (serviceId === 1) {
+      return 10000;
+    }
+    return 15000;
+  };
+
+  const weightFee = (weight) => weight * 10000;
+
+  const calculateShippingFee = (serviceId, weight, width, height, length) => {
+    const volumetricWeight = (length * width * height) / 6000;
+    const finalWeight = Math.max(weight / 1000, volumetricWeight);
+    console.log(volumetricWeight);
+    let fee = baseFee(serviceId);
+    fee += weightFee(finalWeight);
+    return fee;
+  };
+
+  try {
+    const {
+      serviceId,
+      weight,
+      width,
+      height,
+      length,
+    } = req.body;
+    const fee = calculateShippingFee(serviceId, weight, width, height, length);
+    res.json({ estimatedShippingFee: fee });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

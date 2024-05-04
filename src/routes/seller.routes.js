@@ -14,6 +14,7 @@ module.exports = (app) => {
   router.get('/logistics_services', sellers.getLogisticsServices);
   router.post('/logistics_services/subscribe', sellers.subscribeLogisticsServices);
   router.post('/logistics_services/unsubscribe', sellers.unsubscribeLogisticsServices);
+  router.post('/logistics_services/estimate_shipping_fee', sellers.estimateShippingFee);
 
   router.get('/verification', sellers.getVerification);
   router.post('/verification', upload.fields([

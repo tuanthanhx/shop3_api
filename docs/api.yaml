@@ -1812,6 +1812,58 @@ paths:
         "500":
           description: Internal Server Error
 
+  /sellers/logistics_services/estimate_shipping_fee:
+    post:
+      summary: Estimate shipping fee
+      tags:
+        - Sellers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+                - weight
+                - width
+                - height
+                - length
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+                weight:
+                  type: integer
+                  example: 1000
+                width:
+                  type: integer
+                  example: 20
+                height:
+                  type: integer
+                  example: 20
+                length:
+                  type: integer
+                  example: 20
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estimatedShippingFee:
+                    type: number
+                    format: float
+                    example: 10000
+        "400":
+          description: Bad Request
+        "404":
+          description: Logistics service was not found
+        "500":
+          description: Internal Server Error
+
 components:
   schemas:
     UserResponse:
