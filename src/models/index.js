@@ -101,7 +101,7 @@ db.logistics_service.belongsToMany(db.shop, { through: 'logistics_services_shops
 db.shop.belongsToMany(db.logistics_service, { through: 'logistics_services_shops_maps', as: 'logisticsServices' });
 
 db.logistics_service.belongsToMany(db.product, { through: 'logistics_services_products_maps' });
-db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_products_maps' });
+db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_products_maps', as: 'logisticsServices' });
 
 db.logistics_provider.belongsToMany(db.logistics_service, { through: 'logistics_services_providers_maps' });
 db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_services_providers_maps', as: 'logisticsProviders' });

@@ -59,6 +59,14 @@ exports.findAll = async (req, res) => {
           attributes: ['id', 'file'],
         },
         {
+          model: db.logistics_service,
+          as: 'logisticsServices',
+          attributes: ['id', 'uniqueId', 'name'],
+          through: {
+            attributes: [],
+          },
+        },
+        {
           model: db.product_attribute,
           as: 'productAttributes',
           attributes: ['name', 'value'],
@@ -156,6 +164,14 @@ exports.findOne = async (req, res) => {
           model: db.product_video,
           as: 'productVideos',
           attributes: ['id', 'file'],
+        },
+        {
+          model: db.logistics_service,
+          as: 'logisticsServices',
+          attributes: ['id', 'uniqueId', 'name'],
+          through: {
+            attributes: [],
+          },
         },
         {
           model: db.product_attribute,
@@ -279,6 +295,7 @@ exports.create = async (req, res) => {
       brandId,
       images,
       video,
+      logisticsServiceIds,
       attributes,
       variants,
       productVariants,
@@ -328,6 +345,22 @@ exports.create = async (req, res) => {
         file: video,
         productId: createdProduct.id,
       });
+    }
+
+    // Handle logistics services
+    if (logisticsServiceIds?.length) {
+      const logisticsServices = await db.logistics_service.findAll({
+        where: { id: logisticsServiceIds },
+      });
+
+      if (logisticsServices.length !== logisticsServiceIds.length) {
+        res.status(404).send({
+          message: 'One or more logistics services not found',
+        });
+        return;
+      }
+
+      await createdProduct.addLogisticsService(logisticsServices);
     }
 
     // Handle attributes
@@ -425,6 +458,7 @@ exports.update = async (req, res) => {
       brandId,
       images,
       video,
+      logisticsServiceIds,
       attributes,
       variants,
       productVariants,
@@ -484,6 +518,26 @@ exports.update = async (req, res) => {
         file: video,
         productId: product.id,
       });
+    }
+
+    // Handle logistics services
+    if (logisticsServiceIds !== undefined) {
+      if (logisticsServiceIds?.length) {
+        const logisticsServices = await db.logistics_service.findAll({
+          where: { id: logisticsServiceIds },
+        });
+
+        if (logisticsServices.length !== logisticsServiceIds.length) {
+          res.status(404).send({
+            message: 'One or more logistics services not found',
+          });
+          return;
+        }
+
+        await product.setLogisticsServices(logisticsServices);
+      } else {
+        await product.setLogisticsServices([]);
+      }
     }
 
     // Handle attributes
