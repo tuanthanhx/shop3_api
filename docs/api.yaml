@@ -1724,11 +1724,11 @@ paths:
       security:
         - bearerAuth: []
 
-  /shipping/services:
+  /sellers/logistics_services:
     get:
       summary: Get a list of shipping services
       tags:
-        - Shipping
+        - Sellers
       responses:
         "200":
           description: A JSON array of shipping services
@@ -1748,6 +1748,69 @@ paths:
           description: Internal Server Error
       security:
         - bearerAuth: []
+
+  /sellers/logistics_services/subscribe:
+    post:
+      summary: Subscribe to a shipping service
+      tags:
+        - Sellers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/SimpleResponse"
+        "400":
+          description: Bad Request
+        "404":
+          description: Logistics service was not found
+        "500":
+          description: Internal Server Error
+
+
+  /sellers/logistics_services/unsubscribe:
+    post:
+      summary: Unsubscribe to a shipping service
+      tags:
+        - Sellers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/SimpleResponse"
+        "400":
+          description: Bad Request
+        "404":
+          description: Logistics service was not found
+        "500":
+          description: Internal Server Error
 
 components:
   schemas:
@@ -2149,6 +2212,13 @@ components:
     #       type: string
     #       format: date-time
 
+    SimpleResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          example: true
+
     LogisticsService:
       type: object
       properties:
@@ -2166,6 +2236,10 @@ components:
           example: dummy
           nullable: true
           description: The detailed description of the logistics service.
+        isSubscribed:
+          type: boolean
+          example: true
+          description: Check if the current shop subscribed to the logistics service.
         logisticsProviders:
           type: array
           items:
@@ -2182,7 +2256,7 @@ components:
           description: The unique identifier of the logistics provider.
         name:
           type: string
-          example: GHN
+          example: FedEx
           description: The name of the logistics provider.
         description:
           type: string

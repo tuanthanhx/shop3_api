@@ -98,7 +98,7 @@ db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attri
 db.attribute_value.belongsTo(db.attribute, { foreignKey: 'attributeId' });
 
 db.logistics_service.belongsToMany(db.shop, { through: 'logistics_services_shops_maps' });
-db.shop.belongsToMany(db.logistics_service, { through: 'logistics_services_shops_maps' });
+db.shop.belongsToMany(db.logistics_service, { through: 'logistics_services_shops_maps', as: 'logisticsServices' });
 
 db.logistics_service.belongsToMany(db.product, { through: 'logistics_services_products_maps' });
 db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_products_maps' });

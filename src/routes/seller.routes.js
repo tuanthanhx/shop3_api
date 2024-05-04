@@ -10,6 +10,11 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/business_types', sellers.getBusinessTypes);
+
+  router.get('/logistics_services', sellers.getLogisticsServices);
+  router.post('/logistics_services/subscribe', sellers.subscribeLogisticsServices);
+  router.post('/logistics_services/unsubscribe', sellers.unsubscribeLogisticsServices);
+
   router.get('/verification', sellers.getVerification);
   router.post('/verification', upload.fields([
     { name: 'householdBusinessRegistrationDocument1', maxCount: 1 },

@@ -315,7 +315,6 @@ exports.updateVerification = async (req, res) => {
       object.corporateEnterpriseCodeNumber = null;
     }
 
-
     // Append new shop data
     if (businessType === 1) { // Household
       // Remove current docs
@@ -389,6 +388,151 @@ exports.updateVerification = async (req, res) => {
 
     res.send({
       data: shop,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getLogisticsServices = async (req, res) => {
+  try {
+    const { user } = req;
+
+    const logisticsServices = await db.logistics_service.findAll({
+      where: { isEnabled: true },
+      attributes: ['id', 'name', 'description'],
+      include: [
+        {
+          model: db.logistics_provider,
+          as: 'logisticsProviders',
+          attributes: ['id', 'name', 'description', 'logo'],
+          where: { isEnabled: true },
+          through: {
+            attributes: [],
+          },
+          include: [
+            {
+              model: db.logistics_provider_option,
+              as: 'logisticsProvidersOptions',
+              attributes: ['packageWeightMin', 'packageWeightMax', 'packageWidthMax', 'packageHeightMax', 'packageLengthMax', 'codSupported', 'cpSupported'],
+              where: {
+                logisticsServiceId: { [db.Sequelize.Op.col]: 'logistics_service.id' },
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const shop = await db.shop.findOne({
+      where: { userId: user.id },
+      attributes: [],
+      include: [
+        {
+          model: db.logistics_service,
+          as: 'logisticsServices',
+          where: { isEnabled: true },
+          attributes: ['id', 'uniqueId', 'name'],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+
+    let updatedLogisticsServices;
+    if (shop && shop?.logisticsServices?.length && logisticsServices?.length) {
+      updatedLogisticsServices = logisticsServices.map((el) => el.get({ plain: true })).map((service) => {
+        const isSubscribed = shop.logisticsServices.some((shopService) => shopService.id === service.id);
+        return {
+          ...service,
+          isSubscribed,
+        };
+      });
+    } else {
+      updatedLogisticsServices = logisticsServices;
+    }
+
+    res.send({
+      data: updatedLogisticsServices,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.subscribeLogisticsServices = async (req, res) => {
+  try {
+    const { user } = req;
+
+    const { serviceId } = req.body;
+
+    const shop = await db.shop.findOne({
+      where: { userId: user.id },
+    });
+
+    if (!shop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+
+    const logisticsService = await db.logistics_service.findByPk(serviceId);
+
+    if (!logisticsService) {
+      res.status(404).send({
+        message: 'Logistics service not found',
+      });
+      return;
+    }
+
+    await shop.addLogisticsService(logisticsService);
+
+    res.send({
+      data: true,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.unsubscribeLogisticsServices = async (req, res) => {
+  try {
+    const { user } = req;
+
+    const { serviceId } = req.body;
+
+    const shop = await db.shop.findOne({
+      where: { userId: user.id },
+    });
+
+    if (!shop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+
+    const logisticsService = await db.logistics_service.findByPk(serviceId);
+
+    if (!logisticsService) {
+      res.status(404).send({
+        message: 'Logistics service not found',
+      });
+      return;
+    }
+
+    await shop.removeLogisticsService(logisticsService);
+
+    res.send({
+      data: true,
     });
   } catch (err) {
     res.status(500).send({
