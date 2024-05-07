@@ -3,36 +3,87 @@ const db = require('../models');
 
 const { Op } = db.Sequelize;
 
-exports.findAll = async (req, res) => {
+exports.index = async (req, res) => {
   try {
     const { user } = req;
-    const isAdministrator = user.userGroupId === 6;
 
     const {
-      name,
+      keyword,
+      minPrice,
+      maxPrice,
+      categoryId,
+      // commissionPlanStatus,
+      codStatus,
+      // affiliateOpportunityFilter,
+      // hasPriceDiagnosticResult,
       statusId,
       page,
       limit,
+      sortField,
+      sortOrder = 'asc',
     } = req.query;
 
     const condition = {};
-    if (!isAdministrator) {
-      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
-      if (!foundShop) {
-        res.status(404).send({
-          message: 'Shop not found',
-        });
-        return;
-      }
-      const shopId = foundShop.id;
-      condition.shopId = shopId;
+
+    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
+    if (!foundShop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+    const shopId = foundShop.id;
+
+    condition.shopId = shopId;
+
+    if (keyword) {
+      condition[Op.or] = [
+        { name: { [Op.like]: `%${keyword}%` } },
+        { uniqueId: { [Op.like]: `%${keyword}%` } },
+        { description: { [Op.like]: `%${keyword}%` } },
+        db.sequelize.literal(`EXISTS (SELECT 1 FROM product_variants AS pv WHERE pv.productId = product.id AND pv.sku LIKE '%${keyword}%')`),
+      ];
     }
 
-    if (name) {
-      condition.name = { [Op.like]: `%${name}%` };
+    const variantConditions = [];
+
+    if (minPrice) {
+      variantConditions.push(`pv.price >= ${minPrice}`);
     }
+
+    if (maxPrice) {
+      variantConditions.push(`pv.price <= ${maxPrice}`);
+    }
+
+    if (variantConditions.length > 0) {
+      condition[Op.and] = db.sequelize.literal(`EXISTS (SELECT 1 FROM product_variants AS pv WHERE pv.productId = product.id AND ${variantConditions.join(' AND ')})`);
+    }
+
+    if (categoryId) {
+      const categoryArray = categoryId.split(',').map((id) => parseInt(id.trim(), 10));
+      condition.categoryId = { [Op.in]: categoryArray };
+    }
+
+    if (codStatus !== undefined) {
+      condition.cod = codStatus;
+    }
+
     if (statusId) {
       condition.productStatusId = statusId;
+    }
+
+    let ordering = [['id', 'DESC']];
+
+    if (sortField && sortOrder) {
+      const validSortFields = ['name', 'uniqueId', 'createdAt', 'updatedAt', 'price'];
+      const validSortOrder = ['asc', 'desc'];
+      if (validSortFields.includes(sortField) && validSortOrder.includes(sortOrder.toLowerCase())) {
+        if (sortField === 'price') {
+          ordering = [[{ model: db.product_variant, as: 'productVariants' }, sortField, sortOrder.toUpperCase()]];
+        } else {
+          ordering = [[sortField, sortOrder.toUpperCase()]];
+        }
+      }
     }
 
     const pageNo = parseInt(page, 10) || 1;
@@ -41,9 +92,7 @@ exports.findAll = async (req, res) => {
 
     const data = await db.product.findAndCountAll({
       where: condition,
-      order: [
-        ['id', 'DESC'],
-      ],
+      order: ordering,
       limit: limitPerPage,
       offset,
       distinct: true,
@@ -80,6 +129,7 @@ exports.findAll = async (req, res) => {
         {
           model: db.product_variant,
           as: 'productVariants',
+          required: sortField === 'price',
           include: [
             {
               model: db.option,
@@ -142,13 +192,14 @@ exports.findAll = async (req, res) => {
       data: formattedRows,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
   }
 };
 
-exports.findOne = async (req, res) => {
+exports.show = async (req, res) => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -732,3 +783,19 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+// exports.activeProducts = async (req, res) => {
+
+// };
+
+// exports.deactiveProducts = async (req, res) => {
+
+// };
+
+// exports.deleteProducts = async (req, res) => {
+
+// };
+
+// exports.recoverProducts = async (req, res) => {
+
+// };

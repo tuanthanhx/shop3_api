@@ -1,13 +1,18 @@
 const { param, query, body } = require('express-validator');
 const { validateRules } = require('../middlewares/validators');
 
-exports.findAll = [
-  query('name')
+exports.index = [
+  query('keyword')
     .optional()
     .trim(),
   query('statusId')
     .optional()
     .toInt(),
+  query('codStatus')
+    .optional()
+    .toBoolean(),
+  query('sortOrder')
+    .optional(),
   validateRules,
 ];
 
