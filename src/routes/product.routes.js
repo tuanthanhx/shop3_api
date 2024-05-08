@@ -11,13 +11,12 @@ module.exports = (app) => {
   router.get('/:id', rules.findOne, products.show);
   router.post('/', rules.create, products.create);
   router.put('/:id', rules.update, products.update);
+  router.delete('/:id', rules.delete, products.delete);
 
-  router.delete('/:id', rules.delete, products.delete); // TODO: No need delete, just need to change status to 7
-
-  // router.post('/activate', products.activeProducts);
-  // router.post('/deactivate', products.deactiveProducts);
-  // router.post('/delete', products.deleteProducts);
-  // router.post('/recover', products.recoverProducts);
+  router.post('/bulk_activate', products.bulkActiveProducts);
+  router.post('/bulk_deactivate', products.bulkDeactiveProducts);
+  router.post('/bulk_delete', products.bulkDeleteProducts);
+  router.post('/bulk_recover', products.bulkRecoverProducts);
 
   app.use(`/api/${apiVersion}/products`, router);
 };

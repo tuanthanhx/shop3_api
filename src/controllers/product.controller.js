@@ -751,30 +751,25 @@ exports.delete = async (req, res) => {
       return;
     }
 
-    const isAdministrator = user.userGroupId === 6;
-    if (!isAdministrator) {
-      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
-      if (!foundShop) {
-        res.status(404).send({
-          message: 'Shop not found',
-        });
-        return;
-      }
-
-      const shopId = foundShop.id;
-      if (product.shopId !== shopId) {
-        res.status(403).send({
-          message: 'You do not have permission to delete it',
-        });
-        return;
-      }
+    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
+    if (!foundShop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
     }
 
-    await product.destroy();
+    const shopId = foundShop.id;
+    if (product.shopId !== shopId) {
+      res.status(403).send({
+        message: 'You do not have permission to delete it',
+      });
+      return;
+    }
 
-    await db.variant.destroy({ where: { productId: id } });
-    await db.option.destroy({ where: { productId: id } });
-    await db.product_variant.destroy({ where: { productId: id } });
+    await product.update({
+      status: 6,
+    });
 
     res.status(204).end();
   } catch (err) {
@@ -784,18 +779,86 @@ exports.delete = async (req, res) => {
   }
 };
 
-// exports.activeProducts = async (req, res) => {
+exports.bulkActiveProducts = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
 
-// };
+    const result = await db.product.update(
+      { productStatusId: 1 },
+      { where: { id: ids } },
+    );
 
-// exports.deactiveProducts = async (req, res) => {
+    res.status(200).json({
+      message: `${result[0]} products have been successfully activated.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
 
-// };
+exports.bulkDeactiveProducts = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
 
-// exports.deleteProducts = async (req, res) => {
+    const result = await db.product.update(
+      { productStatusId: 2 },
+      { where: { id: ids } },
+    );
 
-// };
+    res.status(200).json({
+      message: `${result[0]} products have been successfully deactivated.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
 
-// exports.recoverProducts = async (req, res) => {
+exports.bulkDeleteProducts = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
 
-// };
+    const result = await db.product.update(
+      { productStatusId: 6 },
+      { where: { id: ids } },
+    );
+
+    res.status(200).json({
+      message: `${result[0]} products have been successfully deleted.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.bulkRecoverProducts = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
+
+    const result = await db.product.update(
+      { productStatusId: 5 },
+      { where: { id: ids } },
+    );
+
+    res.status(200).json({
+      message: `${result[0]} products have been successfully recovered.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
