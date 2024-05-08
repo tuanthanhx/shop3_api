@@ -7,7 +7,14 @@ const apiVersion = process.env.VERSION || 'v1';
 const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
 
 exports.authenticateToken = (req, res, next) => {
-  const publicPaths = ['/public', '/favicon.ico', '/api-docs', `/api/${apiVersion}/auth`, `/api/${apiVersion}/register`];
+  const publicPaths = [
+    '/favicon.ico',
+    '/public',
+    '/docs',
+    '/api-docs',
+    `/api/${apiVersion}/auth`,
+    `/api/${apiVersion}/register`,
+  ];
   const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
   if (req.path === '/' || (isPublicPaths && req.path !== `/api/${apiVersion}/auth/is_login`)) {
     return next();

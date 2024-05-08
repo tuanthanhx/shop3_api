@@ -5,16 +5,14 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
 const db = require('./src/models');
-
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
-
 require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
+const baseUrl = env === 'development' ? process.env.APP_URL_DEV : APP_URL_PROD;
 
 let corsOptions = {};
 if (env !== 'development') {
@@ -22,25 +20,6 @@ if (env !== 'development') {
     origin: process.env.ALLOWED_ORIGINS.split(','),
   };
 }
-
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: process.env.TITLE,
-      version: '1.0.0',
-      description: `Documentation for ${process.env.TITLE}`,
-    },
-    servers: [
-      {
-        url: env === 'development' ? `${process.env.APP_URL_DEV}/${process.env.VERSION}` : `${process.env.APP_URL_PROD}/${process.env.VERSION}`,
-      },
-    ],
-  },
-  apis: ['./docs/api.yaml'],
-};
-
-const openapiSpecification = swaggerJsdoc(options);
 
 const app = express();
 
@@ -53,7 +32,32 @@ app.use(bodyParserErrorHandler());
 app.use(authenticateToken);
 app.use([handleQueries, validateRules]);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, { customSiteTitle: `${process.env.TITLE} Docs` }));
+const options = {
+  explorer: true,
+  swaggerOptions: {
+    urls: [
+      {
+        url: `${baseUrl}/docs/api_common.yaml`,
+        name: 'Common',
+      },
+      {
+        url: `${baseUrl}/docs/api_admin.yaml`,
+        name: 'Administrator',
+      },
+      {
+        url: `${baseUrl}/docs/api_seller.yaml`,
+        name: 'Sellers',
+      },
+      {
+        url: `${baseUrl}/docs/api_user.yaml`,
+        name: 'Users',
+      },
+    ],
+  },
+};
+
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 db.sequelize.sync()
   .then(() => {
