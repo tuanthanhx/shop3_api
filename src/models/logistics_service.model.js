@@ -15,7 +15,7 @@ module.exports = function (sequelize, Sequelize) {
     isEnabled: {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
-    }
+    },
   }, {
     paranoid: false,
   });

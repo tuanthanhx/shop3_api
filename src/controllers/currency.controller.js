@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const db = require('../models');
 
 const Currency = db.currency;
@@ -39,6 +40,7 @@ exports.findAll = (req, res) => {
       });
     })
     .catch((err) => {
+      logger.error(err);
       res.status(500).send({
         message:
           err.message || 'Some error occurred',
@@ -60,7 +62,7 @@ exports.findOne = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Error retrieving Currency with id=${id}`,
       });
@@ -86,6 +88,7 @@ exports.create = (req, res) => {
       res.send(data);
     })
     .catch((err) => {
+      logger.error(err);
       res.status(500).send({
         message:
           err.message || 'Some error occurred',
@@ -114,7 +117,7 @@ exports.update = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Error updating Currency with id=${id}`,
       });
@@ -139,7 +142,7 @@ exports.delete = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Could not delete Currency with id=${id}`,
       });

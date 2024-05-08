@@ -1,4 +1,5 @@
 const { generateUniqueId, isOnlyUpdateProductVariants } = require('../utils/utils');
+const logger = require('../utils/logger');
 const db = require('../models');
 
 const { Op } = db.Sequelize;
@@ -192,7 +193,7 @@ exports.index = async (req, res) => {
       data: formattedRows,
     });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -620,15 +621,15 @@ exports.update = async (req, res) => {
       // const existingOptions = await db.option.findAll({ where: { productId: product.id } });
       // const existingOptionIds = existingOptions.map((option) => option.id);
 
-      // console.log(existingVariantIds);
-      // console.log(existingOptionIds);
+      // logger.info(existingVariantIds);
+      // logger.info(existingOptionIds);
 
       const updatedVariants = variants.reduce((acc, variant) => {
         if (variant.id) acc[variant.id] = variant;
         return acc;
       }, {});
 
-      console.log(updatedVariants);
+      logger.info(updatedVariants);
 
       const updatePromises = existingVariants.map(async (variant) => {
         if (updatedVariants[variant.id]) {
@@ -639,7 +640,7 @@ exports.update = async (req, res) => {
 
           // Collect option IDs from the payload for comparison
           const updatedOptionIds = updatedVariants[variant.id].options.filter((option) => option.id).map((option) => option.id);
-          console.log('updatedOptionIds:', updatedOptionIds);
+          logger.info('updatedOptionIds:', updatedOptionIds);
 
           // Delete options not present in the updated variant
           const deleteOptionsPromise = db.option.destroy({
@@ -768,7 +769,7 @@ exports.delete = async (req, res) => {
     }
 
     await product.update({
-      status: 6,
+      productStatusId: 6,
     });
 
     res.status(204).end();

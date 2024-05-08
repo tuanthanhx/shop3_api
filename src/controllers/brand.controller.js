@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const db = require('../models');
 
 exports.findAll = async (req, res) => {
@@ -7,6 +8,7 @@ exports.findAll = async (req, res) => {
       data,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -41,6 +43,7 @@ exports.create = async (req, res) => {
       data: createdBrand,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

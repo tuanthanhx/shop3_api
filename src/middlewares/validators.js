@@ -1,5 +1,6 @@
 const { query, validationResult } = require('express-validator');
 const multer = require('multer');
+const logger = require('../utils/logger');
 
 exports.validateRules = (req, res, next) => {
   const errors = validationResult(req);
@@ -25,7 +26,7 @@ exports.handleQueries = [
 
 exports.handleMulterErrors = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    console.error('Multer error:', err.message);
+    logger.error('Multer error:', err.message);
     return res.status(400).json({ errors: err.message });
   }
   return next();

@@ -1,5 +1,6 @@
 const { Storage } = require('@google-cloud/storage');
 const { getFilename, getExtension } = require('./utils');
+const logger = require('./logger');
 
 require('dotenv').config();
 
@@ -25,7 +26,7 @@ exports.upload = async (files, uploadPath) => {
     });
 
     fileStream.on('error', (err) => {
-      console.error('Error uploading to GCS:', err);
+      logger.error('Error uploading to GCS:', err);
       return false;
     });
 

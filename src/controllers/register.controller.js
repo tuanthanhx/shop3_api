@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const { checkOtp, removeOtp } = require('../utils/otp');
 const db = require('../models');
 const auth = require('./auth.controller');
@@ -36,6 +37,7 @@ exports.registerByEmail = async (req, res) => {
     await User.create(object);
     await auth.loginByEmail(req, res);
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -74,6 +76,7 @@ exports.registerByPhone = async (req, res) => {
     await User.create(object);
     await auth.loginByPhone(req, res);
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

@@ -1,3 +1,5 @@
+const logger = require('./logger');
+
 exports.generateRandomNumber = (length) => {
   const maxNumber = 10 ** length - 1;
   const randomNumber = Math.floor(Math.random() * (maxNumber + 1));
@@ -20,6 +22,7 @@ exports.isValidJson = (jsonString) => {
     JSON.parse(jsonString);
     return true;
   } catch (error) {
+    logger.error(error);
     return false;
   }
 };

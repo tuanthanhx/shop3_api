@@ -1,11 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bodyParserErrorHandler = require('express-body-parser-error-handler');
+const helmet = require('helmet');
 const https = require('https');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
+const logger = require('./src/utils/logger');
+const morganMiddleware = require('./src/middlewares/morgan');
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
 const db = require('./src/models');
@@ -30,6 +33,8 @@ if (env === 'production') {
 
 const app = express();
 
+app.use(helmet());
+app.use(morganMiddleware);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -73,11 +78,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
 db.sequelize.sync()
   .then(() => {
     if (env === 'development') {
-      console.info('Synced DB.');
+      logger.info('Synced DB.');
     }
   })
   .catch((err) => {
-    console.error(`Failed to sync DB: ${err.message}`);
+    logger.error(`Failed to sync DB: ${err.message}`);
   });
 
 app.get('/', (req, res) => {
@@ -104,7 +109,7 @@ const startServer = () => new Promise((resolve) => {
     server = app;
   }
   server.listen(port, () => {
-    console.info(`Server is running on port ${port}`);
+    logger.info(`Server is running on port ${port}`);
     resolve(server);
   });
 });
@@ -115,7 +120,7 @@ const closeServer = (server) => new Promise((resolve, reject) => {
       reject(err);
     } else {
       if (env === 'development' || env === 'production') {
-        console.info('Server closed');
+        logger.info('Server closed');
       }
       resolve();
     }

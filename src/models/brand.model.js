@@ -9,7 +9,7 @@ module.exports = function (sequelize, Sequelize) {
     },
     userId: {
       type: Sequelize.INTEGER,
-    }
+    },
   }, {
     paranoid: false,
   });

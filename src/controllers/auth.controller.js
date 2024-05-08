@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../utils/otp');
 const { sendEmail } = require('../utils/email');
 const db = require('../models');
@@ -52,7 +53,7 @@ exports.loginByEmail = async (req, res) => {
       data: { accessToken, refreshToken },
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Login failed' });
   }
 };
@@ -86,7 +87,7 @@ exports.loginByPhone = async (req, res) => {
       data: { accessToken, refreshToken },
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Login failed' });
   }
 };
@@ -123,7 +124,7 @@ exports.refreshToken = async (req, res) => {
       });
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.status(500).json({ error: 'Refresh token is invalid' });
   }
 };
@@ -164,6 +165,7 @@ exports.confirmOtp = async (req, res) => {
     }
     res.send({ data: true });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -201,6 +203,7 @@ exports.resetPasswordByEmail = async (req, res) => {
       data: true,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -238,6 +241,7 @@ exports.resetPasswordByPhone = async (req, res) => {
       data: true,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

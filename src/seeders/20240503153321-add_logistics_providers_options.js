@@ -41,7 +41,6 @@ module.exports = {
         updatedAt: new Date(),
       },
 
-
       {
         logisticsServiceId: 2,
         logisticsProviderId: 1,

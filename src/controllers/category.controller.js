@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const db = require('../models');
 
 const Categories = db.category;
@@ -20,6 +21,7 @@ exports.findAll = async (req, res) => {
       data: categories,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -38,6 +40,7 @@ exports.create = async (req, res) => {
     const newCategory = await Categories.create(object);
     res.status(201).json(newCategory);
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -64,6 +67,7 @@ exports.update = async (req, res) => {
       data: foundCategory,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -83,6 +87,7 @@ exports.delete = async (req, res) => {
     await category.destroy();
     res.status(204).end();
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -115,6 +120,7 @@ exports.findAllAttributes = async (req, res) => {
       data: category.attributes,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

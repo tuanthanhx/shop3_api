@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const gcs = require('../utils/gcs');
 
 exports.uploadProductImages = async (req, res) => {
@@ -16,6 +17,7 @@ exports.uploadProductImages = async (req, res) => {
       data: uploadedFiles,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -38,6 +40,7 @@ exports.uploadProductVideo = async (req, res) => {
       data: uploadedFiles[0],
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -60,6 +63,7 @@ exports.uploadProductVariantImage = async (req, res) => {
       data: uploadedFiles[0],
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

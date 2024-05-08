@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const db = require('../models');
 
 const Language = db.language;
@@ -35,6 +36,7 @@ exports.findAll = (req, res) => {
       });
     })
     .catch((err) => {
+      logger.error(err);
       res.status(500).send({
         message:
           err.message || 'Some error occurred',
@@ -56,7 +58,7 @@ exports.findOne = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Error retrieving Language with id=${id}`,
       });
@@ -80,6 +82,7 @@ exports.create = (req, res) => {
       res.send(data);
     })
     .catch((err) => {
+      logger.error(err);
       res.status(500).send({
         message:
           err.message || 'Some error occurred',
@@ -108,7 +111,7 @@ exports.update = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Error updating Language with id=${id}`,
       });
@@ -133,7 +136,7 @@ exports.delete = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      logger.error(err);
       res.status(500).send({
         message: `Could not delete Language with id=${id}`,
       });

@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const { checkOtp, removeOtp } = require('../utils/otp');
 const gcs = require('../utils/gcs');
 const db = require('../models');
@@ -9,6 +10,7 @@ exports.getBusinessTypes = async (req, res) => {
       data,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -31,6 +33,7 @@ exports.getVerification = async (req, res) => {
       data: shop,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -194,6 +197,7 @@ exports.createVerification = async (req, res) => {
       data: createdShop,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -390,6 +394,7 @@ exports.updateVerification = async (req, res) => {
       data: shop,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -459,6 +464,7 @@ exports.getLogisticsServices = async (req, res) => {
       data: updatedLogisticsServices,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -497,6 +503,7 @@ exports.subscribeLogisticsServices = async (req, res) => {
       data: true,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -535,6 +542,7 @@ exports.unsubscribeLogisticsServices = async (req, res) => {
       data: true,
     });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });
@@ -554,7 +562,6 @@ exports.estimateShippingFee = async (req, res) => {
   const calculateShippingFee = (serviceId, weight, width, height, length) => {
     const volumetricWeight = (length * width * height) / 6000;
     const finalWeight = Math.max(weight / 1000, volumetricWeight);
-    console.log(volumetricWeight);
     let fee = baseFee(serviceId);
     fee += weightFee(finalWeight);
     return fee;
@@ -571,6 +578,7 @@ exports.estimateShippingFee = async (req, res) => {
     const fee = calculateShippingFee(serviceId, weight, width, height, length);
     res.json({ estimatedShippingFee: fee });
   } catch (err) {
+    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

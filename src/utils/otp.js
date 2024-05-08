@@ -1,5 +1,6 @@
 const dayjs = require('dayjs');
 const { generateRandomNumber } = require('./utils');
+const logger = require('./logger');
 const db = require('../models');
 
 require('dotenv').config();
@@ -16,7 +17,7 @@ exports.createOtp = async (receiver) => {
     }
     return code;
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
   return false;
 };
@@ -43,7 +44,7 @@ exports.checkOtp = async (receiver, code) => {
       return true;
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
   return false;
 };
@@ -62,7 +63,7 @@ exports.removeOtp = async (receiver) => {
       return true;
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
   return false;
 };
