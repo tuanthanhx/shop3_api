@@ -1,21 +1,28 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bodyParserErrorHandler = require('express-body-parser-error-handler');
+const https = require('https');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
-const db = require('./src/models');
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
 const { handleQueries, validateRules } = require('./src/middlewares/validators');
+const db = require('./src/models');
+
 require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
-const baseUrl = env === 'development' ? process.env.APP_URL_DEV : APP_URL_PROD;
+const baseUrl = env === 'production' ? APP_URL_PROD : process.env.APP_URL_DEV;
+
+const sslOptions = {
+  key: env === 'production' ? fs.readFileSync(process.env.SSL_KEY_FILE ?? '') : null,
+  cert: env === 'production' ? fs.readFileSync(process.env.SSL_CERT_FILE ?? '') : null,
+};
 
 let corsOptions = {};
-if (env !== 'development') {
+if (env === 'production') {
   corsOptions = {
     origin: process.env.ALLOWED_ORIGINS.split(','),
   };
@@ -46,11 +53,15 @@ const options = {
       },
       {
         url: `${baseUrl}/docs/api_seller.yaml`,
-        name: 'Sellers',
+        name: 'Seller',
       },
       {
         url: `${baseUrl}/docs/api_user.yaml`,
-        name: 'Users',
+        name: 'User',
+      },
+      {
+        url: `${baseUrl}/docs/api_public.yaml`,
+        name: 'Public',
       },
     ],
   },
@@ -86,10 +97,14 @@ fs.readdirSync(routesDir)
   });
 
 const startServer = () => new Promise((resolve) => {
-  const server = app.listen(port, () => {
-    if (env === 'development' || env === 'production') {
-      console.info(`Server is running by ${env} mode on port ${port}`);
-    }
+  let server;
+  if (env === 'production') {
+    server = https.createServer(sslOptions, app);
+  } else {
+    server = app;
+  }
+  server.listen(port, () => {
+    console.info(`Server is running on port ${port}`);
     resolve(server);
   });
 });

@@ -5,12 +5,13 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/me', users.findMe);
+  router.get('/me', users.findMe); // TODO : Move this to common, and other to admin APIs later.
+
   router.get('/', users.findAll);
   router.get('/:id', users.findOne);
   router.post('/', users.create);
   router.put('/:id', users.update);
   router.delete('/:id', users.delete);
 
-  app.use(`/api/${apiVersion}/users`, router);
+  app.use(`/api-seller/${apiVersion}/users`, router);
 };

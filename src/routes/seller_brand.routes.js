@@ -8,5 +8,5 @@ module.exports = (app) => {
   router.get('/', brands.findAll);
   router.post('/', brands.create);
 
-  app.use(`/api/${apiVersion}/brands`, router);
+  app.use(`/api-seller/${apiVersion}/brands`, router);
 };

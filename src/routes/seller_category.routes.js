@@ -13,5 +13,5 @@ module.exports = (app) => {
 
   router.get('/:id/attributes', categories.findAllAttributes);
 
-  app.use(`/api/${apiVersion}/categories`, router);
+  app.use(`/api-seller/${apiVersion}/categories`, router);
 };

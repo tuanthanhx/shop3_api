@@ -9,5 +9,5 @@ module.exports = (app) => {
   router.post('/email', rules.registerByEmail, register.registerByEmail);
   router.post('/phone', rules.registerByPhone, register.registerByPhone);
 
-  app.use(`/api/${apiVersion}/register`, router);
+  app.use(`/api-common/${apiVersion}/register`, router);
 };

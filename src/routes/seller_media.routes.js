@@ -21,5 +21,5 @@ module.exports = (app) => {
     { name: 'file', maxCount: 1 },
   ]), rules.uploadProductVariantImage, media.uploadProductVariantImage);
 
-  app.use(`/api/${apiVersion}/media`, router);
+  app.use(`/api-seller/${apiVersion}/media`, router);
 };

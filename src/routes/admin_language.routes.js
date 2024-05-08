@@ -11,5 +11,5 @@ module.exports = (app) => {
   router.put('/:id', languages.update);
   router.delete('/:id', languages.delete);
 
-  app.use(`/api/${apiVersion}/languages`, router);
+  app.use(`/api-admin/${apiVersion}/languages`, router);
 };

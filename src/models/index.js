@@ -10,7 +10,7 @@ const dbConfig = dbConfigs[env];
 const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
   host: dbConfig.host,
   dialect: dbConfig.dialect,
-  logging: env === 'development' ? console.log : false,
+  logging: false, // env === 'development' ? console.log : false,
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,

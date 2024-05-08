@@ -12,5 +12,5 @@ module.exports = (app) => {
   router.put('/:id', currencies.update);
   router.delete('/:id', currencies.delete);
 
-  app.use(`/api/${apiVersion}/currencies`, router);
+  app.use(`/api-admin/${apiVersion}/currencies`, router);
 };

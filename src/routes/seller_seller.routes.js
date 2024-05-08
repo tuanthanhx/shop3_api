@@ -38,5 +38,5 @@ module.exports = (app) => {
     { name: 'corporateCompanyRegistrationDocument3', maxCount: 1 },
   ]), rules.updateVerification, sellers.updateVerification);
 
-  app.use(`/api/${apiVersion}/sellers`, router);
+  app.use(`/api-seller/${apiVersion}/sellers`, router);
 };

@@ -18,5 +18,5 @@ module.exports = (app) => {
   router.post('/bulk_delete', products.bulkDeleteProducts);
   router.post('/bulk_recover', products.bulkRecoverProducts);
 
-  app.use(`/api/${apiVersion}/products`, router);
+  app.use(`/api-seller/${apiVersion}/products`, router);
 };

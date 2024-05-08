@@ -17,5 +17,5 @@ module.exports = (app) => {
   router.post('/generate_otp/phone', rules.generateOtpByPhone, auth.generateOtpByPhone);
   router.post('/confirm_otp', rules.confirmOtp, auth.confirmOtp);
 
-  app.use(`/api/${apiVersion}/auth`, router);
+  app.use(`/api-common/${apiVersion}/auth`, router);
 };
