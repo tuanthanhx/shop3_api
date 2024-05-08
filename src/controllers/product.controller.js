@@ -1,4 +1,4 @@
-const { generateUniqueId, isOnlyUpdateProductVariants } = require('../utils/utils');
+const { generateUniqueId, isOnlyUpdateProductVariants, isValidJson } = require('../utils/utils');
 const logger = require('../utils/logger');
 const db = require('../models');
 
@@ -176,13 +176,28 @@ exports.index = async (req, res) => {
         };
       });
 
+      const tryParseJSON = (jsonString) => {
+        try {
+          return JSON.parse(jsonString);
+        } catch (e) {
+          return jsonString;
+        }
+      };
+
+      const productAttributes = rowData.productAttributes.map((attr) => ({
+        name: attr.name,
+        value: tryParseJSON(attr.value),
+      }));
+
       delete rowData.variants;
       delete rowData.productVariants;
+      delete rowData.productAttributes;
 
       return {
         ...rowData,
         variants,
         productVariants,
+        productAttributes,
       };
     });
 
@@ -306,14 +321,29 @@ exports.show = async (req, res) => {
       };
     });
 
+    const tryParseJSON = (jsonString) => {
+      try {
+        return JSON.parse(jsonString);
+      } catch (e) {
+        return jsonString;
+      }
+    };
+
+    const formattedProductAttributes = product.productAttributes.map((attr) => ({
+      name: attr.name,
+      value: tryParseJSON(attr.value),
+    }));
+
     const productObject = product.toJSON();
     delete productObject.variants;
     delete productObject.productVariants;
+    delete productObject.productAttributes;
 
     const responseObject = {
       ...productObject,
       variants: formattedVariants,
       productVariants: formattedProductVariants,
+      productAttributes: formattedProductAttributes,
     };
 
     res.status(200).json({
