@@ -699,9 +699,7 @@ exports.update = async (req, res) => {
           await Promise.all([deleteOptionsPromise, ...updateOptionsPromise]);
           return true;
         }
-        // No update for this variant, so destroy it and its options
-        await db.option.destroy({ where: { variantId: variant.id } });
-        await db.product_variant.destroy({ where: { variantId: variant.id } });
+        // No update for this variant, so destroy it (its options will be cascade removed)
         return variant.destroy();
       });
 

@@ -82,7 +82,7 @@ db.option.belongsTo(db.product);
 db.product.hasMany(db.product_variant, { as: 'productVariants', onDelete: 'CASCADE' });
 db.product_variant.belongsTo(db.product);
 
-db.variant.hasMany(db.option);
+db.variant.hasMany(db.option, { onDelete: 'CASCADE' });
 db.option.belongsTo(db.variant);
 
 db.product_variant.belongsToMany(db.option, { through: 'product_variants_maps' });
@@ -91,7 +91,7 @@ db.option.belongsToMany(db.product_variant, { through: 'product_variants_maps' }
 db.category.belongsToMany(db.attribute, { through: 'category_attribute_maps' });
 db.attribute.belongsToMany(db.category, { through: 'category_attribute_maps' });
 
-db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attributeValues' });
+db.attribute.hasMany(db.attribute_value, { foreignKey: 'attributeId', as: 'attributeValues', onDelete: 'CASCADE' });
 db.attribute_value.belongsTo(db.attribute, { foreignKey: 'attributeId' });
 
 db.logistics_service.belongsToMany(db.shop, { through: 'logistics_services_shops_maps' });
