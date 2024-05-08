@@ -1557,6 +1557,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+        - bearerAuth: []
 
   /products/bulk_deactivate:
     post:
@@ -1584,6 +1586,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+        - bearerAuth: []
 
 
   /products/bulk_delete:
@@ -1612,6 +1616,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+        - bearerAuth: []
 
   /products/bulk_recover:
     post:
@@ -1639,6 +1645,8 @@ paths:
           description: Bad Request
         "500":
           description: Internal Server Error
+      security:
+        - bearerAuth: []
 
   /sellers/business_types:
     get:
@@ -1960,6 +1968,8 @@ paths:
       summary: Subscribe to a shipping service
       tags:
         - Sellers
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1992,6 +2002,8 @@ paths:
       summary: Unsubscribe to a shipping service
       tags:
         - Sellers
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -2023,6 +2035,8 @@ paths:
       summary: Estimate shipping fee
       tags:
         - Sellers
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
