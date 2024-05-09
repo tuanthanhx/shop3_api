@@ -11,6 +11,7 @@
     "seed": "cd src && npx sequelize-cli db:seed:all",
     "test:sync": "cross-env NODE_ENV=test node jest.sync.js",
     "test:seed": "cd src && npx sequelize-cli db:seed:all --env=test",
+    "test:dry": "cross-env NODE_ENV=test jest --detectOpenHandles",
     "test": "cross-env NODE_ENV=test npm run test:sync && npm run test:seed && jest --detectOpenHandles"
   },
   "nodemonConfig": {

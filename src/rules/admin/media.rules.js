@@ -15,9 +15,10 @@ exports.uploadFiles = [
             throw new Error('Each product image must be less than 10MB');
           }
         });
+        return true;
       }
     }
-    return true;
+    throw new Error('No files provided.');
   }),
   validateRules,
   handleMulterErrors,

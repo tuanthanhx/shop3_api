@@ -19,9 +19,10 @@ exports.uploadProductImages = [
             throw new Error('Each product image must be in JPEG or PNG format');
           }
         });
+        return true;
       }
     }
-    return true;
+    throw new Error('No files was provided.');
   }),
   validateRules,
   handleMulterErrors,
@@ -39,8 +40,9 @@ exports.uploadProductVideo = [
       if (!['video/mp4', 'video/quicktime'].includes(fileType)) {
         throw new Error('Product video must be in MP4 or QuickTime format');
       }
+      return true;
     }
-    return true;
+    throw new Error('No file was provided.');
   }),
   validateRules,
   handleMulterErrors,
@@ -58,8 +60,9 @@ exports.uploadProductVariantImage = [
       if (!['image/jpeg', 'image/png'].includes(fileType)) {
         throw new Error('Variant image must be in JPEG or PNG format');
       }
+      return true;
     }
-    return true;
+    throw new Error('No file was provided.');
   }),
   validateRules,
   handleMulterErrors,
