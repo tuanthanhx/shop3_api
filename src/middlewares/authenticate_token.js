@@ -15,7 +15,11 @@ exports.authenticateToken = (req, res, next) => {
     `/api-common/${apiVersion}/auth`,
     `/api-common/${apiVersion}/register`,
   ];
+  const adminPaths = [
+    '/api-admin',
+  ];
   const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
+  const isAdminPaths = adminPaths.some((path) => req.path.startsWith(path));
   if (req.path === '/' || (isPublicPaths && req.path !== `/api-common/${apiVersion}/auth/is_login`)) {
     return next();
   }
@@ -26,6 +30,11 @@ exports.authenticateToken = (req, res, next) => {
   try {
     const user = jwt.verify(token, accessTokenSecret);
     req.user = user;
+
+    if (isAdminPaths && user.userGroupId !== 6) {
+      return res.status(403).json({ error: 'You are not authorized to access this API' });
+    }
+
     return next();
   } catch (err) {
     return res.status(401).json({ error: 'Invalid token' });
