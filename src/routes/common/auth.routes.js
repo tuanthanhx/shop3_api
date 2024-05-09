@@ -6,7 +6,8 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/is_login', auth.isLogin); // OK
+  router.get('/is_login', auth.isLogin);
+  router.get('/me', auth.findMe);
   router.post('/refresh_token', rules.refreshToken, auth.refreshToken);
   router.post('/login/email', rules.loginByEmail, auth.loginByEmail);
   router.post('/login/phone', rules.loginByPhone, auth.loginByPhone);

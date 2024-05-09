@@ -1,11 +1,11 @@
-const logger = require('../utils/logger');
-const db = require('../models');
+const logger = require('../../utils/logger');
+const db = require('../../models');
 
 const User = db.user;
 const Shops = db.shop;
 const { Op } = db.Sequelize;
 
-exports.findAll = (req, res) => {
+exports.index = (req, res) => {
   const {
     name,
     email,
@@ -175,6 +175,8 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
   const { id } = req.params;
+
+  // TODO: Cannot selft-delete
 
   User.destroy({
     where: { id },

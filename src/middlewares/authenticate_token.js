@@ -20,7 +20,14 @@ exports.authenticateToken = (req, res, next) => {
   ];
   const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
   const isAdminPaths = adminPaths.some((path) => req.path.startsWith(path));
-  if (req.path === '/' || (isPublicPaths && req.path !== `/api-common/${apiVersion}/auth/is_login`)) {
+
+  if (
+    req.path === '/' || (
+      isPublicPaths
+      && req.path !== `/api-common/${apiVersion}/auth/is_login`
+      && req.path !== `/api-common/${apiVersion}/auth/me`
+    )
+  ) {
     return next();
   }
 

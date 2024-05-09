@@ -24,6 +24,31 @@ exports.isLogin = async (req, res) => {
   });
 };
 
+exports.findMe = async (req, res) => {
+  try {
+    console.log(req.user);
+    const { id } = req.user;
+    const foundUser = await db.user.findByPk(id);
+    if (!foundUser) {
+      res.status(404).send({
+        message: 'Cannot find user with the provided ID',
+      });
+      return;
+    }
+    const userObject = foundUser.toJSON();
+    const foundShop = await db.shop.findOne({ where: { userId: id } });
+    if (foundShop) {
+      userObject.shopId = foundShop.id;
+    }
+    res.send(userObject);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.loginByEmail = async (req, res) => {
   const { email, password } = req.body;
 
