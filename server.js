@@ -92,26 +92,32 @@ app.get('/', (req, res) => {
   });
 });
 
-const routesDir = `${__dirname}/src/routes`;
-fs.readdirSync(routesDir)
-  .filter((file) => file.endsWith('.routes.js'))
-  .forEach((file) => {
-    const routePath = path.join(routesDir, file);
-    const routes = require(routePath);
-    routes(app);
+const loadRoutes = (directory) => {
+  const items = fs.readdirSync(directory, { withFileTypes: true });
+  items.forEach((item) => {
+    const itemPath = path.join(directory, item.name);
+    if (item.isDirectory()) {
+      loadRoutes(itemPath);
+    } else if (item.name.endsWith('.routes.js')) {
+      const routes = require(itemPath);
+      routes(app);
+    }
   });
+};
+
+const routesDir = path.join(__dirname, 'src/routes');
+loadRoutes(routesDir);
 
 const startServer = () => new Promise((resolve) => {
-  let server;
-  if (env === 'production') {
-    server = https.createServer(sslOptions, app);
-  } else {
-    server = app;
-  }
-  server.listen(port, () => {
-    logger.info(`Server is running on port ${port}`);
+  const listenCallback = (server) => {
+    if (env !== 'test') {
+      logger.info(`Server is running by ${env} mode on port ${port}`);
+    }
     resolve(server);
-  });
+  };
+  const server = env === 'production'
+    ? https.createServer(sslOptions, app).listen(port, () => listenCallback(server))
+    : app.listen(port, () => listenCallback(server));
 });
 
 const closeServer = (server) => new Promise((resolve, reject) => {
@@ -119,7 +125,7 @@ const closeServer = (server) => new Promise((resolve, reject) => {
     if (err) {
       reject(err);
     } else {
-      if (env === 'development' || env === 'production') {
+      if (env !== 'test') {
         logger.info('Server closed');
       }
       resolve();

@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const UserGroup = sequelize.define('user_group', {
+  return sequelize.define('user_group', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -10,6 +10,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return UserGroup;
 };

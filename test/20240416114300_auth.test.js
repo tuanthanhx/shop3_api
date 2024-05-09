@@ -5,10 +5,10 @@ require('dotenv').config();
 
 const api = `/api-common/${process.env.VERSION}`;
 
-describe('Register by Email', () => {
+describe('Register by Email XXX2', () => {
   it('Success', async () => {
     const body = {
-      email: 'incrxi-test-300@gmail.com',
+      email: 'incrxi-test-400@gmail.com',
       password: 'xxxxxx',
       passwordConfirm: 'xxxxxx',
       verificationCode: '000000',

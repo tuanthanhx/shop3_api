@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const users = require('../controllers/user.controller');
+  const users = require('../../controllers/user.controller');
 
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';

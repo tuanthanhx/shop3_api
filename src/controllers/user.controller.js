@@ -102,7 +102,7 @@ exports.findMe = async (req, res) => {
   }
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   if (!req.body.name) {
     res.status(400).send({
       message: 'Name cannot be empty',
@@ -125,6 +125,14 @@ exports.create = (req, res) => {
     is_active: true,
     last_login: null,
   };
+
+  const foundUser = await db.user.find({ where: email });
+  if (foundUser) {
+    res.status(409).send({
+      message: 'Duplicated email or phone',
+    });
+    return;
+  }
 
   User.create(object)
     .then((data) => {

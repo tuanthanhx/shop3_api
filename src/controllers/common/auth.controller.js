@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const logger = require('../utils/logger');
-const { createOtp, checkOtp, removeOtp } = require('../utils/otp');
-const { sendEmail } = require('../utils/email');
-const db = require('../models');
+const logger = require('../../utils/logger');
+const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
+const { sendEmail } = require('../../utils/email');
+const db = require('../../models');
 
 require('dotenv').config();
 
@@ -15,7 +15,7 @@ const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 exports.isLogin = async (req, res) => {
   if (req.user) {
     res.send({
-      data: true,
+      data: req.user,
     });
     return;
   }

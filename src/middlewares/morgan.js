@@ -1,15 +1,15 @@
 const morgan = require('morgan');
 const logger = require('../utils/logger');
 
-const stream = {
-  // Use the http severity
-  write: (message) => logger.http(message),
-};
+// const stream = {
+//   // Use the http severity
+//   write: (message) => logger.http(message),
+// };
 
-const skip = () => {
-  const env = process.env.NODE_ENV || 'development';
-  return env !== 'development';
-};
+// const skip = () => {
+//   const env = process.env.NODE_ENV || 'development';
+//   return env !== 'development';
+// };
 
 // const morganMiddleware = morgan(
 //   // Define message format string (this is the default one).

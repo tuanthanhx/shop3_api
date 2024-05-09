@@ -1,5 +1,6 @@
 module.exports = {
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['./jest.setup.js'],
   reporters: [
     'default',
     ['jest-html-reporters', {

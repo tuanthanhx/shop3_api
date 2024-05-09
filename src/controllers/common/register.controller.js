@@ -1,6 +1,6 @@
-const logger = require('../utils/logger');
-const { checkOtp, removeOtp } = require('../utils/otp');
-const db = require('../models');
+const logger = require('../../utils/logger');
+const { checkOtp, removeOtp } = require('../../utils/otp');
+const db = require('../../models');
 const auth = require('./auth.controller');
 
 const User = db.user;
@@ -22,7 +22,7 @@ exports.registerByEmail = async (req, res) => {
 
     const foundUser = await User.findOne({ where: { email } });
     if (foundUser) {
-      res.status(400).send({
+      res.status(409).send({
         message: 'An user with the provided email already exists',
       });
       return;
@@ -61,7 +61,7 @@ exports.registerByPhone = async (req, res) => {
 
     const foundUser = await User.findOne({ where: { phone } });
     if (foundUser) {
-      res.status(400).send({
+      res.status(409).send({
         message: 'An user with the provided phone already exists',
       });
       return;

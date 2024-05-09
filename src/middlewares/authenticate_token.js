@@ -16,7 +16,7 @@ exports.authenticateToken = (req, res, next) => {
     `/api-common/${apiVersion}/register`,
   ];
   const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
-  if (req.path === '/' || (isPublicPaths && req.path !== `/api/${apiVersion}/auth/is_login`)) {
+  if (req.path === '/' || (isPublicPaths && req.path !== `/api-common/${apiVersion}/auth/is_login`)) {
     return next();
   }
 

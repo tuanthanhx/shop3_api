@@ -1,7 +1,7 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const products = require('../controllers/product.controller');
-  const rules = require('../rules/product.rules');
+  const products = require('../../controllers/product.controller');
+  const rules = require('../../rules/product.rules');
 
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';

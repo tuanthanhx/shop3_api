@@ -44,8 +44,8 @@ db.user_refresh_token.belongsTo(db.user);
 db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
 db.country.hasMany(db.user_address, { foreignKey: 'countryCode' });
 
-db.user.belongsTo(db.user_group, { foreignKey: 'userGroupId' });
-db.user_group.hasMany(db.user, { foreignKey: 'userGroupId' });
+db.user.belongsTo(db.user_group);
+db.user_group.hasMany(db.user);
 
 db.user.hasOne(db.shop);
 db.shop.belongsTo(db.user, { foreignKey: 'userId' });

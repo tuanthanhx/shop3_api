@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const languages = require('../controllers/language.controller');
+  const languages = require('../../controllers/language.controller');
 
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
