@@ -17,7 +17,7 @@ require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
-const baseUrl = env === 'production' ? APP_URL_PROD : process.env.APP_URL_DEV;
+const baseUrl = env === 'production' ? process.env.APP_URL_PROD : process.env.APP_URL_DEV;
 
 const sslOptions = {
   key: env === 'production' ? fs.readFileSync(process.env.SSL_KEY_FILE ?? '') : null,
@@ -77,7 +77,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 db.sequelize.sync()
   .then(() => {
-    if (env === 'development') {
+    if (env !== 'test') {
       logger.info('Synced DB.');
     }
   })
