@@ -25,7 +25,7 @@ const sslOptions = {
 };
 
 let corsOptions = {};
-if (env === 'production') {
+if (env === 'production' && process.env.ALLOWED_ORIGINS) {
   corsOptions = {
     origin: process.env.ALLOWED_ORIGINS.split(','),
   };
@@ -115,7 +115,7 @@ const startServer = () => new Promise((resolve) => {
     }
     resolve(server);
   };
-  const server = env === 'production'
+  const server = env === 'production' && process.env.SSL_ENABLED === 'true'
     ? https.createServer(sslOptions, app).listen(port, () => listenCallback(server))
     : app.listen(port, () => listenCallback(server));
 });
