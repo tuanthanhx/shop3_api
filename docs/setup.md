@@ -50,3 +50,9 @@ x sequelize db:seed                           Run specified seeder (--seed somet
   sequelize model:create                      Generates a model and its migration
 x sequelize seed:generate                     Generates a new seed file (--name something)
   sequelize seed:create                       Generates a new seed file
+
+
+TEST:
+
+  npm run test
+  npm run test -- test/20240416114200_register.test.js
