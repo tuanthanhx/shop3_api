@@ -5,6 +5,7 @@ exports.index = async (req, res) => {
   try {
     const {
       name,
+      code,
       page,
       limit,
     } = req.query;
@@ -13,12 +14,15 @@ exports.index = async (req, res) => {
     if (name) {
       condition.name = { [db.Sequelize.like]: `%${name}%` };
     }
+    if (code) {
+      condition.code = { [db.Sequelize.Op.like]: `%${code}%` };
+    }
 
     const pageNo = parseInt(page, 10) || 1;
     const limitPerPage = parseInt(limit, 10) || 10;
     const offset = (pageNo - 1) * limitPerPage;
 
-    const data = await db.language.findAndCountAll({
+    const data = await db.currency.findAndCountAll({
       where: condition,
       limit: limitPerPage,
       offset,
@@ -45,17 +49,17 @@ exports.show = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const language = await db.language.findByPk(id);
+    const currency = await db.currency.findByPk(id);
 
-    if (!language) {
+    if (!currency) {
       res.status(404).send({
-        message: 'Language not found',
+        message: 'Currency not found',
       });
       return;
     }
 
     res.json({
-      data: language,
+      data: currency,
     });
   } catch (err) {
     logger.error(err);
@@ -69,23 +73,35 @@ exports.create = async (req, res) => {
   try {
     const {
       name,
+      code,
+      symbol,
     } = req.body;
 
-    const duplicate = await db.language.findOne({ where: { name } });
+    const duplicate = await db.currency.findOne({
+      where: {
+        [db.Sequelize.Op.or]: [
+          { name },
+          { code },
+        ],
+      },
+    });
+
     if (duplicate) {
       res.status(409).send({
-        message: 'Language name already exists',
+        message: 'Currency name or code already exists',
       });
       return;
     }
 
     const object = {
       name,
+      code,
+      symbol,
     };
 
-    const language = await db.language.create(object);
+    const currency = await db.currency.create(object);
     res.json({
-      data: language,
+      data: currency,
     });
   } catch (err) {
     logger.error(err);
@@ -100,37 +116,44 @@ exports.update = async (req, res) => {
     const { id } = req.params;
     const {
       name,
+      code,
+      symbol,
     } = req.body;
 
-    const language = await db.language.findOne({ where: { id } });
-    if (!language) {
+    const currency = await db.currency.findOne({ where: { id } });
+    if (!currency) {
       res.status(404).send({
-        message: 'Language not found',
+        message: 'Currency not found',
       });
       return;
     }
 
-    const duplicate = await db.language.findOne({
+    const duplicate = await db.currency.findOne({
       where: {
-        name,
+        [db.Sequelize.Op.or]: [
+          { name },
+          { code },
+        ],
         id: { [db.Sequelize.Op.ne]: id },
       },
     });
 
     if (duplicate) {
       res.status(409).send({
-        message: 'Language name already exists',
+        message: 'Currency name or code already exists',
       });
       return;
     }
 
     const object = {
       name,
+      code,
+      symbol,
     };
 
-    await language.update(object);
+    await currency.update(object);
     res.json({
-      data: language,
+      data: currency,
     });
   } catch (err) {
     logger.error(err);
@@ -144,20 +167,20 @@ exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const language = await db.language.findByPk(id);
+    const currency = await db.currency.findByPk(id);
 
-    if (!language) {
+    if (!currency) {
       res.status(404).send({
-        message: 'Language not found',
+        message: 'Currency not found',
       });
       return;
     }
 
-    await language.destroy();
+    await currency.destroy();
 
     res.json({
       data: {
-        message: 'Language deleted successfully',
+        message: 'Currency deleted successfully',
       },
     });
   } catch (err) {
