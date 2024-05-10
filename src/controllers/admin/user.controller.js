@@ -1,99 +1,72 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
-const User = db.user;
-const Shops = db.shop;
 const { Op } = db.Sequelize;
 
-exports.index = (req, res) => {
-  const {
-    name,
-    email,
-    phone,
-    page,
-    limit,
-  } = req.query;
-
-  const condition = {};
-  if (name) {
-    condition.name = { [Op.like]: `%${name}%` };
-  }
-  if (email) {
-    condition.email = { [Op.like]: `%${email}%` };
-  }
-  if (phone) {
-    condition.phone = { [Op.like]: `%${phone}%` };
-  }
-
-  const pageNo = parseInt(page, 10) || 1;
-  const limitPerPage = parseInt(limit, 10) || 10;
-  const offset = (pageNo - 1) * limitPerPage;
-
-  User.findAndCountAll({
-    where: condition,
-    limit: limitPerPage,
-    offset,
-  })
-    .then((data) => {
-      const { count, rows } = data;
-      const totalPages = Math.ceil(count / limitPerPage);
-      res.send({
-        totalItems: count,
-        totalPages,
-        currentPage: pageNo,
-        data: rows,
-      });
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred',
-      });
-    });
-};
-
-exports.findOne = (req, res) => {
-  const { id } = req.params;
-
-  User.findByPk(id)
-    .then((data) => {
-      if (data) {
-        res.send(data);
-      } else {
-        res.status(404).send({
-          message: `Cannot find User with id=${id}`,
-        });
-      }
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send({
-        message: `Error retrieving User with id=${id}`,
-      });
-    });
-};
-
-exports.findMe = async (req, res) => {
-  const { id } = req.user;
-
+exports.index = async (req, res) => {
   try {
-    const foundUser = await User.findByPk(id);
-    if (!foundUser) {
+    const {
+      name,
+      email,
+      phone,
+      page,
+      limit,
+    } = req.query;
+
+    const condition = {};
+    if (name) {
+      condition.name = { [Op.like]: `%${name}%` };
+    }
+    if (email) {
+      condition.email = { [Op.like]: `%${email}%` };
+    }
+    if (phone) {
+      condition.phone = { [Op.like]: `%${phone}%` };
+    }
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+    const offset = (pageNo - 1) * limitPerPage;
+
+    const data = await db.user.findAndCountAll({
+      where: condition,
+      limit: limitPerPage,
+      offset,
+    });
+
+    const { count, rows } = data;
+    const totalPages = Math.ceil(count / limitPerPage);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: pageNo,
+      data: rows,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.show = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await db.user.findByPk(id);
+
+    if (!user) {
       res.status(404).send({
-        message: 'Cannot find user with the provided ID',
+        message: 'User not found',
       });
       return;
     }
 
-    const userObject = foundUser.toJSON();
-
-    const foundShop = await Shops.findOne({ where: { userId: id } });
-    if (foundShop) {
-      userObject.shopId = foundShop.id;
-    }
-
-    res.send(userObject);
+    res.json({
+      data: user,
+    });
   } catch (err) {
     logger.error(err);
     res.status(500).send({
@@ -103,99 +76,260 @@ exports.findMe = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  if (!req.body.name) {
-    res.status(400).send({
-      message: 'Name cannot be empty',
-    });
-    return;
-  }
+  try {
+    const {
+      email,
+      phone,
+      password,
+      name,
+      avatar,
+      gender,
+      languageId,
+      currencyId,
+      isActive,
+    } = req.body;
 
-  const object = {
-    password: req.body.password,
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    avatar: req.body.avatar,
-    gender: req.body.gender,
-    dob: req.body.dob,
-    language_id: req.body.language_id,
-    currency_id: req.body.currency_id,
-    is_phone_validated: false,
-    is_email_validated: false,
-    is_active: true,
-    last_login: null,
-  };
-
-  const foundUser = await db.user.find({ where: email });
-  if (foundUser) {
-    res.status(409).send({
-      message: 'Duplicated email or phone',
-    });
-    return;
-  }
-
-  User.create(object)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send({
-        message:
-          err.message || 'Some error occurred',
+    const user = await db.user.findOne({ where: { email } });
+    if (user) {
+      res.status(409).send({
+        message: 'User exists with the provided email or phone',
       });
+      return;
+    }
+
+    const object = {
+      email,
+      phone,
+      password,
+      userGroupId: 2, // Registered Users
+      name,
+      avatar,
+      gender,
+      languageId,
+      currencyId,
+      isActive,
+    };
+
+    const createdUser = await db.user.create(object);
+    res.json({
+      data: createdUser,
     });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
 };
 
-exports.update = (req, res) => {
-  const { id } = req.params;
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      email,
+      phone,
+      password,
+      name,
+      avatar,
+      gender,
+      languageId,
+      currencyId,
+      isActive,
+    } = req.body;
 
-  const object = req.body;
-
-  User.update(object, {
-    where: { id },
-  })
-    .then(async ([num]) => {
-      if (num > 0) {
-        const data = await User.findByPk(id);
-        res.send(data);
-      } else {
-        res.send({
-          message: `Cannot updated User with id=${id}`,
-        });
-      }
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send({
-        message: `Error updating User with id=${id}`,
+    const user = await db.user.findOne({ where: { id } });
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
       });
+      return;
+    }
+
+    const object = {
+      email,
+      phone,
+      password,
+      name,
+      avatar,
+      gender,
+      languageId,
+      currencyId,
+      isActive,
+    };
+
+    await user.update(object);
+    res.json({
+      data: user,
     });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
 };
 
-exports.delete = (req, res) => {
-  const { id } = req.params;
+exports.activate = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  // TODO: Cannot selft-delete
-
-  User.destroy({
-    where: { id },
-  })
-    .then((num) => {
-      if (num > 0) {
-        res.send({
-          message: 'User was deleted successfully!',
-        });
-      } else {
-        res.send({
-          message: `Cannot delete User with id=${id}`,
-        });
-      }
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send({
-        message: `Could not delete User with id=${id}`,
+    const user = await db.user.findOne({ where: { id } });
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
       });
+      return;
+    }
+
+    await user.update({
+      isActive: true,
     });
+    res.json({
+      data: user,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.deactivate = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log(id);
+
+    const user = await db.user.findOne({ where: { id } });
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
+      });
+      return;
+    }
+
+    await user.update({
+      isActive: false,
+    });
+    res.json({
+      data: user,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await db.user.findByPk(id);
+
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const shop = await db.shop.findOne({ where: { userId: user.id } });
+    if (shop) {
+      res.status(404).send({
+        message: 'User has a shop',
+      });
+      return;
+    }
+
+    await user.destroy();
+
+    res.json({
+      data: {
+        message: 'User deleted successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.bulkActivate = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
+
+    console.log(ids);
+
+    const result = await db.user.update(
+      { isActive: true },
+      { where: { id: ids } },
+    );
+
+    res.status(200).json({
+      message: `${result[0]} users have been successfully activated.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.bulkDeactivate = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
+
+    const result = await db.user.update(
+      { isActive: false },
+      { where: { id: ids } },
+    );
+
+    res.status(200).json({
+      message: `${result[0]} users have been successfully deactivated.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.bulkDelete = async (req, res) => {
+  try {
+    const {
+      ids,
+    } = req.body;
+
+    const shops = await db.shop.findAll({
+      where: { userId: ids },
+    });
+
+    if (shops?.length) {
+      res.status(404).send({
+        message: 'Some users have shop, cannot delete',
+      });
+      return;
+    }
+
+    const numDeletedRows = await db.user.destroy(
+      { where: { id: ids } },
+    );
+
+    res.status(200).json({
+      message: `${numDeletedRows} user${numDeletedRows !== 1 ? 's' : ''} have been successfully deleted.`,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
 };

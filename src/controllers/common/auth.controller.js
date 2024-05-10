@@ -28,19 +28,21 @@ exports.findMe = async (req, res) => {
   try {
     console.log(req.user);
     const { id } = req.user;
-    const foundUser = await db.user.findByPk(id);
-    if (!foundUser) {
+    const user = await db.user.findByPk(id);
+    if (!user) {
       res.status(404).send({
-        message: 'Cannot find user with the provided ID',
+        message: 'User not found',
       });
       return;
     }
-    const userObject = foundUser.toJSON();
-    const foundShop = await db.shop.findOne({ where: { userId: id } });
-    if (foundShop) {
-      userObject.shopId = foundShop.id;
+    const userObject = user.toJSON();
+    const shop = await db.shop.findOne({ where: { userId: id } });
+    if (shop) {
+      userObject.shopId = shop.id;
     }
-    res.send(userObject);
+    res.json({
+      data: userObject,
+    });
   } catch (err) {
     logger.error(err);
     res.status(500).send({
@@ -138,6 +140,29 @@ exports.refreshToken = async (req, res) => {
       res.status(401).send({ error: 'Refresh token is invalid' });
       return;
     }
+
+    // Handle remove expired token (below is example code)
+    // if (verifyExpiration(refreshToken)) {
+    //   db.authToken.destroy({ where: { id: refreshToken.id } });
+    //   res.status(403).send("Refresh token was expired. Please make a new sign in request");
+    //   return;
+    // }
+
+    // authToken.createToken = async function (user) {
+    //   let expiredAt = new Date();
+    //   expiredAt.setSeconds(expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION);
+    //   let _token = uuidv4();
+    //   let refreshToken = await authToken.create({
+    //     token: _token,
+    //     user: user.id,
+    //     expiryDate: expiredAt.getTime(),
+    //   });
+    //   return refreshToken.token;
+    // };
+
+    // authToken.verifyExpiration = (token) => {
+    //   return token.expiryDate.getTime() < new Date().getTime();
+    // };
 
     jwt.verify(refreshToken, refreshTokenSecret, (err, user) => {
       if (err) {
