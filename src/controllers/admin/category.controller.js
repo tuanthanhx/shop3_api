@@ -1,11 +1,11 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
-exports.findAll = async (req, res) => {
-  const { parentId } = req.query;
-  let categories;
-
+exports.index = async (req, res) => {
   try {
+    const { parentId } = req.query;
+    let categories;
+
     if (parentId) {
       categories = await db.category.findAll({
         where: { parentId },
@@ -17,6 +17,30 @@ exports.findAll = async (req, res) => {
     }
     res.json({
       data: categories,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.show = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await db.category.findByPk(id);
+
+    if (!category) {
+      res.status(404).send({
+        message: 'Category not found',
+      });
+      return;
+    }
+
+    res.json({
+      data: category,
     });
   } catch (err) {
     logger.error(err);

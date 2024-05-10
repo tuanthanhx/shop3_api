@@ -6,7 +6,8 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/', rules.findAll, categories.findAll);
+  router.get('/', rules.index, categories.index);
+  router.get('/:id', rules.show, categories.show);
   router.post('/', rules.create, categories.create);
   router.put('/:id', rules.update, categories.update);
   router.delete('/:id', rules.delete, categories.delete);

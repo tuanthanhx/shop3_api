@@ -1,7 +1,7 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
-exports.findAll = async (req, res) => {
+exports.index = async (req, res) => {
   try {
     const { parentId } = req.query;
     let categories;

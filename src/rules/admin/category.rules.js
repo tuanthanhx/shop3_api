@@ -1,9 +1,17 @@
 const { param, query, body } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
-exports.findAll = [
+exports.index = [
   query('parentId')
     .optional()
+    .toInt(),
+  validateRules,
+];
+
+exports.show = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
     .toInt(),
   validateRules,
 ];

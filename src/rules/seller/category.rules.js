@@ -1,7 +1,7 @@
 const { query } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
-exports.findAll = [
+exports.index = [
   query('parentId')
     .optional()
     .toInt(),
