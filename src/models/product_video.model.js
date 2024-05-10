@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const ProductVideo = sequelize.define('product_video', {
+  return sequelize.define('product_video', {
     file: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -7,6 +7,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return ProductVideo;
 };

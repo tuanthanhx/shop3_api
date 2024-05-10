@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const AttributeValue = sequelize.define('attribute_value', {
+  return sequelize.define('attribute_value', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -7,6 +7,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return AttributeValue;
 };

@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Variant = sequelize.define('variant', {
+  return sequelize.define('variant', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -7,6 +7,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Variant;
 };

@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const ProductStatus = sequelize.define('product_status', {
+  return sequelize.define('product_status', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -10,6 +10,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return ProductStatus;
 };

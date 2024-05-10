@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Verification = sequelize.define('verification', {
+  return sequelize.define('verification', {
     code: {
       type: Sequelize.STRING(6),
       allowNull: false,
@@ -11,6 +11,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Verification;
 };

@@ -1,11 +1,9 @@
 module.exports = function (sequelize, Sequelize) {
-  const Language = sequelize.define('language', {
+  return sequelize.define('language', {
     name: {
       type: Sequelize.STRING,
     },
   }, {
     paranoid: false,
   });
-
-  return Language;
 };

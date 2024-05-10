@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Currency = sequelize.define('currency', {
+  return sequelize.define('currency', {
     name: {
       type: Sequelize.STRING,
     },
@@ -12,6 +12,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Currency;
 };

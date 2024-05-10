@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const SellerBusinessType = sequelize.define('seller_business_type', {
+  return sequelize.define('seller_business_type', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -11,6 +11,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return SellerBusinessType;
 };

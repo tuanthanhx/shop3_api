@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Brand = sequelize.define('brand', {
+  return sequelize.define('brand', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -13,6 +13,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Brand;
 };

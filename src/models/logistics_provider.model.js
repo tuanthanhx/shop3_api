@@ -19,27 +19,6 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
-    // packageWeightMin: {
-    //   type: Sequelize.INTEGER,
-    // },
-    // packageWeightMax: {
-    //   type: Sequelize.INTEGER,
-    // },
-    // packageWidthMax: {
-    //   type: Sequelize.INTEGER,
-    // },
-    // packageHeightMax: {
-    //   type: Sequelize.INTEGER,
-    // },
-    // packageLengthMax: {
-    //   type: Sequelize.INTEGER,
-    // },
-    // codSupported: {
-    //   type: Sequelize.BOOLEAN,
-    // },
-    // cpSupported: {
-    //   type: Sequelize.BOOLEAN,
-    // },
   }, {
     paranoid: false,
   });

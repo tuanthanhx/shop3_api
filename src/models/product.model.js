@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Product = sequelize.define('product', {
+  return sequelize.define('product', {
     uniqueId: {
       type: Sequelize.STRING(20),
       allowNull: false,
@@ -44,6 +44,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Product;
 };

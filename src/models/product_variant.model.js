@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const ProductVariant = sequelize.define('product_variant', {
+  return sequelize.define('product_variant', {
     price: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
@@ -15,6 +15,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return ProductVariant;
 };

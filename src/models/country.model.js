@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Country = sequelize.define('country', {
+  return sequelize.define('country', {
     code: {
       type: Sequelize.STRING(2),
       allowNull: false,
@@ -12,6 +12,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Country;
 };

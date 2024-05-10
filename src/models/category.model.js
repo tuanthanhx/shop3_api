@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const Category = sequelize.define('category', {
+  return sequelize.define('category', {
     name: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -10,6 +10,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return Category;
 };

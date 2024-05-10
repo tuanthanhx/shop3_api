@@ -1,5 +1,5 @@
 module.exports = function (sequelize, Sequelize) {
-  const UserAddress = sequelize.define('user_address', {
+  return sequelize.define('user_address', {
     userId: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -26,6 +26,4 @@ module.exports = function (sequelize, Sequelize) {
   }, {
     paranoid: false,
   });
-
-  return UserAddress;
 };
