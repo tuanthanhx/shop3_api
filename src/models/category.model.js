@@ -4,6 +4,9 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    image: {
+      type: Sequelize.STRING,
+    },
     parentId: {
       type: Sequelize.INTEGER,
     },

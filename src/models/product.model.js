@@ -10,7 +10,7 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
     },
     description: {
-      type: Sequelize.TEXT,
+      type: Sequelize.TEXT('long'),
     },
     categoryId: {
       type: Sequelize.INTEGER,
