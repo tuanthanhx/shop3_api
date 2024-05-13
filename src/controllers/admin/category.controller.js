@@ -52,10 +52,15 @@ exports.show = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { name, parentId } = req.body;
+    const {
+      name,
+      image,
+      parentId,
+    } = req.body;
 
     const object = {
       name,
+      image,
       parentId,
     };
 
@@ -83,7 +88,11 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, parentId } = req.body;
+    const {
+      name,
+      image,
+      parentId,
+    } = req.body;
 
     if (id === parentId) {
       res.status(400).send({
@@ -110,6 +119,7 @@ exports.update = async (req, res) => {
 
     await category.update({
       name,
+      image,
       parentId,
     });
 

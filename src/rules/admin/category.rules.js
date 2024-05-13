@@ -20,6 +20,9 @@ exports.create = [
   body('name')
     .notEmpty()
     .withMessage('name is required'),
+  query('image')
+    .optional()
+    .trim(),
   query('parentId')
     .optional()
     .toInt(),
