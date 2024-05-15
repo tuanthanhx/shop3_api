@@ -7,6 +7,7 @@ const { Op } = db.Sequelize;
 exports.index = async (req, res) => {
   try {
     const { user } = req;
+    const isAdministrator = user.userGroupId === 6;
 
     const {
       keyword,
@@ -26,16 +27,17 @@ exports.index = async (req, res) => {
 
     const condition = {};
 
-    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
-    if (!foundShop) {
-      res.status(404).send({
-        message: 'Shop not found',
-      });
-      return;
+    if (!isAdministrator) {
+      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
+      if (!foundShop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      const shopId = foundShop.id;
+      condition.shopId = shopId;
     }
-    const shopId = foundShop.id;
-
-    condition.shopId = shopId;
 
     if (keyword) {
       condition[Op.or] = [
@@ -220,6 +222,8 @@ exports.show = async (req, res) => {
     const { id } = req.params;
     const { user } = req;
 
+    const isAdministrator = user.userGroupId === 6;
+
     const product = await db.product.findByPk(id, {
       include: [
         {
@@ -273,7 +277,6 @@ exports.show = async (req, res) => {
       return;
     }
 
-    const isAdministrator = user.userGroupId === 6;
     if (!isAdministrator) {
       const foundShop = await db.shop.findOne({ where: { userId: user.id } });
       if (!foundShop) {
@@ -767,10 +770,12 @@ exports.update = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
+exports.approve = async (req, res) => {
   try {
     const { id } = req.params;
     const { user } = req;
+
+    const isAdministrator = user.userGroupId === 6;
 
     const product = await db.product.findByPk(id);
     if (!product) {
@@ -780,27 +785,109 @@ exports.delete = async (req, res) => {
       return;
     }
 
-    const foundShop = await db.shop.findOne({ where: { userId: user.id } });
-    if (!foundShop) {
-      res.status(404).send({
-        message: 'Shop not found',
+    if (!isAdministrator) {
+      res.status(403).send({
+        message: 'Permission denied',
       });
       return;
     }
 
-    const shopId = foundShop.id;
-    if (product.shopId !== shopId) {
-      res.status(403).send({
-        message: 'You do not have permission to delete it',
+    await product.update({
+      productStatusId: 1,
+    });
+
+    res.json({
+      data: {
+        message: 'Approved successfully',
+      },
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.unapprove = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+
+    const isAdministrator = user.userGroupId === 6;
+
+    const product = await db.product.findByPk(id);
+    if (!product) {
+      res.status(404).send({
+        message: 'Product not found',
       });
       return;
+    }
+
+    if (!isAdministrator) {
+      res.status(403).send({
+        message: 'Permission denied',
+      });
+      return;
+    }
+
+    await product.update({
+      productStatusId: 3,
+    });
+
+    res.json({
+      data: {
+        message: 'Unapproved successfully',
+      },
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+
+    const isAdministrator = user.userGroupId === 6;
+
+    const product = await db.product.findByPk(id);
+    if (!product) {
+      res.status(404).send({
+        message: 'Product not found',
+      });
+      return;
+    }
+
+    if (!isAdministrator) {
+      const foundShop = await db.shop.findOne({ where: { userId: user.id } });
+      if (!foundShop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+
+      const shopId = foundShop.id;
+      if (product.shopId !== shopId) {
+        res.status(403).send({
+          message: 'Permission denied',
+        });
+        return;
+      }
     }
 
     await product.update({
       productStatusId: 6,
     });
 
-    res.status(204).end();
+    res.json({
+      data: {
+        message: 'Deleted successfully',
+      },
+    });
   } catch (err) {
     res.status(500).send({
       message: err.message || 'Some error occurred',
