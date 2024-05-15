@@ -1,7 +1,7 @@
-const logger = require('../utils/logger');
-const { checkOtp, removeOtp } = require('../utils/otp');
-const gcs = require('../utils/gcs');
-const db = require('../models');
+const logger = require('../../utils/logger');
+const { checkOtp, removeOtp } = require('../../utils/otp');
+const gcs = require('../../utils/gcs');
+const db = require('../../models');
 
 exports.getBusinessTypes = async (req, res) => {
   try {
