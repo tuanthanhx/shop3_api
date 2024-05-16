@@ -3,12 +3,28 @@ const db = require('../../models');
 
 exports.index = async (req, res) => {
   try {
-    const data = await db.shop.findAll({
+    const shops = await db.shop.findAll({
       where: { isSubmitted: true },
     });
 
-    res.send({
-      data,
+    res.json({
+      data: shops,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.show = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const shop = await db.shop.findByPk(id);
+
+    res.json({
+      data: shop,
     });
   } catch (err) {
     logger.error(err);

@@ -10,9 +10,8 @@
     "migrate": "cd src && npx sequelize-cli db:migrate",
     "seed": "cd src && npx sequelize-cli db:seed:all",
     "seed:production": "cd src && npx sequelize-cli db:seed:all --env production",
-    "test:sync": "cross-env NODE_ENV=test node jest.sync.js",
+    "test:sync": "cross-env NODE_ENV=test node ./test/setup/jest.sync.js",
     "test:seed": "cd src && npx sequelize-cli db:seed:all --env=test",
-    "test:dry": "cross-env NODE_ENV=test jest --detectOpenHandles",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "nodemonConfig": {

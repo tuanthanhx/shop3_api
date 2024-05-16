@@ -26,7 +26,6 @@ exports.isLogin = async (req, res) => {
 
 exports.findMe = async (req, res) => {
   try {
-    console.log(req.user);
     const { id } = req.user;
     const user = await db.user.findByPk(id);
     if (!user) {

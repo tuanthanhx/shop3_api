@@ -199,8 +199,6 @@ exports.deactivate = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log(id);
-
     const user = await db.user.findOne({ where: { id } });
     if (!user) {
       res.status(404).send({
@@ -264,8 +262,6 @@ exports.bulkActivate = async (req, res) => {
     const {
       ids,
     } = req.body;
-
-    console.log(ids);
 
     const result = await db.user.update(
       { isActive: true },

@@ -1,4 +1,4 @@
-const { startServer, closeServer } = require('./server');
+const { startServer, closeServer } = require('../../server');
 
 let server;
 
