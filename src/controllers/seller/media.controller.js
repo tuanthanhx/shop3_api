@@ -1,5 +1,5 @@
-const logger = require('../utils/logger');
-const gcs = require('../utils/gcs');
+const logger = require('../../utils/logger');
+const gcs = require('../../utils/gcs');
 
 exports.uploadProductImages = async (req, res) => {
   try {
