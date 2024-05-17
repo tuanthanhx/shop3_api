@@ -8,11 +8,12 @@
     "start": "cross-env NODE_ENV=production node server.js",
     "lint": "npx eslint server.js src/**/*.js --fix",
     "migrate": "cd src && npx sequelize-cli db:migrate",
+    "migrate:production": "cd src && npx sequelize-cli db:migrate --env production",
     "seed": "cd src && npx sequelize-cli db:seed:all",
     "seed:production": "cd src && npx sequelize-cli db:seed:all --env production",
-    "test:sync": "cross-env NODE_ENV=test node ./test/setup/jest.sync.js",
-    "test:seed": "cd src && npx sequelize-cli db:seed:all --env=test",
-    "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
+    "sync:test": "cross-env NODE_ENV=test node ./test/setup/jest.sync.js",
+    "seed:test": "cd src && npx sequelize-cli db:seed:all --env=test",
+    "test": "cross-env NODE_ENV=test PORT=3100 jest --detectOpenHandles"
   },
   "nodemonConfig": {
     "watch": [
@@ -27,7 +28,7 @@
       "src/seeders/*"
     ]
   },
-  "author": "tuanthanhx",
+  "author": "shop3_developers",
   "dependencies": {
     "@google-cloud/storage": "^7.9.0",
     "bcrypt": "^5.1.1",

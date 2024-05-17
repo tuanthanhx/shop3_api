@@ -13,13 +13,31 @@ module.exports = async () => {
     },
   });
 
-  const body = {
+  await db.user.destroy({
+    where: {
+      phone: '0399111111',
+    },
+  });
+
+  const response1 = await request(app).post(`${api}/register/email`).send({
     email: 'test-user@gmail.com',
     password: '123456',
     passwordConfirm: '123456',
     verificationCode: '000000',
-  };
-  const response = await request(app).post(`${api}/register/email`).send(body);
-  const token = response?.body?.data?.accessToken;
-  fs.writeFileSync(path.resolve(__dirname, 'token.txt'), token);
+  });
+  const accessToken1 = response1?.body?.data?.accessToken;
+  const refreshToken1 = response1?.body?.data?.refreshToken;
+  fs.writeFileSync(path.resolve(__dirname, 'access_token_email.txt'), accessToken1);
+  fs.writeFileSync(path.resolve(__dirname, 'refresh_token_email.txt'), refreshToken1);
+
+  const response2 = await request(app).post(`${api}/register/phone`).send({
+    phone: '0399111111',
+    password: '123456',
+    passwordConfirm: '123456',
+    verificationCode: '000000',
+  });
+  const accessToken2 = response2?.body?.data?.accessToken;
+  const refreshToken2 = response2?.body?.data?.refreshToken;
+  fs.writeFileSync(path.resolve(__dirname, 'access_token_phone.txt'), accessToken2);
+  fs.writeFileSync(path.resolve(__dirname, 'refresh_token_phone.txt'), refreshToken2);
 };
