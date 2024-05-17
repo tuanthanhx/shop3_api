@@ -23,10 +23,17 @@ exports.loginByPhone = [
   validateRules,
 ];
 
+exports.isLogin = [];
+
+exports.findMe = [];
+
+exports.logout = [];
+
 exports.refreshToken = [
   body('refreshToken')
     .notEmpty()
-    .withMessage('refreshToken is required'),
+    .withMessage('refreshToken is required')
+    .trim(),
   validateRules,
 ];
 

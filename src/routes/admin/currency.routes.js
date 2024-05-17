@@ -7,10 +7,10 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/', rules.index, currencies.index);
-  router.get('/:id', currencies.show);
-  router.post('/', currencies.create);
-  router.put('/:id', currencies.update);
-  router.delete('/:id', currencies.delete);
+  router.get('/:id', rules.show, currencies.show);
+  router.post('/', rules.create, currencies.create);
+  router.put('/:id', rules.update, currencies.update);
+  router.delete('/:id', rules.delete, currencies.delete);
 
   app.use(`/api-admin/${apiVersion}/currencies`, router);
 };
