@@ -5,18 +5,25 @@ const { app } = require('../server');
 
 require('dotenv').config();
 
-const api = `/api-common/${process.env.VERSION}`;
+const api = `/api-seller/${process.env.VERSION}`;
 
-describe('Currencies', () => {
+describe('Categories', () => {
   let accessToken = null;
 
   beforeAll(() => {
     accessToken = fs.readFileSync(path.resolve(__dirname, 'setup/access_token_email.txt'), 'utf8');
   });
 
-  it('GET /currencies', async () => {
+  it('GET /categories', async () => {
     const response = await request(app)
-      .get(`${api}/currencies`)
+      .get(`${api}/categories`)
+      .set('Authorization', `Bearer ${accessToken}`);
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('GET /categories/1/attributes', async () => {
+    const response = await request(app)
+      .get(`${api}/categories/1/attributes`)
       .set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(200);
   });

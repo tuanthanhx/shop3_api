@@ -14,7 +14,7 @@ describe('Languages', () => {
     accessToken = fs.readFileSync(path.resolve(__dirname, 'setup/access_token_email.txt'), 'utf8');
   });
 
-  it('Get /languages', async () => {
+  it('GET /languages', async () => {
     const response = await request(app)
       .get(`${api}/languages`)
       .set('Authorization', `Bearer ${accessToken}`);
