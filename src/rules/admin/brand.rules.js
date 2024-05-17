@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { validateRules } = require('../middlewares/validators');
+const { validateRules } = require('../../middlewares/validators');
 
 exports.create = [
   body('name')
