@@ -26,7 +26,7 @@ exports.index = async (req, res) => {
   }
 };
 
-exports.findAllAttributes = async (req, res) => {
+exports.getAttributes = async (req, res) => {
   try {
     const { id } = req.params;
 

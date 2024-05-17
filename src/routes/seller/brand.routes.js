@@ -6,7 +6,7 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/', brands.index);
+  router.get('/', rules.index, brands.index);
   router.post('/', rules.create, brands.create);
 
   app.use(`/api-seller/${apiVersion}/brands`, router);

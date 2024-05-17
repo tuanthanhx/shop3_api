@@ -1,6 +1,10 @@
 const { body } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
+exports.index = [];
+
+exports.show = [];
+
 exports.create = [
   body('name')
     .notEmpty()
@@ -11,3 +15,7 @@ exports.create = [
     .trim(),
   validateRules,
 ];
+
+exports.update = [];
+
+exports.delete = [];
