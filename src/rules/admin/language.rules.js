@@ -5,8 +5,5 @@ exports.index = [
   query('name')
     .optional()
     .trim(),
-  query('code')
-    .optional()
-    .trim(),
   validateRules,
 ];

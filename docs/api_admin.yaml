@@ -7,15 +7,145 @@ servers:
   - url: http://127.0.0.1:3000
 
 paths:
-  /test/admin:
-    post:
-      summary: A test API
+  /api-admin/v1/languages:
+    get:
+      summary: Get all languages
       tags:
-        - Test
+        - Languages
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: query
+          description: Names to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
       responses:
-        "200":
-          description: OK
-        "400":
+        '200':
+          description: List of Languages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LanguageResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
+
+  /api-admin/v1/currencies:
+    get:
+      summary: Get all currencies
+      tags:
+        - Currencies
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: query
+          description: Names to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: code
+          in: query
+          description: Codes to filter by.
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: List of Currencies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CurrencyResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    LanguageResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: English
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CurrencyResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: U.S. dollar
+        code:
+          type: string
+          example: USD
+        symbol:
+          type: string
+          example: $
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

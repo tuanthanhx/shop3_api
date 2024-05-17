@@ -50,6 +50,8 @@ paths:
                     $ref: '#/components/schemas/LoginResponse'
         '400':
           description: Bad Request
+        '409':
+          description: Conflict
         '500':
           description: Internal Server Error
 
@@ -95,6 +97,8 @@ paths:
                     $ref: '#/components/schemas/LoginResponse'
         '400':
           description: Bad Request
+        '409':
+          description: Conflict
         '500':
           description: Internal Server Error
 
@@ -301,11 +305,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: true
+                $ref: '#/components/schemas/TrueResponse'
         '400':
           description: Bad Request
         '500':
@@ -346,11 +346,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: true
+                $ref: '#/components/schemas/TrueResponse'
         '400':
           description: Bad Request
         '500':
@@ -379,11 +375,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: true
+                $ref: '#/components/schemas/TrueResponse'
         '400':
           description: Bad Request
         '500':
@@ -412,11 +404,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: true
+                $ref: '#/components/schemas/TrueResponse'
         '400':
           description: Bad Request
         '500':
@@ -456,11 +444,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    example: true
+                $ref: '#/components/schemas/TrueResponse'
         '400':
           description: Bad Request
         '500':
@@ -488,7 +472,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: List of Languages
           content:
             application/json:
               schema:
@@ -512,7 +496,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: List of Currencies
           content:
             application/json:
               schema:
@@ -549,6 +533,9 @@ components:
           type: string
           format: uuid
           example: 6252290c-1a4e-4556-a8cd-e3e32e316fd7
+        shopId:
+          type: integer
+          example: 1
         name:
           type: string
           example: John Smith
@@ -571,9 +558,6 @@ components:
           type: integer
           example: 1
         currencyId:
-          type: integer
-          example: 1
-        shopId:
           type: integer
           example: 1
         subscribeMailingList:
@@ -610,7 +594,6 @@ components:
           type: string
           format: date-time
 
-
     CurrencyResponse:
       type: object
       properties:
@@ -632,3 +615,10 @@ components:
         updated_at:
           type: string
           format: date-time
+
+    TrueResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          example: true

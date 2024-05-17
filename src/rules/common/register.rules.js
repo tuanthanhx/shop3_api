@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { validateRules } = require('../middlewares/validators');
+const { validateRules } = require('../../middlewares/validators');
 
 exports.registerByEmail = [
   body('email')
@@ -29,7 +29,7 @@ exports.registerByEmail = [
 exports.registerByPhone = [
   body('phone')
     .notEmpty()
-    .withMessage('email is invalid format'),
+    .withMessage('phone is invalid format'),
   body('password')
     .notEmpty()
     .withMessage('password is required')
