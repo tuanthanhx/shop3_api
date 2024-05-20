@@ -7,6 +7,117 @@ servers:
   - url: http://127.0.0.1:3000
 
 paths:
+  /api-seller/v1/media/product_images:
+    post:
+      summary: Upload Product Images
+      tags:
+        - Media
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - files
+              properties:
+                files:
+                  type: array
+                  maxItems: 9
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    maxItems: 9
+                    items:
+                      type: string
+                      example: https://storage.googleapis.com/dummy.jpg
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-seller/v1/media/product_video:
+    post:
+      summary: Upload Product Video
+      tags:
+        - Media
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: https://storage.googleapis.com/dummy.jpg
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-seller/v1/media/product_variant_image:
+    post:
+      summary: Upload Product Variant Image
+      tags:
+        - Media
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: https://storage.googleapis.com/dummy.jpg
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
   /api-seller/v1/categories:
     get:
       summary: Get all categories
