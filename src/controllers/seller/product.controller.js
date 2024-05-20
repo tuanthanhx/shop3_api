@@ -1,6 +1,6 @@
-const { generateUniqueId, isOnlyUpdateProductVariants } = require('../utils/utils');
-const logger = require('../utils/logger');
-const db = require('../models');
+const { generateUniqueId, isOnlyUpdateProductVariants } = require('../../utils/utils');
+const logger = require('../../utils/logger');
+const db = require('../../models');
 
 const { Op } = db.Sequelize;
 

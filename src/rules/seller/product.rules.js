@@ -1,22 +1,35 @@
 const { param, query, body } = require('express-validator');
-const { validateRules } = require('../middlewares/validators');
+const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [
   query('keyword')
     .optional()
     .trim(),
+  query('minPrice')
+    .optional()
+    .toInt(),
+  query('maxPrice')
+    .optional()
+    .toInt(),
+  query('categoryId')
+    .optional()
+    .trim(), // int or int[]
   query('statusId')
     .optional()
     .toInt(),
   query('codStatus')
     .optional()
     .toBoolean(),
+  query('sortField')
+    .optional()
+    .trim(),
   query('sortOrder')
-    .optional(),
+    .optional()
+    .trim(),
   validateRules,
 ];
 
-exports.findOne = [
+exports.show = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
@@ -41,6 +54,8 @@ exports.create = [
   body('brandId')
     .optional()
     .toInt(),
+  body('attributes') // TODO: Add a custom validate later
+    .optional(),
   body('variants') // TODO: Add a custom validate later
     .optional(),
   body('productVariants') // TODO: Add a custom validate later
@@ -86,6 +101,8 @@ exports.update = [
   body('brandId')
     .optional()
     .toInt(),
+  body('attributes') // TODO: Add a custom validate later
+    .optional(),
   body('variants') // TODO: Add a custom validate later
     .optional(),
   body('productVariants') // TODO: Add a custom validate later
@@ -114,6 +131,38 @@ exports.delete = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.bulkActiveProducts = [
+  body('ids') // TODO: Validate it later
+    .notEmpty()
+    .withMessage('ids is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.bulkDeactiveProducts = [
+  body('ids') // TODO: Validate it later
+    .notEmpty()
+    .withMessage('ids is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.bulkDeleteProducts = [
+  body('ids') // TODO: Validate it later
+    .notEmpty()
+    .withMessage('ids is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.bulkRecoverProducts = [
+  body('ids') // TODO: Validate it later
+    .notEmpty()
+    .withMessage('ids is required')
     .toInt(),
   validateRules,
 ];

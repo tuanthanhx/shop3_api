@@ -7,6 +7,18 @@ const db = require('../../src/models');
 const api = `/api-common/${process.env.VERSION}`;
 
 module.exports = async () => {
+  await db.product.destroy({
+    where: {
+      name: 'Test Product 001',
+    },
+  });
+
+  await db.shop.destroy({
+    where: {
+      shopName: 'Test Shop',
+    },
+  });
+
   await db.user.destroy({
     where: {
       email: 'test-user@gmail.com',
@@ -16,12 +28,6 @@ module.exports = async () => {
   await db.user.destroy({
     where: {
       phone: '0399111111',
-    },
-  });
-
-  await db.shop.destroy({
-    where: {
-      shopName: 'Test Shop',
     },
   });
 
@@ -37,7 +43,7 @@ module.exports = async () => {
   fs.writeFileSync(path.resolve(__dirname, 'refresh_token_email.txt'), refreshToken1);
 
   const user = await db.user.findOne({
-    where: { email: 'test-user@gmail.com'}
+    where: { email: 'test-user@gmail.com' },
   });
 
   if (user?.id) {
