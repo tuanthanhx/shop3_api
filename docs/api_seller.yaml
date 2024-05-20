@@ -129,8 +129,10 @@ paths:
       summary: Get a list of business types
       tags:
         - Sellers
+      security:
+        - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: A JSON array of business types
           content:
             application/json:
@@ -139,14 +141,131 @@ paths:
                 properties:
                   data:
                     type: object
-                    $ref: "#/components/schemas/SellerBusinessTypesResponse"
-        "400":
+                    $ref: '#/components/schemas/SellerBusinessTypesResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
+
+  /api-seller/v1/sellers/logistics_services/subscribe:
+    post:
+      summary: Subscribe to a shipping service
+      tags:
+        - Logistics Services
       security:
         - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrueResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Logistics service was not found
+        '500':
+          description: Internal Server Error
 
+  /api-seller/v1/sellers/logistics_services/unsubscribe:
+    post:
+      summary: Unsubscribe to a shipping service
+      tags:
+        - Logistics Services
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrueResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Logistics service was not found
+        '500':
+          description: Internal Server Error
+
+  /api-seller/v1/sellers/logistics_services/estimate_shipping_fee:
+    post:
+      summary: Estimate shipping fee
+      tags:
+        - Logistics Services
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - serviceId
+                - weight
+                - width
+                - height
+                - length
+              properties:
+                serviceId:
+                  type: integer
+                  example: 1
+                weight:
+                  type: integer
+                  example: 1000
+                width:
+                  type: integer
+                  example: 20
+                height:
+                  type: integer
+                  example: 20
+                length:
+                  type: integer
+                  example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estimatedShippingFee:
+                    type: number
+                    format: float
+                    example: 10000
+        '400':
+          description: Bad Request
+        '404':
+          description: Logistics service was not found
+        '500':
+          description: Internal Server Error
 
 components:
   securitySchemes:
@@ -156,6 +275,12 @@ components:
       bearerFormat: JWT
 
   schemas:
+    TrueResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          example: true
 
     SellerBusinessTypesResponse:
       type: array
@@ -164,7 +289,7 @@ components:
         properties:
           name:
             type: string
-            example: "Household"
+            example: Household
           description:
             type: string
-            example: "Dummy"
+            example: Dummy
