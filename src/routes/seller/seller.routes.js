@@ -11,11 +11,6 @@ module.exports = (app) => {
 
   router.get('/business_types', rules.getBusinessTypes, sellers.getBusinessTypes);
 
-  router.get('/logistics_services', sellers.getLogisticsServices);
-  router.post('/logistics_services/subscribe', sellers.subscribeLogisticsServices);
-  router.post('/logistics_services/unsubscribe', sellers.unsubscribeLogisticsServices);
-  router.post('/logistics_services/estimate_shipping_fee', sellers.estimateShippingFee);
-
   router.get('/verification', sellers.getVerification);
   router.post('/verification', upload.fields([
     { name: 'householdBusinessRegistrationDocument1', maxCount: 1 },
@@ -37,6 +32,11 @@ module.exports = (app) => {
     { name: 'corporateCompanyRegistrationDocument2', maxCount: 1 },
     { name: 'corporateCompanyRegistrationDocument3', maxCount: 1 },
   ]), rules.updateVerification, sellers.updateVerification);
+
+  router.get('/logistics_services', rules.getLogisticsServices, sellers.getLogisticsServices);
+  router.post('/logistics_services/subscribe', rules.subscribeLogisticsServices, sellers.subscribeLogisticsServices);
+  router.post('/logistics_services/unsubscribe', rules.unsubscribeLogisticsServices, sellers.unsubscribeLogisticsServices);
+  router.post('/logistics_services/estimate_shipping_fee', rules.estimateShippingFee, sellers.estimateShippingFee);
 
   app.use(`/api-seller/${apiVersion}/sellers`, router);
 };

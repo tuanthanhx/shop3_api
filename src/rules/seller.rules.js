@@ -260,3 +260,45 @@ exports.updateVerification = [
   validateRules,
   handleMulterErrors,
 ];
+
+exports.getLogisticsServices = [];
+
+exports.subscribeLogisticsServices = [
+  body('serviceId')
+    .notEmpty()
+    .withMessage('serviceId is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.unsubscribeLogisticsServices = [
+  body('serviceId')
+    .notEmpty()
+    .withMessage('serviceId is required')
+    .toInt(),
+  validateRules,
+];
+
+exports.estimateShippingFee = [
+  body('serviceId')
+    .notEmpty()
+    .withMessage('serviceId is required')
+    .toInt(),
+  body('weight')
+    .notEmpty()
+    .withMessage('weight is required')
+    .toInt(),
+  body('width')
+    .notEmpty()
+    .withMessage('width is required')
+    .toInt(),
+  body('height')
+    .notEmpty()
+    .withMessage('height is required')
+    .toInt(),
+  body('length')
+    .notEmpty()
+    .withMessage('length is required')
+    .toInt(),
+  validateRules,
+];

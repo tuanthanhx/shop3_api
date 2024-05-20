@@ -19,6 +19,12 @@ module.exports = async () => {
     },
   });
 
+  await db.shop.destroy({
+    where: {
+      shopName: 'Test Shop',
+    },
+  });
+
   const response1 = await request(app).post(`${api}/register/email`).send({
     email: 'test-user@gmail.com',
     password: '123456',
@@ -29,6 +35,18 @@ module.exports = async () => {
   const refreshToken1 = response1?.body?.data?.refreshToken;
   fs.writeFileSync(path.resolve(__dirname, 'access_token_email.txt'), accessToken1);
   fs.writeFileSync(path.resolve(__dirname, 'refresh_token_email.txt'), refreshToken1);
+
+  const user = await db.user.findOne({
+    where: { email: 'test-user@gmail.com'}
+  });
+
+  if (user?.id) {
+    await db.shop.create({
+      shopName: 'Test Shop',
+      sellerBusinessTypeId: 1,
+      userId: user.id,
+    });
+  }
 
   const response2 = await request(app).post(`${api}/register/phone`).send({
     phone: '0399111111',
