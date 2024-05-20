@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { validateRules, handleMulterErrors } = require('../middlewares/validators');
+const { validateRules, handleMulterErrors } = require('../../middlewares/validators');
 
 exports.getBusinessTypes = [];
 

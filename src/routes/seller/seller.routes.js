@@ -2,7 +2,7 @@ module.exports = (app) => {
   const router = require('express').Router();
   const multer = require('multer');
   const sellers = require('../../controllers/seller/seller.controller');
-  const rules = require('../../rules/seller.rules');
+  const rules = require('../../rules/seller/seller.rules');
 
   const upload = multer({ storage: multer.memoryStorage() });
 
