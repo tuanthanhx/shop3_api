@@ -9,7 +9,7 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/business_types', sellers.getBusinessTypes);
+  router.get('/business_types', rules.getBusinessTypes, sellers.getBusinessTypes);
 
   router.get('/logistics_services', sellers.getLogisticsServices);
   router.post('/logistics_services/subscribe', sellers.subscribeLogisticsServices);

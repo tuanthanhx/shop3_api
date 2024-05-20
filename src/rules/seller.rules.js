@@ -1,6 +1,8 @@
 const { body } = require('express-validator');
 const { validateRules, handleMulterErrors } = require('../middlewares/validators');
 
+exports.getBusinessTypes = [];
+
 exports.createVerification = [
   body('businessType')
     .notEmpty()
