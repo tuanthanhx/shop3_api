@@ -407,7 +407,7 @@ paths:
 
   /api-admin/v1/shops/:id:
     get:
-      summary: Get shop detail
+      summary: Get a shop
       tags:
         - Shops
       security:
