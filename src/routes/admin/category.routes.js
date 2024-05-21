@@ -12,7 +12,7 @@ module.exports = (app) => {
   router.put('/:id', rules.update, categories.update);
   router.delete('/:id', rules.delete, categories.delete);
 
-  router.get('/:id/attributes', categories.findAllAttributes);
+  router.get('/:id/attributes', rules.findAllAttributes, categories.findAllAttributes);
 
   app.use(`/api-admin/${apiVersion}/categories`, router);
 };

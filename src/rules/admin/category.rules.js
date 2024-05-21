@@ -4,7 +4,8 @@ const { validateRules } = require('../../middlewares/validators');
 exports.index = [
   query('parentId')
     .optional()
-    .toInt(),
+    .isInt()
+    .withMessage('parentId must be integer'),
   validateRules,
 ];
 
@@ -26,7 +27,8 @@ exports.create = [
     .trim(),
   query('parentId')
     .optional()
-    .toInt(),
+    .isInt()
+    .withMessage('parentId must be integer'),
   validateRules,
 ];
 
@@ -39,13 +41,26 @@ exports.update = [
   body('name')
     .optional()
     .trim(),
+  query('image')
+    .optional()
+    .trim(),
   query('parentId')
     .optional()
-    .toInt(),
+    .isInt()
+    .withMessage('parentId must be integer'),
   validateRules,
 ];
 
 exports.delete = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
+
+exports.findAllAttributes = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
