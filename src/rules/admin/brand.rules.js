@@ -1,9 +1,16 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [];
 
-exports.show = [];
+exports.show = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
 
 exports.create = [
   body('name')
@@ -16,6 +23,27 @@ exports.create = [
   validateRules,
 ];
 
-exports.update = [];
+exports.update = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('name')
+    .notEmpty()
+    .withMessage('name is required')
+    .trim(),
+  body('description')
+    .optional()
+    .trim(),
+  validateRules,
+];
 
-exports.delete = [];
+exports.delete = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
