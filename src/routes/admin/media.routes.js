@@ -10,7 +10,7 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.post('/files', upload.fields([
-    { name: 'files', maxCount: 9 },
+    { name: 'files', maxCount: 10 },
   ]), rules.uploadFiles, media.uploadFiles);
 
   app.use(`/api-admin/${apiVersion}/media`, router);
