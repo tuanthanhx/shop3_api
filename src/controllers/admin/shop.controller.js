@@ -101,7 +101,7 @@ exports.activate = async (req, res) => {
 
     res.json({
       data: {
-        message: 'Verified successfully',
+        message: 'Activated successfully',
       },
     });
   } catch (err) {
@@ -139,7 +139,7 @@ exports.deactivate = async (req, res) => {
 
     res.json({
       data: {
-        message: 'Verified successfully',
+        message: 'Deactivated successfully',
       },
     });
   } catch (err) {

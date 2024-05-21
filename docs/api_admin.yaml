@@ -56,7 +56,7 @@ paths:
           description: Internal Server Error
 
     post:
-      summary: Creates a language.
+      summary: Create a language.
       tags:
         - Languages
       security:
@@ -118,7 +118,7 @@ paths:
           description: Internal Server Error
 
     put:
-      summary: Updates a language.
+      summary: Update a language.
       tags:
         - Languages
       security:
@@ -159,7 +159,7 @@ paths:
           description: Internal Server Error
 
     delete:
-      summary: Deletes a language
+      summary: Delete a language
       tags:
         - Languages
       security:
@@ -237,7 +237,7 @@ paths:
           description: Internal Server Error
 
     post:
-      summary: Creates a currency.
+      summary: Create a currency.
       tags:
         - Currencies
       security:
@@ -309,7 +309,7 @@ paths:
           description: Internal Server Error
 
     put:
-      summary: Updates a currency.
+      summary: Update a currency.
       tags:
         - Currencies
       security:
@@ -358,7 +358,7 @@ paths:
           description: Internal Server Error
 
     delete:
-      summary: Deletes a currency
+      summary: Delete a currency
       tags:
         - Currencies
       security:
@@ -377,6 +377,135 @@ paths:
           description: Bad Request
         '404':
           description: Currency not found
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/shops:
+    get:
+      summary: Get all shops
+      description: Show shops that have been submitted
+      tags:
+        - Shops
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of Shops
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ShopResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/shops/:id:
+    get:
+      summary: Get shop detail
+      tags:
+        - Shops
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a shop
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ShopResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Shop not found
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/shops/:id/verify:
+    post:
+      summary: Verify a Shop
+      tags:
+        - Shops
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Verified
+        '400':
+          description: Bad Request
+        '404':
+          description: Shop not found
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/shops/:id/activate:
+    post:
+      summary: Activate a Shop
+      tags:
+        - Shops
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Activated
+        '400':
+          description: Bad Request
+        '404':
+          description: Shop not found
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/shops/:id/deactivate:
+    post:
+      summary: Deactivate a Shop
+      tags:
+        - Shops
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deactivated
+        '400':
+          description: Bad Request
+        '404':
+          description: Shop not found
         '500':
           description: Internal Server Error
 
@@ -413,6 +542,102 @@ components:
         symbol:
           type: string
           example: $
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ShopResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sellerBusinessTypeId:
+          type: integer
+          example: 1
+        shopName:
+          type: string
+          example: 'My Shop'
+        userId:
+          type: integer
+          example: 1
+        email:
+          type: string
+          format: email
+          example: johnsm@gmail.com
+        phone:
+          type: string
+          format: phone
+          example: '0123456789'
+        subscribeMailingList:
+          type: boolean
+          example: true
+        householdBusinessRegistrationDocument1:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        householdBusinessRegistrationDocument2:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        householdBusinessRegistrationDocument3:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        householdBusinessName:
+          type: string
+          example: 'My Company'
+        householdBusinessRegistrationNumber:
+          type: string
+          example: 'AB100000'
+        householdBusinessOwnerName:
+          type: string
+          example: 'John Smith'
+        householdBusinessOwnerIdNumber:
+          type: string
+          example: '123456789'
+        individualIdentityCardFront:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        individualIdentityCardBack:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        individualIdentityCardNumber:
+          type: string
+          example: '123456789'
+        individualOwnerDob:
+          type: string
+          format: date-time
+        individualBusinessOwnerName:
+          type: string
+          example: 'John Smith'
+        individualResidentialAddress:
+          type: string
+          example: '206 Lorem Ipsum st.'
+        individualProductCategoryId:
+          type: integer
+          example: 1
+        corporateCompanyRegistrationDocument1:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        corporateCompanyRegistrationDocument2:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        corporateCompanyRegistrationDocument3:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        corporateCompanyName:
+          type: string
+          example: 'My Company'
+        corporateEnterpiseCodeNumber:
+          type: string
+          example: 'AB100000'
+        isSubmitted:
+          type: boolean
+          example: true
+        isVerified:
+          type: boolean
+          example: false
         createdAt:
           type: string
           format: date-time
