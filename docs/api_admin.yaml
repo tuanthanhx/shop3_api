@@ -727,6 +727,30 @@ paths:
         '500':
           description: Internal Server Error
 
+  /api-admin/v1/user_groups:
+    get:
+      summary: Get all user groups
+      tags:
+        - User Groups
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of User Groups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserGroupResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
   /api-admin/v1/media/files:
     post:
       summary: Upload Files
@@ -970,6 +994,25 @@ components:
         name:
           type: string
           example: Nike
+        description:
+          type: string
+          example: Dummy
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserGroupResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Unregistered
         description:
           type: string
           example: Dummy
