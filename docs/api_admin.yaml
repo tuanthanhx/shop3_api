@@ -55,6 +55,132 @@ paths:
         '500':
           description: Internal Server Error
 
+    post:
+      summary: Creates a language.
+      tags:
+        - Languages
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: English
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageResponse'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/languages/:id:
+    get:
+      summary: Get a language
+      tags:
+        - Languages
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Language Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a language
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/LanguageResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Language not found
+        '500':
+          description: Internal Server Error
+
+    put:
+      summary: Updates a language.
+      tags:
+        - Languages
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Language Id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: English
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Language not found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+
+    delete:
+      summary: Deletes a language
+      tags:
+        - Languages
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Language Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Bad Request
+        '404':
+          description: Language not found
+        '500':
+          description: Internal Server Error
+
   /api-admin/v1/currencies:
     get:
       summary: Get all currencies
@@ -110,6 +236,150 @@ paths:
         '500':
           description: Internal Server Error
 
+    post:
+      summary: Creates a currency.
+      tags:
+        - Currencies
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - code
+                - symbol
+              properties:
+                name:
+                  type: string
+                  example: U.S. dollar
+                code:
+                  type: string
+                  example: USD
+                symbol:
+                  type: string
+                  example: $
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+
+  /api-admin/v1/currencies/:id:
+    get:
+      summary: Get a currency
+      tags:
+        - Currencies
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Currency Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a currency
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CurrencyResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Currency not found
+        '500':
+          description: Internal Server Error
+
+    put:
+      summary: Updates a currency.
+      tags:
+        - Currencies
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Currency Id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - code
+                - symbol
+              properties:
+                name:
+                  type: string
+                  example: U.S. dollar
+                code:
+                  type: string
+                  example: USD
+                symbol:
+                  type: string
+                  example: $
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Currency not found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+
+    delete:
+      summary: Deletes a currency
+      tags:
+        - Currencies
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Currency Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Bad Request
+        '404':
+          description: Currency not found
+        '500':
+          description: Internal Server Error
+
 components:
   schemas:
     LanguageResponse:
@@ -121,10 +391,10 @@ components:
         name:
           type: string
           example: English
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
 
@@ -143,9 +413,9 @@ components:
         symbol:
           type: string
           example: $
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time

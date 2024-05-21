@@ -923,6 +923,36 @@ paths:
           description: Internal Server Error
 
   /api-seller/v1/products/:id:
+    get:
+      summary: Get a product
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Product Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Detail of a product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProductResponse'
+        "400":
+          description: Bad Request
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error
     put:
       summary: Update a product
       tags:

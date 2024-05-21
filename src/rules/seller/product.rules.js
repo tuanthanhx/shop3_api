@@ -33,7 +33,8 @@ exports.show = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
-    .toInt(),
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];
 
@@ -84,7 +85,8 @@ exports.update = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
-    .toInt(),
+    .isInt()
+    .withMessage('id must be integer'),
   body('name')
     .notEmpty()
     .withMessage('name is required')
@@ -131,7 +133,8 @@ exports.delete = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
-    .toInt(),
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];
 

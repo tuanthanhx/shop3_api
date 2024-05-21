@@ -1,4 +1,4 @@
-const { query } = require('express-validator');
+const { query, param, body } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [
@@ -11,10 +11,57 @@ exports.index = [
   validateRules,
 ];
 
-exports.show = [];
+exports.show = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
 
-exports.create = [];
+exports.create = [
+  body('name')
+    .notEmpty()
+    .withMessage('name is required')
+    .trim(),
+  body('code')
+    .notEmpty()
+    .withMessage('code is required')
+    .trim(),
+  body('symbol')
+    .notEmpty()
+    .withMessage('symbol is required')
+    .trim(),
+  validateRules,
+];
 
-exports.update = [];
+exports.update = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('name')
+    .notEmpty()
+    .withMessage('name is required')
+    .trim(),
+  body('code')
+    .notEmpty()
+    .withMessage('code is required')
+    .trim(),
+  body('symbol')
+    .notEmpty()
+    .withMessage('symbol is required')
+    .trim(),
+  validateRules,
+];
 
-exports.delete = [];
+exports.delete = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];

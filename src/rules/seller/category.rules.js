@@ -12,6 +12,7 @@ exports.getAttributes = [
   param('id')
     .notEmpty()
     .withMessage('id is required')
-    .toInt(),
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];
