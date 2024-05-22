@@ -1,12 +1,13 @@
 module.exports = (app) => {
   const router = require('express').Router();
   const users = require('../../controllers/admin/user.controller');
+  const rules = require('../../rules/admin/user.rules');
 
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/', users.index);
-  router.get('/:id', users.show);
+  router.get('/', rules.index, users.index);
+  router.get('/:id', rules.show, users.show);
   router.post('/', users.create);
   router.put('/:id', users.update);
   router.post('/:id/activate', users.activate);
