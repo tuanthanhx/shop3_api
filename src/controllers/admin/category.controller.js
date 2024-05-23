@@ -103,13 +103,16 @@ exports.create = async (req, res) => {
       parentId,
     };
 
-    const category = await db.category.findByPk(parentId);
-    if (!category) {
-      res.status(400).send({
-        message: 'Cannot find the parent category',
-      });
-      return;
+    if (parentId) {
+      const category = await db.category.findByPk(parentId);
+      if (!category) {
+        res.status(400).send({
+          message: 'Cannot find the parent category',
+        });
+        return;
+      }
     }
+
     await db.category.create(object);
     res.status(201).json({
       data: {
