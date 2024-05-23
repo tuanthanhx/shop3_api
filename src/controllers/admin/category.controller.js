@@ -1,22 +1,61 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
+const { Op } = db.Sequelize;
+
 exports.index = async (req, res) => {
   try {
-    const { parentId } = req.query;
-    let categories;
+    const {
+      keyword,
+      parentId,
+      page,
+      limit,
+      sortField,
+      sortOrder = 'asc',
+    } = req.query;
+
+    const condition = {};
+    if (keyword) {
+      condition[Op.or] = [
+        { name: { [Op.like]: `%${keyword}%` } },
+      ];
+    }
 
     if (parentId) {
-      categories = await db.category.findAll({
-        where: { parentId },
-      });
+      condition.parentId = parentId;
     } else {
-      categories = await db.category.findAll({
-        where: { parentId: null },
-      });
+      condition.parentId = null;
     }
+
+    let ordering = [['id', 'DESC']];
+
+    if (sortField && sortOrder) {
+      const validSortFields = ['id', 'name', 'createdAt', 'updatedAt'];
+      const validSortOrder = ['asc', 'desc'];
+      if (validSortFields.includes(sortField) && validSortOrder.includes(sortOrder.toLowerCase())) {
+        ordering = [[sortField, sortOrder.toUpperCase()]];
+      }
+    }
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+    const offset = (pageNo - 1) * limitPerPage;
+
+    const data = await db.category.findAndCountAll({
+      where: condition,
+      order: ordering,
+      limit: limitPerPage,
+      offset,
+    });
+
+    const { count, rows } = data;
+    const totalPages = Math.ceil(count / limitPerPage);
+
     res.json({
-      data: categories,
+      totalItems: count,
+      totalPages,
+      currentPage: pageNo,
+      data: rows,
     });
   } catch (err) {
     logger.error(err);

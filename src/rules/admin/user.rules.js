@@ -12,9 +12,6 @@ exports.index = [
     .optional()
     .isInt()
     .withMessage('groupId must be integer'),
-  query('status')
-    .optional()
-    .trim(),
   query('sortField')
     .optional()
     .trim(),
