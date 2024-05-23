@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 servers:
   - url: https://shop3-api.codingbombs.com:3001
-  - url: http://127.0.0.1:3000
+  - url: http://localhost:3000
 
 paths:
   /api-admin/v1/categories:
@@ -120,7 +120,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/categories/:id:
+  /api-admin/v1/categories/{id}:
     put:
       summary: Update a category
       tags:
@@ -186,7 +186,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/categories/:id/attributes:
+  /api-admin/v1/categories/{id}/attributes:
     get:
       summary: Get all attributes of the category
       tags:
@@ -315,7 +315,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/languages/:id:
+  /api-admin/v1/languages/{id}:
     get:
       summary: Get a language
       tags:
@@ -506,7 +506,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/currencies/:id:
+  /api-admin/v1/currencies/{id}:
     get:
       summary: Get a currency
       tags:
@@ -722,7 +722,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/brands/:id:
+  /api-admin/v1/brands/{id}:
     get:
       summary: Get a brand
       tags:
@@ -931,7 +931,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/UserResponse'
 
-  /api-admin/v1/users/:id:
+  /api-admin/v1/users/{id}:
     get:
       summary: Get an User
       tags:
@@ -1085,7 +1085,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/shops/:id:
+  /api-admin/v1/shops/{id}:
     get:
       summary: Get a shop
       tags:
@@ -1117,7 +1117,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/shops/:id/verify:
+  /api-admin/v1/shops/{id}/verify:
     post:
       summary: Verify a Shop
       tags:
@@ -1141,7 +1141,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/shops/:id/activate:
+  /api-admin/v1/shops/{id}/activate:
     post:
       summary: Activate a Shop
       tags:
@@ -1165,7 +1165,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-admin/v1/shops/:id/deactivate:
+  /api-admin/v1/shops/{id}/deactivate:
     post:
       summary: Deactivate a Shop
       tags:

@@ -4,7 +4,7 @@ info:
   description: Documentation for Shop3 API (Seller)
   version: 1.0.0
 servers:
-  - url: http://127.0.0.1:3000
+  - url: http://localhost:3000
 
 paths:
   # /users:
@@ -94,7 +94,7 @@ paths:
   #     security:
   #       - bearerAuth: []
 
-  # /users/:id:
+  # /users/{id}:
   #   get:
   #     summary: Returns a user by ID.
   #     tags:
@@ -237,7 +237,7 @@ paths:
   #     security:
   #       - bearerAuth: []
 
-  # /languages/:id:
+  # /languages/{id}:
   #   get:
   #     summary: Returns a language by ID.
   #     tags:
@@ -397,7 +397,7 @@ paths:
   #     security:
   #       - bearerAuth: []
 
-  # /currencies/:id:
+  # /currencies/{id}:
   #   get:
   #     summary: Returns a currency by ID.
   #     tags:
@@ -634,7 +634,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /categories/:id:
+  /categories/{id}:
     put:
       summary: Update a category
       tags:
@@ -694,7 +694,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /categories/:id/attributes:
+  /categories/{id}/attributes:
     get:
       summary: Get all attributes of the category
       tags:
@@ -986,7 +986,7 @@ paths:
       security:
         - bearerAuth: []
 
-  /products/:id:
+  /products/{id}:
     put:
       summary: Update a product (Update doc. later)
       description: (Done this API, but update doc. later, now developers can use Postman collection file instead)

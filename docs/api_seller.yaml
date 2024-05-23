@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 servers:
   - url: https://shop3-api.codingbombs.com:3001
-  - url: http://127.0.0.1:3000
+  - url: http://localhost:3000
 
 paths:
   /api-seller/v1/media/product_images:
@@ -141,7 +141,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-seller/v1/categories/:id/attributes:
+  /api-seller/v1/categories/{id}/attributes:
     get:
       summary: Get all attributes of the category
       tags:
@@ -922,7 +922,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-seller/v1/products/:id:
+  /api-seller/v1/products/{id}:
     get:
       summary: Get a product
       tags:
