@@ -46,6 +46,7 @@ app.use([handleQueries, validateRules]);
 
 const options = {
   explorer: true,
+  validatorUrl: null,
   swaggerOptions: {
     urls: [
       {
