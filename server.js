@@ -61,6 +61,10 @@ const options = {
         name: 'Seller',
       },
       {
+        url: `${baseUrl}/docs/api_external.yaml`,
+        name: 'External',
+      },
+      {
         url: `${baseUrl}/docs/api_user.yaml`,
         name: 'User',
       },

@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: Shop3 API
+  description: Documentation for Shop3 API (External)
+  version: 1.0.0
+servers:
+  - url: https://shop3-api.codingbombs.com:3001
+  - url: http://127.0.0.1:3000
+
+paths:
+  /api-external/v1/users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by name, email or phone
+          example: John Smith
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'name', 'email', 'phone', 'isActive', 'createdAt', 'updatedAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      example:
+                        id: 4
+                        uuid: '7d08d0e0-cd99-49b9-ae63-e83dee8a1f74'
+                        name: null
+                        email: 'test_user_101@shop3.com'
+                        phone: null
+                        isActive: true
+                        createdAt: '2024-05-23T09:34:29.000Z'
+                        updatedAt: '2024-05-23T09:34:29.000Z'
+                        reviewsCount: 3
+                        shop:
+                          id: 2
+                          shopName: 'Test Shop 101'
+                          productsCount: 2
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-external/v1/users/:id:
+    get:
+      summary: Get detail of an User
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of an User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example:
+                      id: 4
+                      uuid: '7d08d0e0-cd99-49b9-ae63-e83dee8a1f74'
+                      name: null
+                      email: 'test_user_101@shop3.com'
+                      phone: null
+                      isActive: true
+                      createdAt: '2024-05-23T09:34:29.000Z'
+                      updatedAt: '2024-05-23T09:34:29.000Z'
+                      reviewsCount: 3
+                      shop:
+                        id: 2
+                        shopName: 'Test Shop 101'
+                        productsCount: 2
+        '400':
+          description: Bad Request
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
