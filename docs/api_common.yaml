@@ -4,6 +4,7 @@ info:
   description: Documentation for Shop3 API (Common)
   version: 1.0.0
 servers:
+  - url: https://shop3-api.codingbombs.com:3001
   - url: http://127.0.0.1:3000
 
 paths:

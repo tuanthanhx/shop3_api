@@ -4,6 +4,7 @@ info:
   description: Documentation for Shop3 API (Seller)
   version: 1.0.0
 servers:
+  - url: https://shop3-api.codingbombs.com:3001
   - url: http://127.0.0.1:3000
 
 paths:
@@ -742,7 +743,7 @@ paths:
           required: false
           schema:
             type: string
-            default: id
+            enum: ['id', 'name', 'uniqueId', 'price', 'createdAt', 'updatedAt']
         - name: sortOrder
           in: query
           description: Sort result in direction
@@ -750,7 +751,6 @@ paths:
           schema:
             type: string
             enum: ['asc', 'desc']
-            default: asc
       responses:
         '200':
           description: A list of products
@@ -917,9 +917,9 @@ paths:
       responses:
         '201':
           description: Created
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
   /api-seller/v1/products/:id:
@@ -937,7 +937,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: Detail of a product
           content:
             application/json:
@@ -947,11 +947,11 @@ paths:
                   data:
                     type: object
                     $ref: '#/components/schemas/ProductResponse'
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Product not found
-        "500":
+        '500':
           description: Internal Server Error
     put:
       summary: Update a product
@@ -1113,9 +1113,9 @@ paths:
       responses:
         '200':
           description: Updated
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
     delete:
@@ -1132,13 +1132,13 @@ paths:
           schema:
             type: integer
       responses:
-        "204":
+        '204':
           description: Deleted
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Product not found
-        "500":
+        '500':
           description: Internal Server Error
 
   /api-seller/v1/products/bulk_activate:
@@ -1165,9 +1165,9 @@ paths:
       responses:
         '200':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
   /api-seller/v1/products/bulk_deactivate:
@@ -1194,9 +1194,9 @@ paths:
       responses:
         '200':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
   /api-seller/v1/products/bulk_delete:
@@ -1223,9 +1223,9 @@ paths:
       responses:
         '200':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
   /api-seller/v1/products/bulk_recover:
@@ -1252,9 +1252,9 @@ paths:
       responses:
         '200':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
 
 components:

@@ -4,6 +4,7 @@ info:
   description: Documentation for Shop3 API (Administrator)
   version: 1.0.0
 servers:
+  - url: https://shop3-api.codingbombs.com:3001
   - url: http://127.0.0.1:3000
 
 paths:
@@ -893,6 +894,46 @@ paths:
         - Shops
       security:
         - bearerAuth: []
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by product name, ID or seller SKU
+          example: Example
+          required: false
+          style: form
+          schema:
+            type: string
+            default: null
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'shopName', 'sellerBusinessTypeId', 'email', 'phone', 'isActive', 'createdAt', 'updatedAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
       responses:
         '200':
           description: List of Shops
@@ -901,6 +942,15 @@ paths:
               schema:
                 type: object
                 properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
                   data:
                     type: array
                     items:
@@ -1257,6 +1307,9 @@ components:
           type: boolean
           example: true
         isVerified:
+          type: boolean
+          example: false
+        isActive:
           type: boolean
           example: false
         createdAt:

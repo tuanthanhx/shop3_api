@@ -1,14 +1,74 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
+const { Op } = db.Sequelize;
+
 exports.index = async (req, res) => {
   try {
-    const shops = await db.shop.findAll({
-      where: { isSubmitted: true },
+    const {
+      keyword,
+      status,
+      page,
+      limit,
+      sortField,
+      sortOrder = 'asc',
+    } = req.query;
+
+    const condition = {};
+    condition.isSubmitted = true;
+
+    if (keyword) {
+      condition[Op.or] = [
+        { shopName: { [Op.like]: `%${keyword}%` } },
+        { email: { [Op.like]: `%${keyword}%` } },
+        { phone: { [Op.like]: `%${keyword}%` } },
+      ];
+    }
+
+    if (status) {
+      if (status === 'active') {
+        condition.isVerified = true;
+        condition.isActive = true;
+      }
+      if (status === 'inactive') {
+        condition.isVerified = true;
+        condition.isActive = false;
+      }
+      if (status === 'review') {
+        condition.isVerified = false;
+        condition.isActive = false;
+      }
+    }
+
+    let ordering = [['id', 'DESC']];
+
+    if (sortField && sortOrder) {
+      const validSortFields = ['id', 'shopName', 'sellerBusinessTypeId', 'email', 'phone', 'isActive', 'createdAt', 'updatedAt'];
+      const validSortOrder = ['asc', 'desc'];
+      if (validSortFields.includes(sortField) && validSortOrder.includes(sortOrder.toLowerCase())) {
+        ordering = [[sortField, sortOrder.toUpperCase()]];
+      }
+    }
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+    const offset = (pageNo - 1) * limitPerPage;
+
+    const data = await db.shop.findAndCountAll({
+      where: condition,
+      order: ordering,
+      limit: limitPerPage,
+      offset,
     });
 
+    const { count, rows } = data;
+    const totalPages = Math.ceil(count / limitPerPage);
+
     res.json({
-      data: shops,
+      totalItems: count,
+      totalPages,
+      currentPage: pageNo,
+      data: rows,
     });
   } catch (err) {
     logger.error(err);

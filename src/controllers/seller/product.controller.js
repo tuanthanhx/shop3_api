@@ -78,7 +78,7 @@ exports.index = async (req, res) => {
     let ordering = [['id', 'DESC']];
 
     if (sortField && sortOrder) {
-      const validSortFields = ['name', 'uniqueId', 'createdAt', 'updatedAt', 'price'];
+      const validSortFields = ['id', 'name', 'uniqueId', 'price', 'createdAt', 'updatedAt'];
       const validSortOrder = ['asc', 'desc'];
       if (validSortFields.includes(sortField) && validSortOrder.includes(sortOrder.toLowerCase())) {
         if (sortField === 'price') {
