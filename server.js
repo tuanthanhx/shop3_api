@@ -46,8 +46,8 @@ app.use([handleQueries, validateRules]);
 
 const options = {
   explorer: true,
-  validatorUrl: null,
   swaggerOptions: {
+    validatorUrl: null,
     urls: [
       {
         url: `${baseUrl}/docs/api_common.yaml`,
