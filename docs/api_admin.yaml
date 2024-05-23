@@ -121,6 +121,28 @@ paths:
           description: Internal Server Error
 
   /api-admin/v1/categories/{id}:
+    get:
+      summary: Get a category
+      tags:
+        - Categories
+      parameters:
+        - name: id
+          in: path
+          description: Category Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CategoryResponse'
     put:
       summary: Update a category
       tags:
