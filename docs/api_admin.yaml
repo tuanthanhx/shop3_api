@@ -904,6 +904,13 @@ paths:
           schema:
             type: string
             default: null
+        - name: status
+          in: query
+          description: Status to filter by
+          required: false
+          schema:
+            type: string
+            enum: ['active', 'inactive', 'review']
         - name: page
           in: query
           description: The page number for paginated results
