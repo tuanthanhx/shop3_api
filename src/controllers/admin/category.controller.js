@@ -151,12 +151,14 @@ exports.update = async (req, res) => {
       return;
     }
 
-    const parentCategory = await db.category.findByPk(parentId);
-    if (!parentCategory) {
-      res.status(400).send({
-        message: 'Cannot find the parent category',
-      });
-      return;
+    if (parentId) {
+      const parentCategory = await db.category.findByPk(parentId);
+      if (!parentCategory) {
+        res.status(400).send({
+          message: 'Cannot find the parent category',
+        });
+        return;
+      }
     }
 
     await category.update({
