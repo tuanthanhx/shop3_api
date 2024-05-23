@@ -955,6 +955,12 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
 
   /api-admin/v1/media/files:
     post:

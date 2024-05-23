@@ -13,6 +13,8 @@ paths:
       summary: Get all users
       tags:
         - Users
+      security:
+        - bearerAuth: []
       parameters:
         - name: keyword
           in: query
