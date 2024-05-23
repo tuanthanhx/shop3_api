@@ -513,16 +513,13 @@ paths:
           description: Internal Server Error
 
 components:
-
   securitySchemes:
-
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
   schemas:
-
     LoginResponse:
       type: object
       properties:

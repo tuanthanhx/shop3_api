@@ -138,3 +138,10 @@ paths:
           description: User not found
         '500':
           description: Internal Server Error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

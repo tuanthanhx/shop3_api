@@ -7,7 +7,6 @@ servers:
   - url: http://127.0.0.1:3000
 
 paths:
-
   # /users:
   #   get:
   #     summary: Returns a list of users.
@@ -94,7 +93,6 @@ paths:
   #               $ref: "#/components/schemas/User"
   #     security:
   #       - bearerAuth: []
-
 
   # /users/:id:
   #   get:
@@ -510,9 +508,9 @@ paths:
                     items:
                       type: string
                       example: https://storage.googleapis.com/dummy.jpg
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -545,9 +543,9 @@ paths:
                   data:
                     type: string
                     example: https://storage.googleapis.com/dummy.jpg
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -580,9 +578,9 @@ paths:
                   data:
                     type: string
                     example: https://storage.googleapis.com/dummy.jpg
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -600,11 +598,11 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: A list of categories
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -629,9 +627,9 @@ paths:
       responses:
         '201':
           description: The newly created category
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -662,13 +660,13 @@ paths:
               required:
                 - name
       responses:
-        "200":
+        '200':
           description: The updated category
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Category not found
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -685,13 +683,13 @@ paths:
           schema:
             type: integer
       responses:
-        "204":
+        '204':
           description: Category deleted successfully
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Category not found
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -709,7 +707,7 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: A list of attributes of the category
           content:
             application/json:
@@ -727,7 +725,7 @@ paths:
                           example: 1
                         name:
                           type: string
-                          example: "Season"
+                          example: 'Season'
                         attributeValues:
                           type: array
                           items:
@@ -739,10 +737,10 @@ paths:
                                 example: 1
                               name:
                                 type: string
-                                example: "Spring"
-        "400":
+                                example: 'Spring'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -753,11 +751,11 @@ paths:
       tags:
         - Brands
       responses:
-        "200":
+        '200':
           description: A list of brands
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -784,9 +782,9 @@ paths:
       responses:
         '201':
           description: The newly created brand
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -889,10 +887,10 @@ paths:
           required: false
           schema:
             type: string
-            enum: ["asc", "desc"]
+            enum: ['asc', 'desc']
             default: asc
       responses:
-        "200":
+        '200':
           description: A list of products
           content:
             application/json:
@@ -911,10 +909,10 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/ProductResponse"
-        "400":
+                      $ref: '#/components/schemas/ProductResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -981,9 +979,9 @@ paths:
           #   application/json:
           #     schema:
           #       $ref: "#/components/schemas/ProductResponse"
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1051,9 +1049,9 @@ paths:
           #   application/json:
           #     schema:
           #       $ref: "#/components/schemas/ProductResponse"
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1070,17 +1068,16 @@ paths:
           schema:
             type: integer
       responses:
-        "204":
+        '204':
           description: Product deleted successfully
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Product not found
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
-
 
   /products/bulk_activate:
     post:
@@ -1104,9 +1101,9 @@ paths:
       responses:
         '201':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1133,13 +1130,12 @@ paths:
       responses:
         '201':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
-
 
   /products/bulk_delete:
     post:
@@ -1163,9 +1159,9 @@ paths:
       responses:
         '201':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1192,9 +1188,9 @@ paths:
       responses:
         '201':
           description: OK
-        "400":
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1205,7 +1201,7 @@ paths:
       tags:
         - Sellers
       responses:
-        "200":
+        '200':
           description: A JSON array of business types
           content:
             application/json:
@@ -1214,10 +1210,10 @@ paths:
                 properties:
                   data:
                     type: object
-                    $ref: "#/components/schemas/SellerBusinessTypesResponse"
-        "400":
+                    $ref: '#/components/schemas/SellerBusinessTypesResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1228,7 +1224,7 @@ paths:
       tags:
         - Sellers
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -1237,7 +1233,7 @@ paths:
                 properties:
                   data:
                     type: object
-                    $ref: "#/components/schemas/ShopResponse"
+                    $ref: '#/components/schemas/ShopResponse'
       security:
         - bearerAuth: []
     post:
@@ -1266,7 +1262,7 @@ paths:
                   example: 1
                 shopName:
                   type: string
-                  example: "Sample"
+                  example: 'Sample'
                 householdBusinessRegistrationDocument1:
                   type: string
                   format: binary
@@ -1278,16 +1274,16 @@ paths:
                   format: binary
                 householdBusinessName:
                   type: string
-                  example: "My Company"
+                  example: 'My Company'
                 householdBusinessRegistrationNumber:
                   type: string
-                  example: "AB100000"
+                  example: 'AB100000'
                 householdBusinessOwnerName:
                   type: string
-                  example: "John Smith"
+                  example: 'John Smith'
                 householdBusinessOwnerIdNumber:
                   type: string
-                  example: "123456789"
+                  example: '123456789'
                 individualIdentityCardFront:
                   type: string
                   format: binary
@@ -1296,16 +1292,16 @@ paths:
                   format: binary
                 individualIdentityCardNumber:
                   type: string
-                  example: "123456789"
+                  example: '123456789'
                 individualOwnerDob:
                   type: string
                   format: date-time
                 individualBusinessOwnerName:
                   type: string
-                  example: "John Smith"
+                  example: 'John Smith'
                 individualResidentialAddress:
                   type: string
-                  example: "206 Lorem Ipsum st."
+                  example: '206 Lorem Ipsum st.'
                 individualProductCategoryId:
                   type: integer
                   example: 1
@@ -1320,10 +1316,10 @@ paths:
                   format: binary
                 corporateCompanyName:
                   type: string
-                  example: "My Company"
+                  example: 'My Company'
                 corporateEnterpiseCodeNumber:
                   type: string
-                  example: "AB100000"
+                  example: 'AB100000'
                 useCurrentEmail:
                   type: boolean
                 newEmail:
@@ -1338,7 +1334,7 @@ paths:
                 newPhone:
                   type: string
                   format: phone
-                  example: "0123456789"
+                  example: '0123456789'
                 newPhoneOtp:
                   type: string
                   example: 123456
@@ -1349,7 +1345,7 @@ paths:
                   type: boolean
                   example: false
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -1358,10 +1354,10 @@ paths:
                 properties:
                   data:
                     type: object
-                    $ref: "#/components/schemas/ShopResponse"
-        "400":
+                    $ref: '#/components/schemas/ShopResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1389,7 +1385,7 @@ paths:
                   example: 1
                 shopName:
                   type: string
-                  example: "Sample"
+                  example: 'Sample'
                 householdBusinessRegistrationDocument1:
                   type: string
                   format: binary
@@ -1401,16 +1397,16 @@ paths:
                   format: binary
                 householdBusinessName:
                   type: string
-                  example: "My Company"
+                  example: 'My Company'
                 householdBusinessRegistrationNumber:
                   type: string
-                  example: "AB100000"
+                  example: 'AB100000'
                 householdBusinessOwnerName:
                   type: string
-                  example: "John Smith"
+                  example: 'John Smith'
                 householdBusinessOwnerIdNumber:
                   type: string
-                  example: "123456789"
+                  example: '123456789'
                 individualIdentityCardFront:
                   type: string
                   format: binary
@@ -1419,16 +1415,16 @@ paths:
                   format: binary
                 individualIdentityCardNumber:
                   type: string
-                  example: "123456789"
+                  example: '123456789'
                 individualOwnerDob:
                   type: string
                   format: date-time
                 individualBusinessOwnerName:
                   type: string
-                  example: "John Smith"
+                  example: 'John Smith'
                 individualResidentialAddress:
                   type: string
-                  example: "206 Lorem Ipsum st."
+                  example: '206 Lorem Ipsum st.'
                 individualProductCategoryId:
                   type: integer
                   example: 1
@@ -1443,10 +1439,10 @@ paths:
                   format: binary
                 corporateCompanyName:
                   type: string
-                  example: "My Company"
+                  example: 'My Company'
                 corporateEnterpiseCodeNumber:
                   type: string
-                  example: "AB100000"
+                  example: 'AB100000'
                 useCurrentEmail:
                   type: boolean
                 newEmail:
@@ -1461,7 +1457,7 @@ paths:
                 newPhone:
                   type: string
                   format: phone
-                  example: "0123456789"
+                  example: '0123456789'
                 newPhoneOtp:
                   type: string
                   example: 123456
@@ -1472,7 +1468,7 @@ paths:
                   type: boolean
                   example: false
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -1481,10 +1477,10 @@ paths:
                 properties:
                   data:
                     type: object
-                    $ref: "#/components/schemas/ShopResponse"
-        "400":
+                    $ref: '#/components/schemas/ShopResponse'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1495,7 +1491,7 @@ paths:
       tags:
         - Sellers
       responses:
-        "200":
+        '200':
           description: A JSON array of shipping services
           content:
             application/json:
@@ -1506,10 +1502,10 @@ paths:
                     type: array
                     items:
                       type: object
-                      $ref: "#/components/schemas/LogisticsService"
-        "400":
+                      $ref: '#/components/schemas/LogisticsService'
+        '400':
           description: Bad Request
-        "500":
+        '500':
           description: Internal Server Error
       security:
         - bearerAuth: []
@@ -1534,19 +1530,18 @@ paths:
                   type: integer
                   example: 1
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/SimpleResponse"
-        "400":
+                $ref: '#/components/schemas/SimpleResponse'
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Logistics service was not found
-        "500":
+        '500':
           description: Internal Server Error
-
 
   /sellers/logistics_services/unsubscribe:
     post:
@@ -1568,17 +1563,17 @@ paths:
                   type: integer
                   example: 1
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/SimpleResponse"
-        "400":
+                $ref: '#/components/schemas/SimpleResponse'
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Logistics service was not found
-        "500":
+        '500':
           description: Internal Server Error
 
   /sellers/logistics_services/estimate_shipping_fee:
@@ -1617,7 +1612,7 @@ paths:
                   type: integer
                   example: 20
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -1628,16 +1623,15 @@ paths:
                     type: number
                     format: float
                     example: 10000
-        "400":
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Logistics service was not found
-        "500":
+        '500':
           description: Internal Server Error
 
 components:
   schemas:
-
     SellerBusinessTypesResponse:
       type: array
       items:
@@ -1645,10 +1639,10 @@ components:
         properties:
           name:
             type: string
-            example: "Household"
+            example: 'Household'
           description:
             type: string
-            example: "Dummy"
+            example: 'Dummy'
 
     ShopResponse:
       type: object
@@ -1661,7 +1655,7 @@ components:
           example: 1
         shopName:
           type: string
-          example: "My Shop"
+          example: 'My Shop'
         userId:
           type: integer
           example: 1
@@ -1672,67 +1666,67 @@ components:
         phone:
           type: string
           format: phone
-          example: "0123456789"
+          example: '0123456789'
         subscribeMailingList:
           type: boolean
           example: true
         householdBusinessRegistrationDocument1:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument2:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument3:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessName:
           type: string
-          example: "My Company"
+          example: 'My Company'
         householdBusinessRegistrationNumber:
           type: string
-          example: "AB100000"
+          example: 'AB100000'
         householdBusinessOwnerName:
           type: string
-          example: "John Smith"
+          example: 'John Smith'
         householdBusinessOwnerIdNumber:
           type: string
-          example: "123456789"
+          example: '123456789'
         individualIdentityCardFront:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardBack:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardNumber:
           type: string
-          example: "123456789"
+          example: '123456789'
         individualOwnerDob:
           type: string
           format: date-time
         individualBusinessOwnerName:
           type: string
-          example: "John Smith"
+          example: 'John Smith'
         individualResidentialAddress:
           type: string
-          example: "206 Lorem Ipsum st."
+          example: '206 Lorem Ipsum st.'
         individualProductCategoryId:
           type: integer
           example: 1
         corporateCompanyRegistrationDocument1:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument2:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument3:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyName:
           type: string
-          example: "My Company"
+          example: 'My Company'
         corporateEnterpiseCodeNumber:
           type: string
-          example: "AB100000"
+          example: 'AB100000'
         isSubmitted:
           type: boolean
           example: false
@@ -1802,7 +1796,7 @@ components:
           example: 1
         uniqueId:
           type: string
-          example: "17129807205638693702"
+          example: '17129807205638693702'
         name:
           type: string
           example: Sample Product
@@ -1827,10 +1821,10 @@ components:
           example: 1
         thumbnailImage:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         thumbnailVideo:
           type: string
-          example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productImages:
           type: array
           items:
@@ -1841,7 +1835,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg"
+                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productVideos:
           type: array
           items:
@@ -1852,7 +1846,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: "https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4"
+                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
         variants:
           type: array
           items:
