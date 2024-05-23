@@ -760,30 +760,31 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: name
+        - name: keyword
           in: query
-          description: Names to filter by.
+          description: Search by product name, ID or seller SKU
+          example: Example
           required: false
           style: form
           schema:
             type: string
-        - name: email
+            default: null
+        - name: groupId
           in: query
-          description: Emails to filter by.
+          description: User Group ID to filter by
           required: false
-          style: form
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Status to filter by
+          required: false
           schema:
             type: string
-        - name: phone
-          in: query
-          description: Phones to filter by.
-          required: false
-          style: form
-          schema:
-            type: string
+            enum: ['active', 'inactive']
         - name: page
           in: query
-          description: The page number for paginated results.
+          description: The page number for paginated results
           required: false
           schema:
             type: integer
@@ -791,12 +792,26 @@ paths:
             default: 1
         - name: limit
           in: query
-          description: Maximum number of results to return.
+          description: Maximum number of results to return
           required: false
           schema:
             type: integer
             format: int32
             default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'name', 'email', 'phone', 'userGroupId', 'isActive', 'createdAt', 'updatedAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
       responses:
         '200':
           description: List of Users

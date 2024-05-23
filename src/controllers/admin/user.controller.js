@@ -6,22 +6,45 @@ const { Op } = db.Sequelize;
 exports.index = async (req, res) => {
   try {
     const {
-      name,
-      email,
-      phone,
+      keyword,
+      groupId,
+      status,
       page,
       limit,
+      sortField,
+      sortOrder = 'asc',
     } = req.query;
 
     const condition = {};
-    if (name) {
-      condition.name = { [Op.like]: `%${name}%` };
+    if (keyword) {
+      condition[Op.or] = [
+        { name: { [Op.like]: `%${keyword}%` } },
+        { email: { [Op.like]: `%${keyword}%` } },
+        { phone: { [Op.like]: `%${keyword}%` } },
+      ];
     }
-    if (email) {
-      condition.email = { [Op.like]: `%${email}%` };
+
+    if (groupId) {
+      condition.userGroupId = groupId;
     }
-    if (phone) {
-      condition.phone = { [Op.like]: `%${phone}%` };
+
+    if (status) {
+      if (status === 'active') {
+        condition.isActive = true;
+      }
+      if (status === 'inactive') {
+        condition.isActive = false;
+      }
+    }
+
+    let ordering = [['id', 'DESC']];
+
+    if (sortField && sortOrder) {
+      const validSortFields = ['id', 'name', 'email', 'phone', 'userGroupId', 'isActive', 'createdAt', 'updatedAt'];
+      const validSortOrder = ['asc', 'desc'];
+      if (validSortFields.includes(sortField) && validSortOrder.includes(sortOrder.toLowerCase())) {
+        ordering = [[sortField, sortOrder.toUpperCase()]];
+      }
     }
 
     const pageNo = parseInt(page, 10) || 1;
@@ -30,6 +53,7 @@ exports.index = async (req, res) => {
 
     const data = await db.user.findAndCountAll({
       where: condition,
+      order: ordering,
       limit: limitPerPage,
       offset,
     });
