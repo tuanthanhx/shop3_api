@@ -7,6 +7,7 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/', rules.index, shops.index);
+  router.get('/statistics', rules.statistics, shops.statistics);
   router.get('/:id', rules.show, shops.show);
   router.post('/:id/verify', rules.verify, shops.verify);
   router.post('/:id/activate', rules.activate, shops.activate);

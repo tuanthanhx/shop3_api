@@ -78,6 +78,51 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.statistics = async (req, res) => {
+  try {
+    const all = await db.shop.count({
+      where: {
+        isSubmitted: true,
+      },
+    });
+
+    const active = await db.shop.count({
+      where: {
+        isSubmitted: true,
+        isVerified: true,
+        isActive: true,
+      },
+    });
+
+    const inactive = await db.shop.count({
+      where: {
+        isSubmitted: true,
+        isVerified: true,
+        isActive: false,
+      },
+    });
+
+    const review = await db.shop.count({
+      where: {
+        isSubmitted: true,
+        isVerified: false,
+      },
+    });
+
+    res.json({
+      all,
+      active,
+      inactive,
+      review,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.show = async (req, res) => {
   try {
     const { id } = req.params;
