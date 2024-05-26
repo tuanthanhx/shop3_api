@@ -73,6 +73,10 @@ exports.index = async (req, res) => {
 
     if (statusId) {
       condition.productStatusId = statusId;
+    } else if (isAdministrator) {
+      condition.productStatusId = {
+        [Op.notIn]: [5, 6],
+      };
     }
 
     let ordering = [['id', 'DESC']];
@@ -109,6 +113,11 @@ exports.index = async (req, res) => {
           model: db.product_video,
           as: 'productVideos',
           attributes: ['id', 'file'],
+        },
+        {
+          model: db.category,
+          as: 'category',
+          attributes: ['id', 'name'],
         },
         {
           model: db.logistics_service,
