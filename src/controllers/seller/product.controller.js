@@ -120,6 +120,11 @@ exports.index = async (req, res) => {
           attributes: ['id', 'name'],
         },
         {
+          model: db.brand,
+          as: 'brand',
+          attributes: ['id', 'name'],
+        },
+        {
           model: db.logistics_service,
           as: 'logisticsServices',
           attributes: ['id', 'uniqueId', 'name'],
@@ -152,6 +157,7 @@ exports.index = async (req, res) => {
           ],
         },
       ],
+      attributes: { exclude: ['categoryId', 'brandId'] },
     });
 
     const { count, rows } = data;
@@ -295,6 +301,16 @@ exports.show = async (req, res) => {
           attributes: ['id', 'file'],
         },
         {
+          model: db.category,
+          as: 'category',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: db.brand,
+          as: 'brand',
+          attributes: ['id', 'name'],
+        },
+        {
           model: db.logistics_service,
           as: 'logisticsServices',
           attributes: ['id', 'uniqueId', 'name'],
@@ -326,6 +342,7 @@ exports.show = async (req, res) => {
           ],
         },
       ],
+      attributes: { exclude: ['categoryId', 'brandId'] },
     });
 
     if (!product) {
