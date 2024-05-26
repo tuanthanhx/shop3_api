@@ -226,6 +226,55 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.statistics = async (req, res) => {
+  try {
+    const all = await db.product.count({
+      where: {
+        productStatusId: {
+          [Op.notIn]: [5, 6],
+        },
+      },
+    });
+
+    const active = await db.product.count({
+      where: {
+        productStatusId: 1,
+      },
+    });
+
+    const inactive = await db.product.count({
+      where: {
+        productStatusId: 2,
+      },
+    });
+
+    const review = await db.product.count({
+      where: {
+        productStatusId: 3,
+      },
+    });
+
+    const suspended = await db.product.count({
+      where: {
+        productStatusId: 4,
+      },
+    });
+
+    res.json({
+      all,
+      active,
+      inactive,
+      review,
+      suspended,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.show = async (req, res) => {
   try {
     const { id } = req.params;

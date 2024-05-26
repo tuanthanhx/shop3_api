@@ -29,6 +29,8 @@ exports.index = [
   validateRules,
 ];
 
+exports.statistics = [];
+
 exports.show = [
   param('id')
     .notEmpty()
