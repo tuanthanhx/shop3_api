@@ -18,6 +18,7 @@ npx sequelize db:seed --seed 20240503111032-add_logistics_providers.js
 npx sequelize db:seed --seed 20240503153321-add_logistics_providers_options.js
 npx sequelize db:seed --seed 20240503164651-add_logistics_services__providers_maps.js
 
+NODE_ENV=production npx sequelize db:seed --seed 20240523090930-add_test_user_admin.js
 NODE_ENV=production npx sequelize db:seed --seed 20240523090935-add_test_user_external.js
 NODE_ENV=production npx sequelize db:seed --seed 20240523090940-add_test_user_register.js
 NODE_ENV=production npx sequelize db:seed --seed 20240523090945-add_test_shops.js
