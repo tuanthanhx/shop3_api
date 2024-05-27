@@ -38,18 +38,24 @@ exports.index = async (req, res) => {
     }
 
     const pageNo = parseInt(page, 10) || 1;
-    const limitPerPage = parseInt(limit, 10) || 10;
-    const offset = (pageNo - 1) * limitPerPage;
+    const limitPerPage = parseInt(limit, 10);
 
-    const data = await db.category.findAndCountAll({
+    const queryOptions = {
       where: condition,
       order: ordering,
-      limit: limitPerPage,
-      offset,
-    });
+    };
+
+    if (limitPerPage !== -1) {
+      const effectiveLimit = limitPerPage || 10;
+      const offset = (pageNo - 1) * effectiveLimit;
+      queryOptions.limit = effectiveLimit;
+      queryOptions.offset = offset;
+    }
+
+    const data = await db.category.findAndCountAll(queryOptions);
 
     const { count, rows } = data;
-    const totalPages = Math.ceil(count / limitPerPage);
+    const totalPages = limitPerPage === -1 ? 1 : Math.ceil(count / limitPerPage);
 
     res.json({
       totalItems: count,

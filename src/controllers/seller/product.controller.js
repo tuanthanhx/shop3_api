@@ -42,8 +42,6 @@ exports.index = async (req, res) => {
     if (keyword) {
       condition[Op.or] = [
         { name: { [Op.like]: `%${keyword}%` } },
-        { uniqueId: { [Op.like]: `%${keyword}%` } },
-        { description: { [Op.like]: `%${keyword}%` } },
         db.sequelize.literal(`EXISTS (SELECT 1 FROM product_variants AS pv WHERE pv.productId = product.id AND pv.sku LIKE '%${keyword}%')`),
       ];
     }
@@ -108,37 +106,12 @@ exports.index = async (req, res) => {
           model: db.product_image,
           as: 'productImages',
           attributes: ['id', 'file'],
-        },
-        {
-          model: db.product_video,
-          as: 'productVideos',
-          attributes: ['id', 'file'],
-        },
-        {
-          model: db.category,
-          as: 'category',
-          attributes: ['id', 'name'],
-        },
-        {
-          model: db.brand,
-          as: 'brand',
-          attributes: ['id', 'name'],
-        },
-        {
-          model: db.logistics_service,
-          as: 'logisticsServices',
-          attributes: ['id', 'uniqueId', 'name'],
-          through: {
-            attributes: [],
-          },
-        },
-        {
-          model: db.product_attribute,
-          as: 'productAttributes',
-          attributes: ['name', 'value'],
+          separate: true,
+          limit: 1,
         },
         {
           model: db.variant,
+          separate: true,
           include: {
             model: db.option,
           },
@@ -147,6 +120,7 @@ exports.index = async (req, res) => {
           model: db.product_variant,
           as: 'productVariants',
           required: sortField === 'price',
+          separate: true,
           include: [
             {
               model: db.option,
@@ -157,27 +131,27 @@ exports.index = async (req, res) => {
           ],
         },
       ],
-      attributes: { exclude: ['categoryId', 'brandId'] },
+      attributes: { exclude: ['categoryId', 'brandId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
     });
 
     const { count, rows } = data;
     const totalPages = Math.ceil(count / limitPerPage);
 
-    const formattedRows = rows.map((row) => {
+    const formattedRows = rows?.map((row) => {
       const rowData = row.toJSON();
 
-      const variants = rowData.variants.map((variant) => ({
+      const variants = rowData.variants?.map((variant) => ({
         id: variant.id,
         name: variant.name,
-        options: variant.options.map((option) => ({
+        options: variant.options?.map((option) => ({
           id: option.id,
           name: option.name,
           image: option.image,
         })),
       }));
 
-      const productVariants = rowData.productVariants.map((pv) => {
-        const options = pv.options.map((option) => ({
+      const productVariants = rowData.productVariants?.map((pv) => {
+        const options = pv.options?.map((option) => ({
           variantId: option.variantId,
           name: option.variant.name,
           optionId: option.id,
@@ -193,28 +167,13 @@ exports.index = async (req, res) => {
         };
       });
 
-      const tryParseJSON = (jsonString) => {
-        try {
-          return JSON.parse(jsonString);
-        } catch (e) {
-          return jsonString;
-        }
-      };
-
-      const productAttributes = rowData.productAttributes.map((attr) => ({
-        name: attr.name,
-        value: tryParseJSON(attr.value),
-      }));
-
       delete rowData.variants;
       delete rowData.productVariants;
-      delete rowData.productAttributes;
 
       return {
         ...rowData,
         variants,
         productVariants,
-        productAttributes,
       };
     });
 
@@ -291,16 +250,6 @@ exports.show = async (req, res) => {
     const product = await db.product.findByPk(id, {
       include: [
         {
-          model: db.product_image,
-          as: 'productImages',
-          attributes: ['id', 'file'],
-        },
-        {
-          model: db.product_video,
-          as: 'productVideos',
-          attributes: ['id', 'file'],
-        },
-        {
           model: db.category,
           as: 'category',
           attributes: ['id', 'name'],
@@ -325,6 +274,7 @@ exports.show = async (req, res) => {
         },
         {
           model: db.variant,
+          separate: true,
           include: {
             model: db.option,
           },
@@ -332,6 +282,7 @@ exports.show = async (req, res) => {
         {
           model: db.product_variant,
           as: 'productVariants',
+          separate: true,
           include: [
             {
               model: db.option,
@@ -342,7 +293,19 @@ exports.show = async (req, res) => {
           ],
         },
       ],
-      attributes: { exclude: ['categoryId', 'brandId'] },
+      attributes: { exclude: ['categoryId', 'brandId', 'description'] },
+    });
+
+    const productDescription = await db.product.findByPk(id, {
+      attributes: ['description'],
+    });
+
+    const productImages = await product.getProductImages({
+      attributes: ['id', 'file'],
+    });
+
+    const productVideos = await product.getProductVideos({
+      attributes: ['id', 'file'],
     });
 
     if (!product) {
@@ -371,10 +334,10 @@ exports.show = async (req, res) => {
     }
 
     // Format variants
-    const formattedVariants = product.variants.map((variant) => ({
+    const formattedVariants = product.variants?.map((variant) => ({
       id: variant.id,
       name: variant.name,
-      options: variant.options.map((option) => ({
+      options: variant.options?.map((option) => ({
         id: option.id,
         name: option.name,
         image: option.image,
@@ -382,8 +345,8 @@ exports.show = async (req, res) => {
     }));
 
     // Format productVariants
-    const formattedProductVariants = product.productVariants.map((pv) => {
-      const options = pv.options.map((option) => ({
+    const formattedProductVariants = product.productVariants?.map((pv) => {
+      const options = pv.options?.map((option) => ({
         variantId: option.variantId,
         name: option.variant.name,
         optionId: option.id,
@@ -413,12 +376,16 @@ exports.show = async (req, res) => {
     }));
 
     const productObject = product.toJSON();
+    const productDescriptionObject = productDescription.toJSON();
     delete productObject.variants;
     delete productObject.productVariants;
     delete productObject.productAttributes;
 
     const responseObject = {
       ...productObject,
+      description: productDescriptionObject?.description,
+      productImages,
+      productVideos,
       variants: formattedVariants,
       productVariants: formattedProductVariants,
       productAttributes: formattedProductAttributes,
