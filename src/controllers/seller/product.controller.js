@@ -103,6 +103,11 @@ exports.index = async (req, res) => {
       distinct: true,
       include: [
         {
+          model: db.category,
+          as: 'category',
+          attributes: ['id', 'name'],
+        },
+        {
           model: db.product_image,
           as: 'productImages',
           attributes: ['id', 'file'],
