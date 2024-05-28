@@ -13,7 +13,7 @@ exports.index = [
     .toInt(),
   query('categoryId')
     .optional()
-    .trim(), // int or int[]
+    .trim(), // list of int
   query('statusId')
     .optional()
     .toInt(),

@@ -12,8 +12,7 @@ exports.authenticateToken = (req, res, next) => {
     '/public',
     '/docs',
     '/api-docs',
-    `/api-common/${apiVersion}/auth`,
-    `/api-common/${apiVersion}/register`,
+    '/api-common',
   ];
   const adminPaths = [
     '/api-admin',

@@ -320,14 +320,6 @@ exports.show = async (req, res) => {
       attributes: ['description'],
     });
 
-    const productImages = await product.getProductImages({
-      attributes: ['id', 'file'],
-    });
-
-    const productVideos = await product.getProductVideos({
-      attributes: ['id', 'file'],
-    });
-
     if (!product) {
       res.status(404).send({
         message: 'Product not found',
@@ -352,6 +344,14 @@ exports.show = async (req, res) => {
         return;
       }
     }
+
+    const productImages = await product?.getProductImages({
+      attributes: ['id', 'file'],
+    });
+
+    const productVideos = await product?.getProductVideos({
+      attributes: ['id', 'file'],
+    });
 
     // Format variants
     const formattedVariants = product.variants?.map((variant) => ({
