@@ -20,6 +20,15 @@ exports.index = [
   query('codStatus')
     .optional()
     .toBoolean(),
+  query('limit')
+    .optional()
+    .custom((value) => {
+      const num = Number(value);
+      if (num >= 1 && num <= 25) {
+        return true;
+      }
+      throw new Error('Invalid value for limit. Allowed values are between 1 and 25');
+    }),
   query('sortField')
     .optional()
     .trim(),

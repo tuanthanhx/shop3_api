@@ -38,7 +38,7 @@ exports.index = async (req, res) => {
     }
 
     const pageNo = parseInt(page, 10) || 1;
-    const limitPerPage = parseInt(limit, 10);
+    const limitPerPage = parseInt(limit, 10) || 10;
 
     const queryOptions = {
       where: condition,
@@ -46,7 +46,7 @@ exports.index = async (req, res) => {
     };
 
     if (limitPerPage !== -1) {
-      const effectiveLimit = limitPerPage || 10;
+      const effectiveLimit = limitPerPage;
       const offset = (pageNo - 1) * effectiveLimit;
       queryOptions.limit = effectiveLimit;
       queryOptions.offset = offset;

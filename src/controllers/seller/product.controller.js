@@ -8,6 +8,8 @@ exports.index = async (req, res) => {
   try {
     const { user } = req;
     const isAdministrator = user.userGroupId === 6;
+    // const isUser = user.userGroupId === 1;
+    // const isCommon = user.userGroupId === 0;
 
     const {
       keyword,
@@ -91,29 +93,23 @@ exports.index = async (req, res) => {
       }
     }
 
-    const pageNo = parseInt(page, 10) || 1;
-    const limitPerPage = parseInt(limit, 10) || 10;
-    const offset = (pageNo - 1) * limitPerPage;
+    const includeOptions = [
+      {
+        model: db.category,
+        as: 'category',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: db.product_image,
+        as: 'productImages',
+        attributes: ['id', 'file'],
+        separate: true,
+        limit: 1,
+      },
+    ];
 
-    const data = await db.product.findAndCountAll({
-      where: condition,
-      order: ordering,
-      limit: limitPerPage,
-      offset,
-      distinct: true,
-      include: [
-        {
-          model: db.category,
-          as: 'category',
-          attributes: ['id', 'name'],
-        },
-        {
-          model: db.product_image,
-          as: 'productImages',
-          attributes: ['id', 'file'],
-          separate: true,
-          limit: 1,
-        },
+    if (!isAdministrator) {
+      includeOptions.push(
         {
           model: db.variant,
           separate: true,
@@ -135,12 +131,31 @@ exports.index = async (req, res) => {
             },
           ],
         },
-      ],
+      );
+    }
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+
+    const queryOptions = {
+      where: condition,
+      order: ordering,
+      distinct: true,
+      include: includeOptions,
       attributes: { exclude: ['categoryId', 'brandId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
-    });
+    };
+
+    if (limitPerPage !== -1) {
+      const effectiveLimit = limitPerPage;
+      const offset = (pageNo - 1) * effectiveLimit;
+      queryOptions.limit = effectiveLimit;
+      queryOptions.offset = offset;
+    }
+
+    const data = await db.product.findAndCountAll(queryOptions);
 
     const { count, rows } = data;
-    const totalPages = Math.ceil(count / limitPerPage);
+    const totalPages = limitPerPage === -1 ? 1 : Math.ceil(count / limitPerPage);
 
     const formattedRows = rows?.map((row) => {
       const rowData = row.toJSON();
