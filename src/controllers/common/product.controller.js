@@ -109,7 +109,7 @@ exports.index = async (req, res) => {
       order: ordering,
       distinct: true,
       include: includeOptions,
-      attributes: { exclude: ['categoryId', 'brandId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
+      attributes: { exclude: ['productStatusId', 'categoryId', 'brandId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
     };
 
     if (limitPerPage !== -1) {
@@ -231,7 +231,7 @@ exports.show = async (req, res) => {
           ],
         },
       ],
-      attributes: { exclude: ['categoryId', 'brandId', 'description'] },
+      attributes: { exclude: ['productStatusId', 'categoryId', 'brandId', 'description'] },
     });
 
     const productDescription = await db.product.findByPk(id, {

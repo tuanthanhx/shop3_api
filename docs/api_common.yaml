@@ -512,6 +512,109 @@ paths:
         '500':
           description: Internal Server Error
 
+  /api-common/v1/categories:
+    get:
+      summary: Get all categories
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by product name
+          example: Example
+          required: false
+          style: form
+          schema:
+            type: string
+            default: null
+        - name: parentId
+          in: query
+          description: ID of the parent category
+          required: false
+          schema:
+            type: integer
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'name', 'createdAt', 'updatedAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+      responses:
+        '200':
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-common/v1/categories/{id}:
+    get:
+      summary: Get a category
+      tags:
+        - Categories
+      parameters:
+        - name: id
+          in: path
+          description: Category Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CategoryResponse'
+
   /api-common/v1/products:
     get:
       summary: Get list of products
@@ -766,6 +869,29 @@ components:
           type: string
           format: date-time
         updated_at:
+          type: string
+          format: date-time
+
+    CategoryResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Bathroom Supplies
+        image:
+          type: string
+          format: uri
+          example: https://storage.googleapis.com/dummy.jpg
+        parentId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
           type: string
           format: date-time
 
