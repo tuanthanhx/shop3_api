@@ -958,16 +958,14 @@ components:
         description:
           type: string
           example: Dummy dummy dummy
-        price:
+        minPrice:
           type: number
           format: float
-          example: 100000
-        sku:
-          type: string
-          example: SKU0001
-        quantity:
-          type: integer
           example: 100
+        maxPrice:
+          type: number
+          format: float
+          example: 500
         shopId:
           type: integer
           example: 1
