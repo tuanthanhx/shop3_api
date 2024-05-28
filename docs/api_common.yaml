@@ -512,6 +512,145 @@ paths:
         '500':
           description: Internal Server Error
 
+  /api-common/v1/products:
+    get:
+      summary: Get list of products
+      tags:
+        - Products
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by product name, ID or seller SKU
+          example: jacket
+          required: false
+          style: form
+          schema:
+            type: string
+            default: null
+        - name: minPrice
+          in: query
+          description: Minimum price
+          example: 10000
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: null
+        - name: maxPrice
+          in: query
+          description: Maximum price
+          example: 200000
+          required: false
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: null
+        - name: categoryId
+          in: query
+          description: Search by Category ID(s) (can be multiple values, comma separated)
+          example: 1,2
+          required: false
+          style: form
+          schema:
+            type: string
+            default: null
+        - name: codStatus
+          in: query
+          description: Search by COD Status
+          example: true
+          required: false
+          style: form
+          schema:
+            type: boolean
+            default: null
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'name', 'uniqueId', 'price', 'createdAt', 'updatedAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-common/v1/products/{id}:
+    get:
+      summary: Get a product
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          description: Product Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of a product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Product not found
+        '500':
+          description: Internal Server Error
+
 components:
   securitySchemes:
     bearerAuth:
@@ -520,6 +659,13 @@ components:
       bearerFormat: JWT
 
   schemas:
+    TrueResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          example: true
+
     LoginResponse:
       type: object
       properties:
@@ -623,9 +769,124 @@ components:
           type: string
           format: date-time
 
-    TrueResponse:
+    Variant:
       type: object
       properties:
-        data:
-          type: object
-          example: true
+        name:
+          type: string
+          description: The name of the variant category, such as size or color.
+          example: Size
+        options:
+          type: array
+          items:
+            type: string
+            example: Medium
+          description: A list of available options for the variant category.
+
+    Option:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the option, such as 'Size' or 'Color'.
+          example: Size
+        value:
+          type: string
+          description: The value corresponding to the option name, such as 'Medium' or 'Red'.
+          example: Medium
+
+    ProductVariant:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+          description: A list of option objects defining the characteristics of the product variant.
+        price:
+          type: integer
+          format: float
+          description: The price of the product variant.
+          example: 100000
+        sku:
+          type: string
+          description: The stock keeping unit identifier for the product variant.
+          example: SKU001
+        quantity:
+          type: integer
+          description: The available quantity of the product variant.
+          example: 100
+
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        uniqueId:
+          type: string
+          example: '17129807205638693702'
+        name:
+          type: string
+          example: Sample Product
+        description:
+          type: string
+          example: Dummy dummy dummy
+        price:
+          type: number
+          format: float
+          example: 100000
+        sku:
+          type: string
+          example: SKU0001
+        quantity:
+          type: integer
+          example: 100
+        shopId:
+          type: integer
+          example: 1
+        productStatusId:
+          type: integer
+          example: 1
+        thumbnailImage:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        thumbnailVideo:
+          type: string
+          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        productImages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              file:
+                type: string
+                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+        productVideos:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              file:
+                type: string
+                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+        productVariants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariant'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

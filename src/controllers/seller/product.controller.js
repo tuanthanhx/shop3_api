@@ -8,8 +8,6 @@ exports.index = async (req, res) => {
   try {
     const { user } = req;
     const isAdministrator = user.userGroupId === 6;
-    // const isUser = user.userGroupId === 1;
-    // const isCommon = user.userGroupId === 0;
 
     const {
       keyword,
