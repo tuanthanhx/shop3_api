@@ -33,3 +33,21 @@ exports.isOnlyUpdateProductVariants = (productVariants) => productVariants.every
   }
   return product.options.every((option) => typeof option.variantId !== 'undefined' && typeof option.optionId !== 'undefined');
 });
+
+exports.getMinMaxPrice = (productVariants) => {
+  if (!productVariants || productVariants.length === 0) return { minPrice: null, maxPrice: null };
+
+  let minPrice = productVariants[0].price;
+  let maxPrice = productVariants[0].price;
+
+  for (let i = 1; i < productVariants.length; i++) {
+    if (productVariants[i].price < minPrice) {
+      minPrice = productVariants[i].price;
+    }
+    if (productVariants[i].price > maxPrice) {
+      maxPrice = productVariants[i].price;
+    }
+  }
+
+  return { minPrice, maxPrice };
+};

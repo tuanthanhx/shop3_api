@@ -1,4 +1,4 @@
-const { generateUniqueId, isOnlyUpdateProductVariants } = require('../../utils/utils');
+const { generateUniqueId, isOnlyUpdateProductVariants, getMinMaxPrice } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -104,33 +104,13 @@ exports.index = async (req, res) => {
         separate: true,
         limit: 1,
       },
+      {
+        model: db.product_variant,
+        as: 'productVariants',
+        required: sortField === 'price',
+        separate: true,
+      },
     ];
-
-    if (!isAdministrator) {
-      includeOptions.push(
-        {
-          model: db.variant,
-          separate: true,
-          include: {
-            model: db.option,
-          },
-        },
-        {
-          model: db.product_variant,
-          as: 'productVariants',
-          required: sortField === 'price',
-          separate: true,
-          include: [
-            {
-              model: db.option,
-              include: {
-                model: db.variant,
-              },
-            },
-          ],
-        },
-      );
-    }
 
     const pageNo = parseInt(page, 10) || 1;
     const limitPerPage = parseInt(limit, 10) || 10;
@@ -185,11 +165,14 @@ exports.index = async (req, res) => {
         };
       });
 
+      const minMaxPrice = getMinMaxPrice(rowData.productVariants);
+
       delete rowData.variants;
       delete rowData.productVariants;
 
       return {
         ...rowData,
+        ...minMaxPrice,
         variants,
         productVariants,
       };
@@ -380,6 +363,8 @@ exports.show = async (req, res) => {
       };
     });
 
+    const minMaxPrice = getMinMaxPrice(product.productVariants);
+
     const tryParseJSON = (jsonString) => {
       try {
         return JSON.parse(jsonString);
@@ -401,6 +386,7 @@ exports.show = async (req, res) => {
 
     const responseObject = {
       ...productObject,
+      ...minMaxPrice,
       description: productDescriptionObject?.description,
       productImages,
       productVideos,

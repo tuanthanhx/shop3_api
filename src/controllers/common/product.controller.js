@@ -1,3 +1,4 @@
+const { getMinMaxPrice } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -79,25 +80,10 @@ exports.index = async (req, res) => {
         limit: 1,
       },
       {
-        model: db.variant,
-        separate: true,
-        include: {
-          model: db.option,
-        },
-      },
-      {
         model: db.product_variant,
         as: 'productVariants',
         required: sortField === 'price',
         separate: true,
-        include: [
-          {
-            model: db.option,
-            include: {
-              model: db.variant,
-            },
-          },
-        ],
       },
     ];
 
@@ -154,11 +140,14 @@ exports.index = async (req, res) => {
         };
       });
 
+      const minMaxPrice = getMinMaxPrice(rowData.productVariants);
+
       delete rowData.variants;
       delete rowData.productVariants;
 
       return {
         ...rowData,
+        ...minMaxPrice,
         variants,
         productVariants,
       };
@@ -282,6 +271,8 @@ exports.show = async (req, res) => {
       };
     });
 
+    const minMaxPrice = getMinMaxPrice(product.productVariants);
+
     const tryParseJSON = (jsonString) => {
       try {
         return JSON.parse(jsonString);
@@ -303,6 +294,7 @@ exports.show = async (req, res) => {
 
     const responseObject = {
       ...productObject,
+      ...minMaxPrice,
       description: productDescriptionObject?.description,
       productImages,
       productVideos,
