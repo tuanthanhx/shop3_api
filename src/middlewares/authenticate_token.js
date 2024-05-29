@@ -29,6 +29,7 @@ exports.authenticateToken = (req, res, next) => {
       isPublicPaths
       && req.path !== `/api-common/${apiVersion}/auth/is_login`
       && req.path !== `/api-common/${apiVersion}/auth/me`
+      && req.path !== `/api-common/${apiVersion}/auth/statistics`
     )
   ) {
     return next();

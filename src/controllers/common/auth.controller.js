@@ -50,6 +50,43 @@ exports.findMe = async (req, res) => {
   }
 };
 
+exports.statistics = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const user = await db.user.findByPk(id, {
+      attributes: [
+        'id',
+        'uuid',
+        [db.sequelize.literal('(SELECT COUNT(*) FROM products)'), 'reviewsCount'],
+      ],
+      include: [
+        {
+          model: db.shop,
+          attributes: [
+            'id',
+            'shopName',
+            [db.sequelize.literal('(SELECT COUNT(*) FROM products AS p WHERE p.shopId = shop.id)'), 'productsCount'],
+          ],
+        },
+      ],
+    });
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
+      });
+      return;
+    }
+    res.json({
+      data: user,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.loginByEmail = async (req, res) => {
   const { email, password } = req.body;
 

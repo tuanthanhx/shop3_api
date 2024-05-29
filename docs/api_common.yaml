@@ -143,18 +143,37 @@ paths:
 
   /api-common/v1/auth/me:
     get:
-      summary: Get the current user data
+      summary: Get the current user's data
       tags:
         - Authentication
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: A JSON object of user
+          description: Detail of the user
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-common/v1/auth/statistics:
+    get:
+      summary: Get the current user's statistics
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Statistics of the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticsResponse'
         '400':
           description: Bad Request
         '500':
@@ -833,6 +852,32 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+    StatisticsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        uuid:
+          type: string
+          format: uuid
+          example: 6252290c-1a4e-4556-a8cd-e3e32e316fd7
+        reviewsCount:
+          type: integer
+          example: 100
+        shop:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            shopName:
+              type: string
+              example: Test Shop 101
+            productsCount:
+              type: integer
+              example: 100
 
     LanguageResponse:
       type: object

@@ -27,6 +27,8 @@ exports.isLogin = [];
 
 exports.findMe = [];
 
+exports.statistics = [];
+
 exports.logout = [];
 
 exports.refreshToken = [
