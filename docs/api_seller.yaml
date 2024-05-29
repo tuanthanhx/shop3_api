@@ -926,7 +926,7 @@ paths:
     get:
       summary: Get products statistics
       tags:
-        - Shops
+        - Products
       security:
         - bearerAuth: []
       responses:
