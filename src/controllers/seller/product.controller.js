@@ -194,8 +194,26 @@ exports.index = async (req, res) => {
 
 exports.statistics = async (req, res) => {
   try {
+    const { user } = req;
+    const isAdministrator = user.userGroupId === 6;
+
+    const condition = {};
+
+    if (!isAdministrator) {
+      const shop = await db.shop.findOne({ where: { userId: user.id } });
+      if (!shop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      const shopId = shop.id;
+      condition.shopId = shopId;
+    }
+
     const all = await db.product.count({
       where: {
+        ...condition,
         productStatusId: {
           [Op.notIn]: [5, 6],
         },
@@ -204,24 +222,28 @@ exports.statistics = async (req, res) => {
 
     const active = await db.product.count({
       where: {
+        ...condition,
         productStatusId: 1,
       },
     });
 
     const inactive = await db.product.count({
       where: {
+        ...condition,
         productStatusId: 2,
       },
     });
 
     const review = await db.product.count({
       where: {
+        ...condition,
         productStatusId: 3,
       },
     });
 
     const suspended = await db.product.count({
       where: {
+        ...condition,
         productStatusId: 4,
       },
     });
