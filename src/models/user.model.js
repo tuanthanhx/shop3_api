@@ -53,6 +53,9 @@ module.exports = function (sequelize, Sequelize) {
     lastLogin: {
       type: Sequelize.DATE,
     },
+    walletAddress: {
+      type: Sequelize.STRING,
+    }
   }, {
     paranoid: false,
     defaultScope: {

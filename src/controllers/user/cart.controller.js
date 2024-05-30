@@ -68,7 +68,9 @@ exports.create = async (req, res) => {
     });
 
     if (!product) {
-      res.status(404).send('Product or variant not found');
+      res.status(404).json({
+        error: 'Product or variant not found',
+      });
       return;
     }
 
@@ -83,7 +85,9 @@ exports.create = async (req, res) => {
     if (cartItem) {
       const newQuantity = cartItem.quantity + quantity;
       if (newQuantity > product.productVariants[0].dataValues.quantity) {
-        res.status(404).send('Not enough quantity in stock');
+        res.status(400).json({
+          error: 'Requested quantity exceeds available stock',
+        });
         return;
       }
 
@@ -98,7 +102,9 @@ exports.create = async (req, res) => {
       });
     } else {
       if (object.quantity > product.productVariants[0].dataValues.quantity) {
-        res.status(404).send('Not enough quantity in stock');
+        res.status(400).json({
+          error: 'Requested quantity exceeds available stock',
+        });
         return;
       }
       await db.cart.create(object);

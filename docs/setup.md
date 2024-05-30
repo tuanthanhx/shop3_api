@@ -29,6 +29,10 @@ NODE_ENV=production npx sequelize db:seed --seed 20240523090950-add_test_product
 
 npx sequelize-cli db:migrate --env production
 
+OR sepecified file:
+
+npx sequelize-cli db:migrate --to 20240530185717-add-wallet-address-to-user.js --env production
+
 ===========
 
 

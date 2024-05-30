@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
+const { ethers } = require('ethers');
 const logger = require('../../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
 const { sendEmail } = require('../../utils/email');
+const { generateRandomNumber } = require('../../utils/utils');
 const db = require('../../models');
 
 require('dotenv').config();
@@ -150,6 +152,60 @@ exports.loginByPhone = async (req, res) => {
       data: { accessToken, refreshToken },
     });
   } catch (error) {
+    logger.error(error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+};
+
+exports.loginByWallet = async (req, res) => {
+  try {
+    const {
+      address,
+      signature,
+      message,
+      userGroupId,
+    } = req.body;
+    const signerAddress = ethers.verifyMessage(message, signature);
+
+    if (signerAddress.toLowerCase() !== address.toLowerCase()) {
+      res.status(401).json({ error: 'Invalid signature' });
+      return;
+    }
+
+    const tmpPassword = generateRandomNumber(6);
+
+    const [user, createdUser] = await db.user.findOrCreate({
+      where: { walletAddress: address },
+      defaults: {
+        password: tmpPassword,
+        userGroupId: userGroupId || 1,
+      },
+    });
+
+    const userData = user || createdUser;
+
+    const userIdentity = {
+      id: userData.id,
+      uuid: userData.uuid,
+      userGroupId: userData.userGroupId,
+    };
+    const accessToken = jwt.sign(userIdentity, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign(userIdentity, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
+
+    const [token, createdToken] = await UserRefreshToken.findOrCreate({
+      where: { userId: userData.id },
+      defaults: { token: refreshToken },
+    });
+
+    if (!createdToken) {
+      await token.update({ token: refreshToken });
+    }
+
+    res.json({
+      data: { accessToken, refreshToken },
+    });
+  } catch (error) {
+    console.log(error);
     logger.error(error);
     res.status(500).json({ error: 'Login failed' });
   }

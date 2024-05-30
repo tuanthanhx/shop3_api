@@ -12,6 +12,7 @@ module.exports = (app) => {
   router.post('/refresh_token', rules.refreshToken, auth.refreshToken);
   router.post('/login/email', rules.loginByEmail, auth.loginByEmail);
   router.post('/login/phone', rules.loginByPhone, auth.loginByPhone);
+  router.post('/login/wallet', rules.loginByWallet, auth.loginByWallet);
   router.post('/logout', rules.logout, auth.logout);
   router.post('/reset_password/email', rules.resetPasswordByEmail, auth.resetPasswordByEmail);
   router.post('/reset_password/phone', rules.resetPasswordByPhone, auth.resetPasswordByPhone);
