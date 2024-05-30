@@ -108,6 +108,17 @@ db.logistics_service.hasMany(db.logistics_provider_option);
 db.logistics_provider_option.belongsTo(db.logistics_provider);
 db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProvidersOptions' });
 
+// Relationship between cart with user, product, product variants
+
+db.user.hasMany(db.cart, { onDelete: 'CASCADE' });
+db.cart.belongsTo(db.user);
+
+db.product.hasMany(db.cart, { onDelete: 'CASCADE' });
+db.cart.belongsTo(db.product);
+
+db.product_variant.hasMany(db.cart, { onDelete: 'CASCADE' });
+db.cart.belongsTo(db.product_variant, { as: 'productVariant' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

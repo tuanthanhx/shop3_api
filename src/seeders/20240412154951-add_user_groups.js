@@ -2,31 +2,31 @@ module.exports = {
   async up(queryInterface) {
     await queryInterface.bulkInsert('user_groups', [
       {
-        name: 'Unregistered / Not Logged In',
+        name: 'Users',
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Registered Users',
+        name: 'Sellers',
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Users Awaiting Email Confirmation',
+        name: 'Unused 03',
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Users Awaiting Moderation',
+        name: 'Unused 04',
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Moderators',
+        name: 'External / 3rd Parties',
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),

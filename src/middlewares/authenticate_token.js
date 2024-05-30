@@ -17,12 +17,20 @@ exports.authenticateToken = (req, res, next) => {
   const adminPaths = [
     '/api-admin',
   ];
-  const externalPaths = [
-    '/api-external',
+  // const externalPaths = [
+  //   '/api-external',
+  // ];
+  const sellerPaths = [
+    '/api-seller',
+  ];
+  const userPaths = [
+    '/api-user',
   ];
   const isPublicPaths = publicPaths.some((path) => req.path.startsWith(path));
   const isAdminPaths = adminPaths.some((path) => req.path.startsWith(path));
-  const isExternalPaths = externalPaths.some((path) => req.path.startsWith(path));
+  // const isExternalPaths = externalPaths.some((path) => req.path.startsWith(path));
+  const isSellerPaths = sellerPaths.some((path) => req.path.startsWith(path));
+  const isUserPaths = userPaths.some((path) => req.path.startsWith(path));
 
   if (
     req.path === '/' || (
@@ -46,12 +54,20 @@ exports.authenticateToken = (req, res, next) => {
       return res.status(403).json({ error: 'You are not authorized to access this API' });
     }
 
-    if (isExternalPaths && user.userGroupId !== 5) {
+    // if (isExternalPaths && user.userGroupId !== 5) {
+    //   return res.status(403).json({ error: 'You are not authorized to access this API' });
+    // }
+
+    if (isSellerPaths && user.userGroupId !== 2) {
+      return res.status(403).json({ error: 'You are not authorized to access this API' });
+    }
+
+    if (isUserPaths && user.userGroupId !== 1) {
       return res.status(403).json({ error: 'You are not authorized to access this API' });
     }
 
     return next();
   } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 };
