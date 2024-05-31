@@ -51,3 +51,37 @@ exports.connectWallet = async (req, res) => {
     });
   }
 };
+
+exports.disconnectWallet = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const me = await db.user.findByPk(userId);
+
+    if (!me) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    if (!me.email && !me.phone) {
+      res.status(400).json({ error: 'Cannot disconnect wallet if email and phone are empty' });
+      return;
+    }
+
+    me.update({
+      walletAddress: null,
+    });
+
+    res.json({
+      data: {
+        message: 'Wallet disconnected successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

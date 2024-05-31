@@ -6,7 +6,7 @@ exports.index = [];
 exports.connectWallet = [
   body('address')
     .notEmpty()
-    .withMessage('phone is required')
+    .withMessage('address is required')
     .trim(),
   body('signature')
     .notEmpty()
@@ -18,3 +18,5 @@ exports.connectWallet = [
     .trim(),
   validateRules,
 ];
+
+exports.disconnectWallet = [];
