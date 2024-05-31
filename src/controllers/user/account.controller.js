@@ -1,5 +1,6 @@
 const { ethers } = require('ethers');
 const logger = require('../../utils/logger');
+const { checkOtp, removeOtp } = require('../../utils/otp');
 const db = require('../../models');
 
 exports.connectWallet = async (req, res) => {
@@ -76,6 +77,77 @@ exports.disconnectWallet = async (req, res) => {
     res.json({
       data: {
         message: 'Wallet disconnected successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getOrdersStatistics = async (req, res) => {
+  try {
+    // TODO: Get real data later, now use dummy
+    const data = {
+      all: 1968,
+      shipping: 968,
+      completed: 1968,
+      canceled: 68,
+    };
+
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      receiver,
+      otp,
+      password,
+    } = req.body;
+
+    const verifyOtpResult = await checkOtp(receiver, otp);
+    if (!verifyOtpResult) {
+      res.status(400).json({ data: 'Invalid OTP' });
+      return;
+    }
+    await removeOtp(receiver);
+
+    const me = await db.user.findByPk(userId);
+    if (!me) {
+      res.status(404).send({
+        message: 'User not found',
+      });
+      return;
+    }
+
+    if (me.email !== receiver && me.phone !== receiver) {
+      res.status(404).send({
+        message: 'This email or phone not belong to you',
+      });
+      return;
+    }
+
+    await me.update({
+      password: me.generateHash(password),
+    });
+
+    res.json({
+      data: {
+        message: 'Password updated successfully',
       },
     });
   } catch (err) {

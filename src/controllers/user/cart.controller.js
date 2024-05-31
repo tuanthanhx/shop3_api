@@ -42,6 +42,7 @@ exports.index = async (req, res) => {
         quantity: cartItem.quantity,
         product: cartItem.product,
         productVariant: cartItem.productVariant,
+        totalPrice: cartItem.quantity * cartItem.productVariant.price,
       });
       return acc;
     }, {});
@@ -121,7 +122,6 @@ exports.create = async (req, res) => {
         data: {
           message: 'Cart item updated successfully',
         },
-        product,
       });
     } else {
       if (object.quantity > product.productVariants[0].dataValues.quantity) {
@@ -136,7 +136,6 @@ exports.create = async (req, res) => {
         data: {
           message: 'Cart item created successfully',
         },
-        product,
       });
     }
   } catch (err) {

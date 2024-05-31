@@ -6,6 +6,11 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
+  router.get('/orders_statistics', rules.getOrdersStatistics, accounts.getOrdersStatistics);
+  // router.get('/recent_orders', rules.getOrdersStatistics, accounts.getOrdersStatistics);
+
+  router.post('/change_password', rules.changePassword, accounts.changePassword);
+
   router.post('/connect_wallet', rules.connectWallet, accounts.connectWallet);
   router.post('/disconnect_wallet', rules.disconnectWallet, accounts.disconnectWallet);
 

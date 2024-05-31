@@ -20,3 +20,31 @@ exports.connectWallet = [
 ];
 
 exports.disconnectWallet = [];
+
+exports.getOrdersStatistics = [];
+
+exports.changePassword = [
+  body('receiver')
+    .notEmpty()
+    .withMessage('receiver is required')
+    .trim(),
+  body('otp')
+    .notEmpty()
+    .withMessage('otp is required')
+    .trim(),
+  body('password')
+    .notEmpty()
+    .withMessage('password is required')
+    .isLength({ min: 6 })
+    .withMessage('password must be at least 6 characters'),
+  body('passwordConfirm')
+    .notEmpty()
+    .withMessage('passwordConfirm is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('passwordConfirm does not match password');
+      }
+      return true;
+    }),
+  validateRules,
+];
