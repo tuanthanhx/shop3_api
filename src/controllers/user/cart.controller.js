@@ -12,6 +12,11 @@ exports.index = async (req, res) => {
       attributes: ['id', 'quantity'],
       include: [
         {
+          model: db.shop,
+          as: 'shop',
+          attributes: ['id', 'shopName'],
+        },
+        {
           model: db.product,
           as: 'product',
           attributes: ['id', 'name'],
@@ -23,8 +28,26 @@ exports.index = async (req, res) => {
         },
       ],
     });
+
+    const groupedData = data.reduce((acc, cartItem) => {
+      const shopId = cartItem.shop.id;
+      if (!acc[shopId]) {
+        acc[shopId] = {
+          shop: cartItem.shop,
+          items: [],
+        };
+      }
+      acc[shopId].items.push({
+        id: cartItem.id,
+        quantity: cartItem.quantity,
+        product: cartItem.product,
+        productVariant: cartItem.productVariant,
+      });
+      return acc;
+    }, {});
+
     res.json({
-      data,
+      data: Object.values(groupedData),
     });
   } catch (err) {
     logger.error(err);
@@ -107,6 +130,7 @@ exports.create = async (req, res) => {
         });
         return;
       }
+      object.shopId = product.shopId;
       await db.cart.create(object);
       res.status(200).json({
         data: {

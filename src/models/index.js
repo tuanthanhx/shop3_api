@@ -113,6 +113,9 @@ db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProv
 db.user.hasMany(db.cart, { onDelete: 'CASCADE' });
 db.cart.belongsTo(db.user);
 
+db.shop.hasMany(db.cart, { onDelete: 'CASCADE' });
+db.cart.belongsTo(db.shop);
+
 db.product.hasMany(db.cart, { onDelete: 'CASCADE' });
 db.cart.belongsTo(db.product);
 

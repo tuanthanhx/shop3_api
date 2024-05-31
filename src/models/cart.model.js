@@ -4,6 +4,10 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    shopId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     productId: {
       type: Sequelize.INTEGER,
       allowNull: false,

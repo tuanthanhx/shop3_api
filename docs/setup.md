@@ -32,6 +32,7 @@ npx sequelize-cli db:migrate --env production
 OR sepecified file:
 
 npx sequelize-cli db:migrate --to 20240530185717-add-wallet-address-to-user.js --env production
+npx sequelize-cli db:migrate --to 20240530185720-add-shop-id-to-cart.js --env production
 
 ===========
 
