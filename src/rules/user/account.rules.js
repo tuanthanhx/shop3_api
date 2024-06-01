@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [];
@@ -46,5 +46,75 @@ exports.changePassword = [
       }
       return true;
     }),
+  validateRules,
+];
+
+exports.getAddresses = [];
+
+exports.createAddress = [
+  body('firstName')
+    .notEmpty()
+    .withMessage('firstName is required')
+    .trim(),
+  body('lastName')
+    .notEmpty()
+    .withMessage('lastName is required')
+    .trim(),
+  body('phone')
+    .notEmpty()
+    .withMessage('phone is required')
+    .trim(),
+  body('countryCode')
+    .notEmpty()
+    .withMessage('countryCode is required')
+    .trim(),
+  body('address')
+    .notEmpty()
+    .withMessage('address is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+
+exports.updateAddress = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('firstName')
+    .notEmpty()
+    .withMessage('firstName is required')
+    .trim(),
+  body('lastName')
+    .notEmpty()
+    .withMessage('lastName is required')
+    .trim(),
+  body('phone')
+    .notEmpty()
+    .withMessage('phone is required')
+    .trim(),
+  body('countryCode')
+    .notEmpty()
+    .withMessage('countryCode is required')
+    .trim(),
+  body('address')
+    .notEmpty()
+    .withMessage('address is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+
+exports.deleteAddress = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];

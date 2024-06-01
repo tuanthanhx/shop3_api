@@ -4,21 +4,21 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    addressLine1: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    addressLine2: {
+    firstName: {
       type: Sequelize.STRING,
     },
-    city: {
+    lastName: {
       type: Sequelize.STRING,
     },
-    postcode: {
+    phone: {
       type: Sequelize.STRING,
     },
     countryCode: {
       type: Sequelize.STRING(2),
+    },
+    address: {
+      type: Sequelize.STRING,
+      allowNull: false,
     },
     isDefault: {
       type: Sequelize.BOOLEAN,
