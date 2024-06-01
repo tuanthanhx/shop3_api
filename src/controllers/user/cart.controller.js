@@ -92,7 +92,7 @@ exports.index = async (req, res) => {
     }, {});
 
     res.json({
-      data: groupedData,
+      data: Object.values(groupedData),
     });
   } catch (err) {
     logger.error(err);
