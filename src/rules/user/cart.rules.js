@@ -1,18 +1,7 @@
 const { body, param } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
-exports.index = [
-  // query('keyword')
-  //   .optional()
-  //   .trim(),
-  // query('sortField')
-  //   .optional()
-  //   .trim(),
-  // query('sortOrder')
-  //   .optional()
-  //   .trim(),
-  // validateRules,
-];
+exports.index = [];
 
 exports.create = [
   body('productId')
@@ -28,8 +17,10 @@ exports.create = [
   body('quantity')
     .notEmpty()
     .withMessage('quantity is required')
-    .isInt()
-    .withMessage('quantity must be integer'),
+    .isInt({
+      min: 1,
+    })
+    .withMessage('quantity must be a positive integer'),
   validateRules,
 ];
 

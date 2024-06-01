@@ -21,16 +21,59 @@ exports.index = async (req, res) => {
           model: db.product,
           as: 'product',
           attributes: ['id', 'name'],
+          include: [
+            {
+              model: db.product_image,
+              as: 'productImages',
+              attributes: ['id', 'file'],
+              limit: 1,
+            },
+          ],
         },
         {
           model: db.product_variant,
           as: 'productVariant',
           attributes: ['id', 'sku', 'quantity', 'price'],
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            },
+          ],
         },
       ],
     });
 
-    const groupedData = data.reduce((acc, cartItem) => {
+    const formatedData = data.map((item) => {
+      const itemObject = item.toJSON();
+      const newOptions = itemObject.productVariant.options.map((option) => ({
+        variantId: option.variantId,
+        variantName: option.variant.name,
+        optionId: option.id,
+        optionName: option.name,
+        optionImage: option.image,
+      }));
+
+      const updatedProduct = { ...itemObject.product };
+
+      item.productVariant.options.forEach((option) => {
+        if (option.image) {
+          updatedProduct.variantImage = option.image;
+        }
+      });
+      return {
+        ...itemObject,
+        product: updatedProduct,
+        productVariant: {
+          ...itemObject.productVariant,
+          options: newOptions,
+        },
+      };
+    });
+
+    const groupedData = formatedData.reduce((acc, cartItem) => {
       const shopId = cartItem.shop.id;
       if (!acc[shopId]) {
         acc[shopId] = {
@@ -49,7 +92,7 @@ exports.index = async (req, res) => {
     }, {});
 
     res.json({
-      data: Object.values(groupedData),
+      data: groupedData,
     });
   } catch (err) {
     logger.error(err);
