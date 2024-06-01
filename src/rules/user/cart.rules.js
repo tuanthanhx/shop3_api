@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [
@@ -30,5 +30,14 @@ exports.create = [
     .withMessage('quantity is required')
     .isInt()
     .withMessage('quantity must be integer'),
+  validateRules,
+];
+
+exports.delete = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];

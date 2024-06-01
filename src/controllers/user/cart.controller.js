@@ -5,6 +5,7 @@ exports.index = async (req, res) => {
   try {
     const { user } = req;
     const userId = user.id;
+
     const data = await db.cart.findAll({
       where: {
         userId,
@@ -138,6 +139,37 @@ exports.create = async (req, res) => {
         },
       });
     }
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const cartItem = await db.cart.findOne({ where: { id, userId } });
+
+    if (!cartItem) {
+      res.status(404).send({
+        message: 'cart item not found',
+      });
+      return;
+    }
+
+    await cartItem.destroy();
+
+    res.json({
+      data: {
+        message: 'Cart item deleted successfully',
+      },
+    });
   } catch (err) {
     logger.error(err);
     res.status(500).send({
