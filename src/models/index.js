@@ -41,8 +41,11 @@ db.user.belongsTo(db.currency, { foreignKey: 'currencyId' });
 db.user.hasMany(db.user_refresh_token, { onDelete: 'CASCADE' });
 db.user_refresh_token.belongsTo(db.user);
 
-db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
 db.country.hasMany(db.user_address, { foreignKey: 'countryCode' });
+db.user_address.belongsTo(db.country, { foreignKey: 'countryCode' });
+
+db.user.hasMany(db.user_address, { onDelete: 'CASCADE' });
+db.user_address.belongsTo(db.user);
 
 db.user.belongsTo(db.user_group);
 db.user_group.hasMany(db.user);
