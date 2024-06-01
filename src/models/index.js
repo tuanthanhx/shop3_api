@@ -125,6 +125,14 @@ db.cart.belongsTo(db.product);
 db.product_variant.hasMany(db.cart, { onDelete: 'CASCADE' });
 db.cart.belongsTo(db.product_variant, { as: 'productVariant' });
 
+// Relationship between payment_method with payment method types, user
+
+db.user.hasMany(db.payment_method, { onDelete: 'CASCADE' });
+db.payment_method.belongsTo(db.user);
+
+db.payment_method_type.hasMany(db.payment_method, { onDelete: 'CASCADE' });
+db.payment_method.belongsTo(db.payment_method_type);
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

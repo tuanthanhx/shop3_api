@@ -118,3 +118,5 @@ exports.deleteAddress = [
     .withMessage('id must be integer'),
   validateRules,
 ];
+
+exports.getPaymentMethodTypes = [];

@@ -346,3 +346,22 @@ exports.deleteAddress = async (req, res) => {
     });
   }
 };
+
+exports.getPaymentMethodTypes = async (req, res) => {
+  try {
+    const data = await db.payment_method_type.findAll({
+      where: {
+        isActive: true,
+      },
+      attributes: ['id', 'name'],
+    });
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
