@@ -14,6 +14,8 @@ module.exports = (app) => {
   router.put('/addresses/:id', rules.updateAddress, accounts.updateAddress);
   router.delete('/addresses/:id', rules.deleteAddress, accounts.deleteAddress);
 
+  router.get('/payment_method_types', rules.getPaymentMethodTypes, accounts.getPaymentMethodTypes);
+
   router.post('/connect_wallet', rules.connectWallet, accounts.connectWallet);
   router.post('/disconnect_wallet', rules.disconnectWallet, accounts.disconnectWallet);
 

@@ -10,6 +10,7 @@ npx sequelize db:seed --seed 20240328173146-add_countries.js
 npx sequelize db:seed --seed 20240409170330-add_sellers_business_types.js
 npx sequelize db:seed --seed 20240412141602-add_category.js
 npx sequelize db:seed --seed 20240412154951-add_user_groups.js
+npx sequelize db:seed --seed 20240412154955-add_payment_method_types.js
 npx sequelize db:seed --seed 20240412163634-add_product_statuses.js
 npx sequelize db:seed --seed 20240423103941-add_brands.js
 npx sequelize db:seed --seed 20240426073727-add_attributes.js
