@@ -345,21 +345,75 @@ exports.getPaymentMethods = async (req, res) => {
     const { user } = req;
     const userId = user.id;
 
-    const data = await db.payment_method.findAll({
+    const paymentMethods = await db.payment_method.findAll({
       where: {
         userId,
       },
-      // attributes: ['id', 'firstName', 'lastName', 'phone', 'address', 'isDefault'],
-      // include: [
-      //   {
-      //     model: db.country,
-      //     as: 'country',
-      //     attributes: ['code', 'name'],
-      //   },
-      // ],
+      attributes: ['id', 'paymentMethodTypeId', 'isDefault'],
+      include: [
+        {
+          model: db.payment_method_type,
+          attributes: ['name'],
+        },
+      ],
     });
+
+    const result = await Promise.all(paymentMethods.map(async (paymentMethod) => {
+      let specificAssociation = null;
+
+      switch (paymentMethod.paymentMethodTypeId) {
+        case 1:
+          specificAssociation = await paymentMethod.getPayment_method_card({
+            attributes: ['cardName', 'cardNumber'],
+          });
+          break;
+        case 2:
+          specificAssociation = await paymentMethod.getPayment_method_paypal({
+            attributes: ['accountName'],
+          });
+          break;
+        case 3:
+          specificAssociation = await paymentMethod.getPayment_method_cryptocurrency({
+            attributes: ['walletAddress'],
+          });
+          break;
+        case 4:
+          specificAssociation = await paymentMethod.getPayment_method_online({
+            attributes: ['serviceName', 'accountName'],
+          });
+          break;
+        default:
+          break;
+      }
+
+      return {
+        id: paymentMethod.id,
+        paymentMethodTypeId: paymentMethod.paymentMethodTypeId,
+        paymentMethodType: paymentMethod.payment_method_type?.name,
+        isDefault: paymentMethod.isDefault,
+        info: specificAssociation ? specificAssociation.toJSON() : null,
+      };
+    }));
+
+    const groupedResult = result.reduce((acc, paymentMethod) => {
+      const { paymentMethodTypeId } = paymentMethod;
+      if (!acc[paymentMethodTypeId]) {
+        acc[paymentMethodTypeId] = {
+          typeId: paymentMethod.paymentMethodTypeId,
+          typeName: paymentMethod.paymentMethodType,
+          items: [],
+        };
+      }
+      acc[paymentMethodTypeId].items.push({
+        id: paymentMethod.id,
+        isDefault: paymentMethod.isDefault,
+        info: paymentMethod.info,
+      });
+      return acc;
+    }, {});
+
     res.json({
-      data,
+      data: Object.values(groupedResult),
     });
   } catch (err) {
     logger.error(err);

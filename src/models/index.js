@@ -133,16 +133,16 @@ db.payment_method.belongsTo(db.user);
 db.payment_method_type.hasMany(db.payment_method, { onDelete: 'CASCADE' });
 db.payment_method.belongsTo(db.payment_method_type);
 
-db.payment_method.hasMany(db.payment_method_card, { onDelete: 'CASCADE' });
+db.payment_method.hasOne(db.payment_method_card, { onDelete: 'CASCADE' });
 db.payment_method_card.belongsTo(db.payment_method);
 
-db.payment_method.hasMany(db.payment_method_paypal, { onDelete: 'CASCADE' });
+db.payment_method.hasOne(db.payment_method_paypal, { onDelete: 'CASCADE' });
 db.payment_method_paypal.belongsTo(db.payment_method);
 
-db.payment_method.hasMany(db.payment_method_cryptocurrency, { onDelete: 'CASCADE' });
+db.payment_method.hasOne(db.payment_method_cryptocurrency, { onDelete: 'CASCADE' });
 db.payment_method_cryptocurrency.belongsTo(db.payment_method);
 
-db.payment_method.hasMany(db.payment_method_online, { onDelete: 'CASCADE' });
+db.payment_method.hasOne(db.payment_method_online, { onDelete: 'CASCADE' });
 db.payment_method_online.belongsTo(db.payment_method);
 
 db.Sequelize = Sequelize;
