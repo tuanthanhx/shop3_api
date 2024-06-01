@@ -119,4 +119,61 @@ exports.deleteAddress = [
   validateRules,
 ];
 
+exports.createPaymentMethodWithCards = [
+  body('cardNumber')
+    .notEmpty()
+    .withMessage('cardNumber is required')
+    .trim(),
+  body('expYear')
+    .notEmpty()
+    .withMessage('expYear is required')
+    .trim(),
+  body('expMonth')
+    .notEmpty()
+    .withMessage('expMonth is required')
+    .trim(),
+  body('ccv')
+    .notEmpty()
+    .withMessage('ccv is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+exports.createPaymentMethodWithPaypal = [
+  body('accountName')
+    .notEmpty()
+    .withMessage('accountName is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+exports.createPaymentMethodWithCryptocurrencies = [
+  body('walletAddress')
+    .notEmpty()
+    .withMessage('walletAddress is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+exports.createPaymentMethodWithOnline = [
+  body('serviceName')
+    .notEmpty()
+    .withMessage('serviceName is required')
+    .trim(),
+  body('accountName')
+    .notEmpty()
+    .withMessage('accountName is required')
+    .trim(),
+  body('isDefault')
+    .optional()
+    .toBoolean(),
+  validateRules,
+];
+
 exports.getPaymentMethodTypes = [];

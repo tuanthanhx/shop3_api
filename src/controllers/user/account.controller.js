@@ -225,7 +225,7 @@ exports.createAddress = async (req, res) => {
       );
     }
 
-    res.status(200).json({
+    res.json({
       data: {
         message: 'Address created successfully',
       },
@@ -337,6 +337,194 @@ exports.deleteAddress = async (req, res) => {
     res.json({
       data: {
         message: 'Address deleted successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createPaymentMethodWithCards = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      // cardNumber,
+      // expYear,
+      // expMonth,
+      // ccv,
+      isDefault,
+    } = req.body;
+
+    const object = {
+      userId,
+      // cardNumber,
+      // expYear,
+      // expMonth,
+      // ccv,
+      paymentMethodTypeId: 1,
+      isActive: true,
+      isDefault,
+    };
+
+    const createdData = await db.payment_method.create(object);
+
+    if (isDefault) {
+      await db.payment_method.update(
+        { isDefault: false },
+        {
+          where: {
+            userId,
+            id: { [db.Sequelize.Op.ne]: createdData.id },
+          },
+        },
+      );
+    }
+
+    res.json({
+      data: {
+        message: 'Payment method created successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createPaymentMethodWithPaypal = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      // accountName,
+      isDefault,
+    } = req.body;
+
+    const object = {
+      userId,
+      // accountName,
+      paymentMethodTypeId: 2,
+      isActive: true,
+      isDefault,
+    };
+
+    const createdData = await db.payment_method.create(object);
+
+    if (isDefault) {
+      await db.payment_method.update(
+        { isDefault: false },
+        {
+          where: {
+            userId,
+            id: { [db.Sequelize.Op.ne]: createdData.id },
+          },
+        },
+      );
+    }
+
+    res.json({
+      data: {
+        message: 'Payment method created successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createPaymentMethodWithCryptocurrencies = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      // walletAddress,
+      isDefault,
+    } = req.body;
+
+    const object = {
+      userId,
+      // walletAddress,
+      paymentMethodTypeId: 3,
+      isActive: true,
+      isDefault,
+    };
+
+    const createdData = await db.payment_method.create(object);
+
+    if (isDefault) {
+      await db.payment_method.update(
+        { isDefault: false },
+        {
+          where: {
+            userId,
+            id: { [db.Sequelize.Op.ne]: createdData.id },
+          },
+        },
+      );
+    }
+
+    res.json({
+      data: {
+        message: 'Payment method created successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createPaymentMethodWithOnline = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      // serviceName,
+      // accountName,
+      isDefault,
+    } = req.body;
+
+    const object = {
+      userId,
+      // serviceName,
+      // accountName,
+      paymentMethodTypeId: 4,
+      isActive: true,
+      isDefault,
+    };
+
+    const createdData = await db.payment_method.create(object);
+
+    if (isDefault) {
+      await db.payment_method.update(
+        { isDefault: false },
+        {
+          where: {
+            userId,
+            id: { [db.Sequelize.Op.ne]: createdData.id },
+          },
+        },
+      );
+    }
+
+    res.json({
+      data: {
+        message: 'Payment method created successfully',
       },
     });
   } catch (err) {

@@ -14,6 +14,11 @@ module.exports = (app) => {
   router.put('/addresses/:id', rules.updateAddress, accounts.updateAddress);
   router.delete('/addresses/:id', rules.deleteAddress, accounts.deleteAddress);
 
+  router.post('/payment_methods/cards', rules.createPaymentMethodWithCards, accounts.createPaymentMethodWithCards);
+  router.post('/payment_methods/paypal', rules.createPaymentMethodWithPaypal, accounts.createPaymentMethodWithPaypal);
+  router.post('/payment_methods/cryptocurrencies', rules.createPaymentMethodWithCryptocurrencies, accounts.createPaymentMethodWithCryptocurrencies);
+  router.post('/payment_methods/online', rules.createPaymentMethodWithOnline, accounts.createPaymentMethodWithOnline);
+
   router.get('/payment_method_types', rules.getPaymentMethodTypes, accounts.getPaymentMethodTypes);
 
   router.post('/connect_wallet', rules.connectWallet, accounts.connectWallet);
