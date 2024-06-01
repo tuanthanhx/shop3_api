@@ -325,13 +325,6 @@ exports.deleteAddress = async (req, res) => {
       return;
     }
 
-    if (userAddress.isDefault) {
-      res.status(400).send({
-        message: 'Address is set as default, cannot delete',
-      });
-      return;
-    }
-
     await userAddress.destroy();
 
     res.json({
@@ -347,31 +340,67 @@ exports.deleteAddress = async (req, res) => {
   }
 };
 
+exports.getPaymentMethods = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const data = await db.payment_method.findAll({
+      where: {
+        userId,
+      },
+      // attributes: ['id', 'firstName', 'lastName', 'phone', 'address', 'isDefault'],
+      // include: [
+      //   {
+      //     model: db.country,
+      //     as: 'country',
+      //     attributes: ['code', 'name'],
+      //   },
+      // ],
+    });
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.createPaymentMethodWithCards = async (req, res) => {
   try {
     const { user } = req;
     const userId = user.id;
 
     const {
-      // cardNumber,
-      // expYear,
-      // expMonth,
-      // ccv,
+      cardNumber,
+      expYear,
+      expMonth,
+      ccv,
       isDefault,
     } = req.body;
 
     const object = {
       userId,
-      // cardNumber,
-      // expYear,
-      // expMonth,
-      // ccv,
+      cardNumber,
+      expYear,
+      expMonth,
+      ccv,
       paymentMethodTypeId: 1,
       isActive: true,
       isDefault,
     };
 
     const createdData = await db.payment_method.create(object);
+    await db.payment_method_card.create({
+      paymentMethodId: createdData.id,
+      cardNumber,
+      expYear,
+      expMonth,
+      ccv,
+    });
 
     if (isDefault) {
       await db.payment_method.update(
@@ -404,19 +433,23 @@ exports.createPaymentMethodWithPaypal = async (req, res) => {
     const userId = user.id;
 
     const {
-      // accountName,
+      accountName,
       isDefault,
     } = req.body;
 
     const object = {
       userId,
-      // accountName,
+      accountName,
       paymentMethodTypeId: 2,
       isActive: true,
       isDefault,
     };
 
     const createdData = await db.payment_method.create(object);
+    await db.payment_method_paypal.create({
+      paymentMethodId: createdData.id,
+      accountName,
+    });
 
     if (isDefault) {
       await db.payment_method.update(
@@ -449,19 +482,23 @@ exports.createPaymentMethodWithCryptocurrencies = async (req, res) => {
     const userId = user.id;
 
     const {
-      // walletAddress,
+      walletAddress,
       isDefault,
     } = req.body;
 
     const object = {
       userId,
-      // walletAddress,
+      walletAddress,
       paymentMethodTypeId: 3,
       isActive: true,
       isDefault,
     };
 
     const createdData = await db.payment_method.create(object);
+    await db.payment_method_cryptocurrency.create({
+      paymentMethodId: createdData.id,
+      walletAddress,
+    });
 
     if (isDefault) {
       await db.payment_method.update(
@@ -494,21 +531,26 @@ exports.createPaymentMethodWithOnline = async (req, res) => {
     const userId = user.id;
 
     const {
-      // serviceName,
-      // accountName,
+      serviceName,
+      accountName,
       isDefault,
     } = req.body;
 
     const object = {
       userId,
-      // serviceName,
-      // accountName,
+      serviceName,
+      accountName,
       paymentMethodTypeId: 4,
       isActive: true,
       isDefault,
     };
 
     const createdData = await db.payment_method.create(object);
+    await db.payment_method_online.create({
+      paymentMethodId: createdData.id,
+      serviceName,
+      accountName,
+    });
 
     if (isDefault) {
       await db.payment_method.update(
@@ -525,6 +567,90 @@ exports.createPaymentMethodWithOnline = async (req, res) => {
     res.json({
       data: {
         message: 'Payment method created successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.setDefaultPaymentMethod = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const paymentMethod = await db.payment_method.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!paymentMethod) {
+      res.status(404).send({
+        message: 'Payment method not found',
+      });
+      return;
+    }
+
+    await paymentMethod.update({
+      isDefault: true,
+    });
+
+    await db.payment_method.update(
+      { isDefault: false },
+      {
+        where: {
+          userId,
+          id: { [db.Sequelize.Op.ne]: paymentMethod.id },
+        },
+      },
+    );
+
+    res.json({
+      data: {
+        message: 'Set payment method as default successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.deletePaymentMethod = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const paymentMethod = await db.payment_method.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!paymentMethod) {
+      res.status(404).send({
+        message: 'Payment method not found',
+      });
+      return;
+    }
+
+    await paymentMethod.destroy();
+
+    res.json({
+      data: {
+        message: 'Payment method deleted successfully',
       },
     });
   } catch (err) {

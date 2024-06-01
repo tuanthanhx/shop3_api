@@ -119,6 +119,8 @@ exports.deleteAddress = [
   validateRules,
 ];
 
+exports.getPaymentMethods = [];
+
 exports.createPaymentMethodWithCards = [
   body('cardNumber')
     .notEmpty()
@@ -173,6 +175,24 @@ exports.createPaymentMethodWithOnline = [
   body('isDefault')
     .optional()
     .toBoolean(),
+  validateRules,
+];
+
+exports.setDefaultPaymentMethod = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
+
+exports.deletePaymentMethod = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
   validateRules,
 ];
 
