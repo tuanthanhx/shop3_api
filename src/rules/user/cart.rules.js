@@ -3,6 +3,8 @@ const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [];
 
+exports.getCount = [];
+
 exports.create = [
   body('productId')
     .notEmpty()

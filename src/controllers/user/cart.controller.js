@@ -102,6 +102,50 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.getCount = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const data = await db.cart.findAll({
+      where: {
+        userId,
+      },
+      attributes: ['id', 'quantity'],
+      include: [
+        {
+          model: db.product,
+          as: 'product',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: db.product_image,
+              as: 'productImages',
+              attributes: ['id', 'file'],
+              limit: 1,
+            },
+          ],
+        },
+        {
+          model: db.product_variant,
+          as: 'productVariant',
+          attributes: ['id', 'price'],
+        },
+      ],
+    });
+
+    res.json({
+      total: data.length,
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.create = async (req, res) => {
   try {
     const { user } = req;
