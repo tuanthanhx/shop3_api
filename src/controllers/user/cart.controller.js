@@ -234,6 +234,54 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.updateQuantity = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      quantity,
+    } = req.body;
+
+    const cartItem = await db.cart.findOne({ where: { id, userId } });
+
+    if (!cartItem) {
+      res.status(404).send({
+        message: 'Cart item not found',
+      });
+      return;
+    }
+
+    const productVariant = await db.product_variant.findByPk(cartItem.productVariantId);
+
+    if (quantity > productVariant?.quantity) {
+      res.status(400).json({
+        error: 'Requested quantity exceeds available stock',
+      });
+      return;
+    }
+
+    await cartItem.update({
+      quantity,
+    });
+
+    res.json({
+      data: {
+        message: 'Quantity updated successfully',
+        cartItem,
+        productVariant,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const { id } = req.params;
@@ -245,7 +293,7 @@ exports.delete = async (req, res) => {
 
     if (!cartItem) {
       res.status(404).send({
-        message: 'cart item not found',
+        message: 'Cart item not found',
       });
       return;
     }

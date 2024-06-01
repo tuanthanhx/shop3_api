@@ -26,6 +26,22 @@ exports.create = [
   validateRules,
 ];
 
+exports.updateQuantity = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('quantity')
+    .notEmpty()
+    .withMessage('quantity is required')
+    .isInt({
+      min: 1,
+    })
+    .withMessage('quantity must be a positive integer'),
+  validateRules,
+];
+
 exports.delete = [
   param('id')
     .notEmpty()
