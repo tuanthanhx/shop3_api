@@ -71,12 +71,10 @@ exports.create = async (req, res) => {
       order.orderItems.push(orderItem);
     }
 
-    // Process orders
     const orderCreationPromises = [];
     for (const orderData of shopOrdersMap.values()) {
       const { shopId, totalAmount, orderItems } = orderData;
 
-      // eslint-disable-next-line no-await-in-loop
       const createdOrder = await db.order.create({
         uniqueId: generateUniqueId(),
         userId,
@@ -102,8 +100,14 @@ exports.create = async (req, res) => {
       );
     }
 
-    // Commit transaction
     await Promise.all([...orderCreationPromises]);
+    await db.cart.destroy({
+      where: {
+        id: cartIds,
+        userId,
+      },
+      transaction,
+    });
     await transaction.commit();
 
     res.json({
