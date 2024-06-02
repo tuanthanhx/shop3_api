@@ -365,7 +365,7 @@ exports.create = async (req, res) => {
       cartIds,
       paymentMethodId,
       logisticsProviderOptionId,
-      userAddressId
+      userAddressId,
     } = req.body;
 
     const cartItemPromises = cartIds.map((cartId) => db.cart.findOne({
@@ -392,24 +392,34 @@ exports.create = async (req, res) => {
       return;
     }
 
-    const paymentMethod = await db.payment_method.findOne({
-      where: {
-        userId,
-        id: paymentMethodId,
-      },
-      include: [
-        {
-          model: db.payment_method_type,
-          attributes: ['name'],
-        },
-      ],
-    });
+    let paymentMethod;
 
-    if (!paymentMethod) {
-      res.status(404).json({
-        error: 'Payment method not found',
+    if (paymentMethodId !== 0) {
+      paymentMethod = await db.payment_method.findOne({
+        where: {
+          userId,
+          id: paymentMethodId,
+        },
+        include: [
+          {
+            model: db.payment_method_type,
+            attributes: ['name'],
+          },
+        ],
       });
-      return;
+
+      if (!paymentMethod) {
+        res.status(404).json({
+          error: 'Payment method not found',
+        });
+        return;
+      }
+    } else {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'COD',
+        },
+      };
     }
 
     const logisticsProviderOption = await db.logistics_provider_option.findOne({
@@ -419,6 +429,7 @@ exports.create = async (req, res) => {
       include: [
         {
           model: db.logistics_provider,
+          as: 'logisticsProvider',
           attributes: ['name'],
         },
       ],
