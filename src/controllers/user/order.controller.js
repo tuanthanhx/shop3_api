@@ -412,3 +412,93 @@ exports.create = async (req, res) => {
     });
   }
 };
+
+exports.cancel = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const { id } = req.params;
+
+    const order = await db.order.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (![1, 2, 4].includes(order.orderStatusId)) {
+      res.status(400).send({
+        message: 'Cannot cancel order after it has been confirmed',
+      });
+      return;
+    }
+
+    order.update({
+      orderStatusId: 15,
+    });
+
+    res.json({
+      data: {
+        message: 'Order cancelled successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.complete = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const { id } = req.params;
+
+    const order = await db.order.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (![9, 10, 11, 12, 13, 24, 25].includes(order.orderStatusId)) {
+      res.status(400).send({
+        message: 'Cannot mark order as completed while it is not delivered',
+      });
+      return;
+    }
+
+    order.update({
+      orderStatusId: 14,
+    });
+
+    res.json({
+      data: {
+        message: 'Order marked as completed successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

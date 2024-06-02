@@ -1,4 +1,4 @@
-const { query, param, check } = require('express-validator');
+const { query, param, body, check } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [
@@ -24,9 +24,32 @@ exports.create = [
   check('cartIds.*')
     .isInt({ min: 1 })
     .withMessage('Each cartId must be a positive integer'),
+  body('paymentMethodId')
+    .isInt()
+    .withMessage('paymentMethodId must be integer'),
+  body('logisticsProviderOptionId')
+    .isInt()
+    .withMessage('logisticsProviderOptionId must be integer'),
+  body('userAddressId')
+    .isInt()
+    .withMessage('userAddressId must be integer'),
   validateRules,
 ];
 
-// exports.updateQuantity = [];
+exports.cancel = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
 
-// exports.delete = [];
+exports.complete = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];

@@ -9,8 +9,8 @@ module.exports = (app) => {
   router.get('/', rules.index, orders.index);
   router.get('/:id', rules.show, orders.show);
   router.post('/', rules.create, orders.create);
-  // router.post('/:id/update_quantity', rules.updateQuantity, orders.updateQuantity);
-  // router.delete('/:id', rules.delete, orders.delete);
+  router.post('/:id/cancel', rules.cancel, orders.cancel);
+  router.post('/:id/complete', rules.complete, orders.complete);
 
   app.use(`/api-user/${apiVersion}/orders`, router);
 };
