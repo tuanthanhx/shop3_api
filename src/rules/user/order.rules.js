@@ -1,9 +1,21 @@
-const { check } = require('express-validator');
+const { query, param, check } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
-// exports.index = [];
+exports.index = [
+  query('status')
+    .optional()
+    .trim(),
+  validateRules,
+];
 
-// exports.getCount = [];
+exports.show = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];
 
 exports.create = [
   check('cartIds')

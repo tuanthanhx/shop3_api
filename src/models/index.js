@@ -154,16 +154,16 @@ db.shop.hasMany(db.order, { onDelete: 'CASCADE' });
 db.order.belongsTo(db.shop);
 
 db.order_status.hasMany(db.order);
-db.order.belongsTo(db.order_status);
+db.order.belongsTo(db.order_status, { as: 'orderStatus' });
 
-db.order.hasMany(db.order_item, { onDelete: 'CASCADE' });
+db.order.hasMany(db.order_item, { as: 'orderItems', onDelete: 'CASCADE' });
 db.order_item.belongsTo(db.order);
 
 db.product.hasMany(db.order_item, { onDelete: 'CASCADE' });
 db.order_item.belongsTo(db.product);
 
 db.product_variant.hasMany(db.order_item, { onDelete: 'CASCADE' });
-db.order_item.belongsTo(db.product_variant);
+db.order_item.belongsTo(db.product_variant, { as: 'productVariant' });
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
