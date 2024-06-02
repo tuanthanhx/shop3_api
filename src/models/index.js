@@ -108,7 +108,7 @@ db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_
 
 db.logistics_provider_option.belongsTo(db.logistics_service);
 db.logistics_service.hasMany(db.logistics_provider_option);
-db.logistics_provider_option.belongsTo(db.logistics_provider);
+db.logistics_provider_option.belongsTo(db.logistics_provider, { as: 'logisticsProvider' });
 db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProvidersOptions' });
 
 // Relationship between cart, user, product, product_variant

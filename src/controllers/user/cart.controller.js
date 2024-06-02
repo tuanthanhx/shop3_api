@@ -46,6 +46,20 @@ exports.index = async (req, res) => {
       ],
     });
 
+    const logisticsProviderOptions = await db.logistics_provider_option.findAll({
+      attributes: ['id'],
+      where: {
+        logisticsServiceId: 2,
+      },
+      include: [
+        {
+          model: db.logistics_provider,
+          as: 'logisticsProvider',
+          attributes: ['name'],
+        },
+      ],
+    });
+
     const formatedData = data.map((item) => {
       const itemObject = item.toJSON();
       const newOptions = itemObject.productVariant.options.map((option) => ({
@@ -91,8 +105,19 @@ exports.index = async (req, res) => {
       return acc;
     }, {});
 
+    const formatedLogisticsProviderOptions = logisticsProviderOptions.map((option) => {
+      const optionObj = option.toJSON();
+      const logisticsProvider = optionObj?.logisticsProvider?.name;
+      delete optionObj.logisticsProvider;
+      return {
+        ...optionObj,
+        logisticsProvider,
+      };
+    });
+
     res.json({
       data: Object.values(groupedData),
+      shippingOptions: formatedLogisticsProviderOptions,
     });
   } catch (err) {
     logger.error(err);
