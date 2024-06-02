@@ -9,15 +9,34 @@ exports.index = async (req, res) => {
     const { user } = req;
     const userId = user.id;
 
+    // const isAdministrator = user.userGroupId === 6;
+    const isSeller = user.userGroupId === 2;
+    const isUser = user.userGroupId === 1;
+
     const {
       status,
       page,
       limit,
     } = req.query;
 
-    const condition = {
-      userId,
-    };
+    const condition = {};
+
+    if (isSeller) {
+      const shop = await db.shop.findOne({
+        where: {
+          userId,
+        },
+      });
+      if (!shop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      condition.shopId = shop?.id;
+    } else if (isUser) {
+      condition.userId = userId;
+    }
 
     switch (status) {
       case 'order_placed':
@@ -195,13 +214,36 @@ exports.show = async (req, res) => {
     const { user } = req;
     const userId = user.id;
 
+    // const isAdministrator = user.userGroupId === 6;
+    const isSeller = user.userGroupId === 2;
+    const isUser = user.userGroupId === 1;
+
     const { id } = req.params;
 
+    const condition = {
+      id,
+      // userId,
+    };
+
+    if (isSeller) {
+      const shop = await db.shop.findOne({
+        where: {
+          userId,
+        },
+      });
+      if (!shop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      condition.shopId = shop?.id;
+    } else if (isUser) {
+      condition.userId = userId;
+    }
+
     const order = await db.order.findOne({
-      where: {
-        id,
-        userId,
-      },
+      where: condition,
       attributes: ['id', 'uniqueId', 'totalAmount'],
       include: [
         {
@@ -213,6 +255,16 @@ exports.show = async (req, res) => {
           model: db.order_status,
           attributes: ['name'],
           as: 'orderStatus',
+        },
+        {
+          model: db.order_payment,
+          attributes: ['id', 'paymenMethod', 'amount', 'status', 'content'],
+          as: 'orderPayment',
+        },
+        {
+          model: db.order_shipping,
+          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'fee', 'status'],
+          as: 'orderShipping',
         },
         {
           model: db.order_item,
