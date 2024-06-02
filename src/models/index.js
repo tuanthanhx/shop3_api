@@ -111,7 +111,7 @@ db.logistics_service.hasMany(db.logistics_provider_option);
 db.logistics_provider_option.belongsTo(db.logistics_provider);
 db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProvidersOptions' });
 
-// Relationship between cart with user, product, product variants
+// Relationship between cart, user, product, product_variant
 
 db.user.hasMany(db.cart, { onDelete: 'CASCADE' });
 db.cart.belongsTo(db.user);
@@ -125,7 +125,7 @@ db.cart.belongsTo(db.product);
 db.product_variant.hasMany(db.cart, { onDelete: 'CASCADE' });
 db.cart.belongsTo(db.product_variant, { as: 'productVariant' });
 
-// Relationship between payment_method with payment method types, user
+// Relationship between payment_method, payment_method_type, user
 
 db.user.hasMany(db.payment_method, { onDelete: 'CASCADE' });
 db.payment_method.belongsTo(db.user);
@@ -144,6 +144,26 @@ db.payment_method_cryptocurrency.belongsTo(db.payment_method);
 
 db.payment_method.hasOne(db.payment_method_online, { onDelete: 'CASCADE' });
 db.payment_method_online.belongsTo(db.payment_method);
+
+// Relationship between order, order_status, order_item, user, shop, product
+
+db.user.hasMany(db.order, { onDelete: 'CASCADE' });
+db.order.belongsTo(db.user);
+
+db.shop.hasMany(db.order, { onDelete: 'CASCADE' });
+db.order.belongsTo(db.shop);
+
+db.order_status.hasMany(db.order);
+db.order.belongsTo(db.order_status);
+
+db.order.hasMany(db.order_item, { onDelete: 'CASCADE' });
+db.order_item.belongsTo(db.order);
+
+db.product.hasMany(db.order_item, { onDelete: 'CASCADE' });
+db.order_item.belongsTo(db.product);
+
+db.product_variant.hasMany(db.order_item, { onDelete: 'CASCADE' });
+db.order_item.belongsTo(db.product_variant);
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

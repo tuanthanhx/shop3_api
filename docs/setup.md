@@ -25,6 +25,7 @@ NODE_ENV=production npx sequelize db:seed --seed 20240523090940-add_test_user_se
 NODE_ENV=production npx sequelize db:seed --seed 20240523090941-add_test_user_registered.js
 NODE_ENV=production npx sequelize db:seed --seed 20240523090945-add_test_shops.js
 NODE_ENV=production npx sequelize db:seed --seed 20240523090950-add_test_products.js
+NODE_ENV=production npx sequelize db:seed --seed 20240602000000-add_order_statuses.js
 
 # MIGRATION
 
