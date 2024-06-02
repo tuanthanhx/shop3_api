@@ -91,6 +91,16 @@ exports.index = async (req, res) => {
           as: 'orderStatus',
         },
         {
+          model: db.order_payment,
+          attributes: ['id', 'paymenMethod', 'amount', 'status', 'content'],
+          as: 'orderPayment',
+        },
+        {
+          model: db.order_shipping,
+          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'fee', 'status'],
+          as: 'orderShipping',
+        },
+        {
           model: db.order_item,
           attributes: ['id', 'quantity', 'price'],
           as: 'orderItems',
@@ -299,7 +309,12 @@ exports.create = async (req, res) => {
     const { user } = req;
     const userId = user.id;
 
-    const { cartIds } = req.body;
+    const {
+      cartIds,
+      paymentMethodId,
+      logisticsProviderOptionId,
+      userAddressId
+    } = req.body;
 
     const cartItemPromises = cartIds.map((cartId) => db.cart.findOne({
       where: {
@@ -319,8 +334,62 @@ exports.create = async (req, res) => {
 
     const hasNotFound = cartItems.some((item) => item === null);
     if (hasNotFound) {
-      res.status(400).json({
+      res.status(404).json({
         error: 'Some cart items are not found',
+      });
+      return;
+    }
+
+    const paymentMethod = await db.payment_method.findOne({
+      where: {
+        userId,
+        id: paymentMethodId,
+      },
+      include: [
+        {
+          model: db.payment_method_type,
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    if (!paymentMethod) {
+      res.status(404).json({
+        error: 'Payment method not found',
+      });
+      return;
+    }
+
+    const logisticsProviderOption = await db.logistics_provider_option.findOne({
+      where: {
+        id: logisticsProviderOptionId,
+      },
+      include: [
+        {
+          model: db.logistics_provider,
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    if (!logisticsProviderOption) {
+      res.status(404).json({
+        error: 'Logistics provider not found',
+      });
+      return;
+    }
+
+    const userAddress = await db.user_address.findOne({
+      where: {
+        userId,
+        id: userAddressId,
+      },
+      attributes: ['firstName', 'lastName', 'phone', 'countryCode', 'address'],
+    });
+
+    if (!userAddress) {
+      res.status(404).json({
+        error: 'Logistics provider not found',
       });
       return;
     }
@@ -384,8 +453,31 @@ exports.create = async (req, res) => {
         orderId: createdOrder.id,
       }));
 
+      await db.order_payment.create({
+        userId,
+        shopId,
+        orderId: createdOrder.id,
+        amount: totalAmount,
+        paymenMethod: paymentMethod?.payment_method_type?.name,
+        status: 1,
+        content: '',
+      }, { transaction });
+
+      await db.order_shipping.create({
+        userId,
+        shopId,
+        orderId: createdOrder.id,
+        fee: 0, // TODO: Dummy
+        status: 1,
+        firstName: userAddress.firstName,
+        lastName: userAddress.lastName,
+        phone: userAddress.phone,
+        countryCode: userAddress.countryCode,
+        address: userAddress.address,
+      }, { transaction });
+
       orderCreationPromises.push(
-        db.order_item.bulkCreate(orderItemsWithOrderId, { transaction }),
+        db.order_item.bulkCreate(orderItemsWithOrderId, { transaction })
       );
     }
 

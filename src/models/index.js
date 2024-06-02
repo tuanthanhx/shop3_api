@@ -145,7 +145,7 @@ db.payment_method_cryptocurrency.belongsTo(db.payment_method);
 db.payment_method.hasOne(db.payment_method_online, { onDelete: 'CASCADE' });
 db.payment_method_online.belongsTo(db.payment_method);
 
-// Relationship between order, order_status, order_item, user, shop, product
+// Relationship between order, order_status, order_payment, order_shipping, order_item, user, shop, product
 
 db.user.hasMany(db.order, { onDelete: 'CASCADE' });
 db.order.belongsTo(db.user);
@@ -164,6 +164,18 @@ db.order_item.belongsTo(db.product);
 
 db.product_variant.hasMany(db.order_item, { onDelete: 'CASCADE' });
 db.order_item.belongsTo(db.product_variant, { as: 'productVariant' });
+
+// Relationship of order_payment, order_shipping
+
+db.order.hasOne(db.order_payment, { foreignKey: 'orderId', as: 'orderPayment', onDelete: 'CASCADE' });
+db.order_payment.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderPayment' });
+db.order_payment.belongsTo(db.user);
+db.order_payment.belongsTo(db.shop);
+
+db.order.hasOne(db.order_shipping, { foreignKey: 'orderId', as: 'orderShipping', onDelete: 'CASCADE' });
+db.order_shipping.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderShipping' });
+db.order_shipping.belongsTo(db.user);
+db.order_shipping.belongsTo(db.shop);
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
