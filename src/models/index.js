@@ -145,7 +145,7 @@ db.payment_method_cryptocurrency.belongsTo(db.payment_method);
 db.payment_method.hasOne(db.payment_method_online, { onDelete: 'CASCADE' });
 db.payment_method_online.belongsTo(db.payment_method);
 
-// Relationship between order, order_status, order_payment, order_shipping, order_item, user, shop, product
+// Relationship of order, order_item
 
 db.user.hasMany(db.order, { onDelete: 'CASCADE' });
 db.order.belongsTo(db.user);
@@ -161,9 +161,6 @@ db.order_item.belongsTo(db.order);
 
 db.product.hasMany(db.order_item, { onDelete: 'CASCADE' });
 db.order_item.belongsTo(db.product);
-
-db.product_variant.hasMany(db.order_item, { onDelete: 'CASCADE' });
-db.order_item.belongsTo(db.product_variant, { as: 'productVariant' });
 
 // Relationship of order_payment, order_shipping
 

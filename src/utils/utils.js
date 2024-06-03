@@ -27,6 +27,14 @@ exports.isValidJson = (jsonString) => {
   }
 };
 
+exports.tryParseJSON = (jsonString) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return jsonString;
+  }
+};
+
 exports.isOnlyUpdateProductVariants = (productVariants) => productVariants.every((product) => {
   if (typeof product.id === 'undefined') {
     return false;

@@ -8,6 +8,9 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
     },
+    productVariant: {
+      type: Sequelize.JSON,
+    },
   }, {
     paranoid: false,
   });

@@ -1,4 +1,4 @@
-const { generateUniqueId } = require('../../utils/utils');
+const { generateUniqueId, tryParseJSON } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -121,7 +121,7 @@ exports.index = async (req, res) => {
         },
         {
           model: db.order_item,
-          attributes: ['id', 'quantity', 'price'],
+          attributes: ['id', 'quantity', 'price', 'productVariant'],
           as: 'orderItems',
           include: [
             {
@@ -137,19 +137,6 @@ exports.index = async (req, res) => {
                 },
               ],
             },
-            {
-              model: db.product_variant,
-              as: 'productVariant',
-              attributes: ['id', 'sku', 'quantity', 'price'],
-              include: [
-                {
-                  model: db.option,
-                  include: {
-                    model: db.variant,
-                  },
-                },
-              ],
-            },
           ],
         },
       ],
@@ -161,34 +148,12 @@ exports.index = async (req, res) => {
     const formattedData = rows.map((order) => {
       const formattedItems = order.orderItems.map((refItem) => {
         const orderItem = refItem.toJSON();
-        const newOptions = orderItem.productVariant.options.map((option) => ({
-          variantId: option.variantId,
-          variantName: option.variant.name,
-          optionId: option.id,
-          optionName: option.name,
-          optionImage: option.image,
-        }));
-
-        const updatedProduct = { ...orderItem.product };
-
-        orderItem.productVariant.options.forEach((option) => {
-          if (option.image) {
-            updatedProduct.variantImage = option.image;
-          }
-        });
-
         return {
           ...orderItem,
-          product: updatedProduct,
-          productVariant: {
-            ...orderItem.productVariant,
-            options: newOptions,
-          },
+          productVariant: tryParseJSON(orderItem.productVariant),
         };
       });
-
       delete order.orderItems;
-
       return {
         ...order.toJSON(),
         orderItems: formattedItems,
@@ -268,7 +233,7 @@ exports.show = async (req, res) => {
         },
         {
           model: db.order_item,
-          attributes: ['id', 'quantity', 'price'],
+          attributes: ['id', 'quantity', 'price', 'productVariant'],
           as: 'orderItems',
           include: [
             {
@@ -284,19 +249,6 @@ exports.show = async (req, res) => {
                 },
               ],
             },
-            {
-              model: db.product_variant,
-              as: 'productVariant',
-              attributes: ['id', 'sku', 'quantity', 'price'],
-              include: [
-                {
-                  model: db.option,
-                  include: {
-                    model: db.variant,
-                  },
-                },
-              ],
-            },
           ],
         },
       ],
@@ -309,40 +261,19 @@ exports.show = async (req, res) => {
       return;
     }
 
-    const orderObject = order.toJSON();
+    const orderObj = order.toJSON();
 
-    const formatedData = orderObject.orderItems.map((orderItem) => {
-      const newOptions = orderItem.productVariant.options.map((option) => ({
-        variantId: option.variantId,
-        variantName: option.variant.name,
-        optionId: option.id,
-        optionName: option.name,
-        optionImage: option.image,
-      }));
+    const formatedOrderItems = orderObj.orderItems.map((orderItem) => ({
+      ...orderItem,
+      productVariant: tryParseJSON(orderItem.productVariant),
+    }));
 
-      const updatedProduct = { ...orderItem.product };
-
-      orderItem.productVariant.options.forEach((option) => {
-        if (option.image) {
-          updatedProduct.variantImage = option.image;
-        }
-      });
-      return {
-        ...orderItem,
-        product: updatedProduct,
-        productVariant: {
-          ...orderItem.productVariant,
-          options: newOptions,
-        },
-      };
-    });
-
-    delete orderObject.orderItems;
+    delete orderObj.orderItems;
 
     res.json({
       data: {
-        ...orderObject,
-        orderItems: formatedData,
+        ...orderObj,
+        orderItems: formatedOrderItems,
       },
     });
   } catch (err) {
@@ -377,7 +308,15 @@ exports.create = async (req, res) => {
         {
           model: db.product_variant,
           as: 'productVariant',
-          attributes: ['quantity', 'price'],
+          attributes: ['id', 'quantity', 'price'],
+          include: [
+            {
+              model: db.option,
+              include: {
+                model: db.variant,
+              },
+            },
+          ],
         },
       ],
     }));
@@ -465,7 +404,6 @@ exports.create = async (req, res) => {
       const {
         shopId,
         productId,
-        productVariantId,
         productVariant,
         quantity,
       } = cartItem;
@@ -479,12 +417,22 @@ exports.create = async (req, res) => {
         });
       }
 
+      const productVariantObj = productVariant?.toJSON();
+
       const orderItem = {
         shopId,
         productId,
-        productVariantId,
         quantity,
         price: productVariant ? productVariant.price : 0,
+        productVariant: {
+          refId: productVariantObj.id,
+          price: productVariantObj.price,
+          images: productVariantObj.options?.map((option) => option.image).filter((image) => image !== null),
+          variants: productVariantObj.options?.map((option) => ({
+            name: option.variant.name,
+            value: option.name,
+          })),
+        },
       };
 
       const order = shopOrdersMap.get(shopId);

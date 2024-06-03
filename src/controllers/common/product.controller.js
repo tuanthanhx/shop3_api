@@ -1,4 +1,4 @@
-const { getMinMaxPrice } = require('../../utils/utils');
+const { getMinMaxPrice, tryParseJSON } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -273,14 +273,6 @@ exports.show = async (req, res) => {
 
     const minMaxPrice = getMinMaxPrice(product.productVariants);
 
-    const tryParseJSON = (jsonString) => {
-      try {
-        return JSON.parse(jsonString);
-      } catch (e) {
-        return jsonString;
-      }
-    };
-
     const formattedProductAttributes = product.productAttributes.map((attr) => ({
       name: attr.name,
       value: tryParseJSON(attr.value),
@@ -359,7 +351,7 @@ exports.getReviews = async (req, res) => {
           where: {
             productId,
           },
-          attributes: ['productVariantId'],
+          attributes: ['productVariant'],
         },
       ],
     };
@@ -378,23 +370,8 @@ exports.getReviews = async (req, res) => {
 
     const formatedRows = rows.map((row) => {
       const rowObj = row.toJSON();
-      if (rowObj.orderItem?.productVariantId) {
-        // TODO: Use it to get the real information of the product variant
-        // rowObj.productVariant = {
-        //   id: rowObj.orderItem.productVariantId,
-        //   variants: [
-        //     {
-        //       variantName: 'Color',
-        //       variantValue: 'Red',
-        //     },
-        //     {
-        //       variantName: 'Size',
-        //       variantValue: 'Small',
-        //     },
-        //   ],
-        //   image: null,
-        //   thumbnail: null,
-        // };
+      if (rowObj.orderItem?.productVariant) {
+        rowObj.productVariant = tryParseJSON(rowObj.orderItem?.productVariant);
         delete rowObj.orderItem;
       }
       return {
