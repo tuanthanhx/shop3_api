@@ -4,7 +4,7 @@ info:
   description: Documentation for Shop3 API (Seller)
   version: 1.0.0
 servers:
-  - url: https://shop3-api.codingbombs.com:3001
+  - url: https://api.shop3.com:3001
   - url: http://localhost:3000
 
 paths:
