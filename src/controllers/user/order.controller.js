@@ -540,7 +540,7 @@ exports.create = async (req, res) => {
       }, { transaction });
 
       orderCreationPromises.push(
-        db.order_item.bulkCreate(orderItemsWithOrderId, { transaction })
+        db.order_item.bulkCreate(orderItemsWithOrderId, { transaction }),
       );
     }
 
@@ -710,6 +710,137 @@ exports.updateStatus = async (req, res) => {
     res.json({
       data: {
         message: 'Update status successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getReviews = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const { id } = req.params;
+
+    condition = {
+      id,
+      userId,
+    };
+
+    const order = await db.order.findOne({
+      where: condition,
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const orderId = order?.id;
+
+    const data = await db.review.findAll({
+      where: {
+        orderId,
+      },
+      attributes: ['id', 'orderItemId', 'rate', 'message', 'images', 'videos'],
+    });
+
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createReview = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const { id } = req.params;
+
+    const {
+      reviews,
+    } = req.body;
+
+    condition = {
+      id,
+      userId,
+    };
+
+    const order = await db.order.findOne({
+      where: condition,
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (![13, 14].includes(order.orderStatusId)) {
+      res.status(400).send({
+        message: 'Cannot review product while it is not completed',
+      });
+      return;
+    }
+
+    const orderId = order?.id;
+    const shopId = order?.shopId;
+
+    const orderItems = await db.order_item.findAll({ where: { orderId } });
+
+    for (let i = 0; i < reviews.length; i++) {
+      const {
+        orderItemId,
+        rate,
+        message,
+        images,
+        videos,
+      } = reviews[i];
+
+      if (orderItems.some((item) => item.id === orderItemId)) {
+        const [review, createdReview] = await db.review.findOrCreate({
+          where: {
+            orderId,
+            shopId,
+            userId,
+            orderItemId,
+          },
+          defaults: {
+            rate,
+            message,
+            images: images || [],
+            videos: videos || [],
+          },
+        });
+
+        if (!createdReview) {
+          await review.update({
+            rate,
+            message,
+            images: images || [],
+            videos: videos || [],
+          });
+        }
+      }
+    }
+
+    res.json({
+      data: {
+        message: 'Reviewed order successfully',
       },
     });
   } catch (err) {

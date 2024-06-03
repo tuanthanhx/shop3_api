@@ -12,5 +12,8 @@ module.exports = (app) => {
   router.post('/:id/cancel', rules.cancel, orders.cancel);
   router.post('/:id/complete', rules.complete, orders.complete);
 
+  router.get('/:id/reviews', rules.getReviews, orders.getReviews);
+  router.post('/:id/reviews', rules.createReview, orders.createReview);
+
   app.use(`/api-user/${apiVersion}/orders`, router);
 };

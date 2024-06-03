@@ -177,6 +177,14 @@ db.order_shipping.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderShippin
 db.order_shipping.belongsTo(db.user);
 db.order_shipping.belongsTo(db.shop);
 
+// Relationship of review
+
+db.order_item.hasOne(db.review, { foreignKey: 'orderItemId', onDelete: 'CASCADE' });
+db.review.belongsTo(db.order_item, { foreignKey: 'orderItemId', onDelete: 'CASCADE' });
+db.review.belongsTo(db.order, { foreignKey: 'orderId', onDelete: 'CASCADE' });
+db.review.belongsTo(db.user, { foreignKey: 'userId', onDelete: 'CASCADE' });
+db.review.belongsTo(db.shop, { foreignKey: 'shopId', onDelete: 'CASCADE' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
