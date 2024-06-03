@@ -851,6 +851,44 @@ exports.createReview = async (req, res) => {
   }
 };
 
+exports.getTracking = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await db.order.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const orderId = order?.id;
+
+    const data = await db.order_tracking.findAll({
+      where: {
+        orderId,
+      },
+      order: [['id', 'DESC']],
+      attributes: ['id', 'message', 'createdAt'],
+    });
+
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.createTracking = async (req, res) => {
   try {
     const { user } = req;

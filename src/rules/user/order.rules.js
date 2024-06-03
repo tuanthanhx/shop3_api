@@ -116,6 +116,14 @@ exports.createReview = [
   validateRules,
 ];
 
+exports.getTracking = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+];
+
 exports.createTracking = [
   param('id')
     .notEmpty()
