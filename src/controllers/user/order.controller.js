@@ -850,3 +850,74 @@ exports.createReview = async (req, res) => {
     });
   }
 };
+
+exports.createTracking = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const isSeller = user.userGroupId === 2;
+
+    const { id } = req.params;
+
+    const {
+      message,
+    } = req.body;
+
+    if (!isSeller) {
+      res.status(403).send({
+        message: 'You do not have perrmision to create tracking',
+      });
+      return;
+    }
+
+    const shop = await db.shop.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!shop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+
+    const shopId = shop?.id;
+
+    const condition = {
+      id,
+      shopId,
+    };
+
+    const order = await db.order.findOne({
+      where: condition,
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const orderId = order?.id;
+
+    await db.order_tracking.create({
+      orderId,
+      userId,
+      message,
+    });
+
+    res.json({
+      data: {
+        message: 'Created tracking successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

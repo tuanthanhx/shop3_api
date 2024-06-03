@@ -9,6 +9,7 @@ module.exports = (app) => {
   router.get('/', rules.index, orders.index);
   router.get('/:id', rules.show, orders.show);
   router.post('/:id/update_status', rules.updateStatus, orders.updateStatus);
+  router.post('/:id/trackings', rules.createTracking, orders.createTracking);
 
   app.use(`/api-seller/${apiVersion}/orders`, router);
 };

@@ -115,3 +115,16 @@ exports.createReview = [
     .withMessage('Each video must be a valid URL'),
   validateRules,
 ];
+
+exports.createTracking = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('message')
+    .notEmpty()
+    .withMessage('message is required')
+    .trim(),
+  validateRules,
+];

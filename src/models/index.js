@@ -177,6 +177,14 @@ db.order_shipping.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderShippin
 db.order_shipping.belongsTo(db.user);
 db.order_shipping.belongsTo(db.shop);
 
+// Relationship of order_tracking
+
+db.order.hasMany(db.order_tracking, { foreignKey: 'orderId', as: 'orderTrackings', onDelete: 'CASCADE' });
+db.order_tracking.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderTrackings' });
+
+db.user.hasMany(db.order_tracking, { foreignKey: 'userId', as: 'orderTrackings' });
+db.order_shipping.belongsTo(db.user, { foreignKey: 'userId' });
+
 // Relationship of review
 
 db.order_item.hasOne(db.review, { foreignKey: 'orderItemId', onDelete: 'CASCADE' });
