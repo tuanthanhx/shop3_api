@@ -657,3 +657,65 @@ exports.complete = async (req, res) => {
     });
   }
 };
+
+exports.updateStatus = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    // const isAdministrator = user.userGroupId === 6;
+    const isSeller = user.userGroupId === 2;
+    // const isUser = user.userGroupId === 1;
+
+    const { id } = req.params;
+
+    const {
+      statusId,
+    } = req.body;
+
+    condition = {
+      id,
+    };
+
+    if (isSeller) {
+      const shop = await db.shop.findOne({
+        where: {
+          userId,
+        },
+      });
+      if (!shop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      condition.shopId = shop?.id;
+    }
+
+    const order = await db.order.findOne({
+      where: condition,
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    order.update({
+      orderStatusId: statusId,
+    });
+
+    res.json({
+      data: {
+        message: 'Update status successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

@@ -53,3 +53,15 @@ exports.complete = [
     .withMessage('id must be integer'),
   validateRules,
 ];
+
+exports.updateStatus = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  body('statusId')
+    .isInt()
+    .withMessage('statusId must be integer'),
+  validateRules,
+];
