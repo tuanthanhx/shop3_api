@@ -312,3 +312,106 @@ exports.show = async (req, res) => {
     });
   }
 };
+
+exports.getReviews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      rate,
+      page,
+      limit,
+    } = req.query;
+
+    const product = await db.product.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      res.status(404).send({
+        message: 'Product not found',
+      });
+      return;
+    }
+
+    const productId = product?.id;
+
+    const condition = {};
+    if (rate) {
+      condition.rate = rate;
+    }
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+
+    const queryOptions = {
+      where: condition,
+      attributes: ['createdAt', 'updatedAt', 'rate', 'message', 'images', 'videos'],
+      include: [
+        {
+          model: db.user,
+          attributes: ['name', 'avatar', 'phone', 'email'],
+        },
+        {
+          model: db.order_item,
+          as: 'orderItem',
+          where: {
+            productId,
+          },
+          attributes: ['productVariantId'],
+        },
+      ],
+    };
+
+    if (limitPerPage !== -1) {
+      const effectiveLimit = limitPerPage;
+      const offset = (pageNo - 1) * effectiveLimit;
+      queryOptions.limit = effectiveLimit;
+      queryOptions.offset = offset;
+    }
+
+    const data = await db.review.findAndCountAll(queryOptions);
+
+    const { count, rows } = data;
+    const totalPages = limitPerPage === -1 ? 1 : Math.ceil(count / limitPerPage);
+
+    const formatedRows = rows.map((row) => {
+      const rowObj = row.toJSON();
+      if (rowObj.orderItem?.productVariantId) {
+        // TODO: Use it to get the real information of the product variant
+        // rowObj.productVariant = {
+        //   id: rowObj.orderItem.productVariantId,
+        //   variants: [
+        //     {
+        //       variantName: 'Color',
+        //       variantValue: 'Red',
+        //     },
+        //     {
+        //       variantName: 'Size',
+        //       variantValue: 'Small',
+        //     },
+        //   ],
+        //   image: null,
+        //   thumbnail: null,
+        // };
+        delete rowObj.orderItem;
+      }
+      return {
+        ...rowObj,
+      };
+    });
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: pageNo,
+      data: formatedRows,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

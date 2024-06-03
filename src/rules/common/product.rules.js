@@ -43,3 +43,16 @@ exports.show = [
     .withMessage('id must be integer'),
   validateRules,
 ];
+
+exports.getReviews = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  query('rate')
+    .optional()
+    .isInt({ min: 1, max: 5 })
+    .withMessage('rate must be an integer between 1 and 5'),
+  validateRules,
+];
