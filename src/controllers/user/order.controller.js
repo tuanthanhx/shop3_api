@@ -101,8 +101,13 @@ exports.index = async (req, res) => {
       include: [
         {
           model: db.shop,
-          attributes: ['shopName'],
+          attributes: ['id', 'shopName'],
           as: 'shop',
+        },
+        {
+          model: db.user,
+          attributes: ['id', 'uuid', 'name', 'avatar'],
+          as: 'user',
         },
         {
           model: db.order_status,
@@ -213,7 +218,7 @@ exports.show = async (req, res) => {
       include: [
         {
           model: db.shop,
-          attributes: ['shopName'],
+          attributes: ['id', 'shopName'],
           as: 'shop',
         },
         {
