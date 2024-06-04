@@ -196,7 +196,6 @@ exports.statistics = async (req, res) => {
   try {
     const { user } = req;
     const isAdministrator = user.userGroupId === 6;
-
     const condition = {};
 
     if (!isAdministrator) {
@@ -207,54 +206,41 @@ exports.statistics = async (req, res) => {
         });
         return;
       }
-      const shopId = shop.id;
-      condition.shopId = shopId;
+      condition.shopId = shop.id;
+    } else {
+      condition.productStatusId = { [Op.notIn]: [5, 6] };
     }
 
-    const all = await db.product.count({
-      where: {
-        ...condition,
-        productStatusId: {
-          [Op.notIn]: [5, 6],
-        },
-      },
+    const statusCounts = await db.product.findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'all'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 1 THEN 1 ELSE 0 END')), 'active'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 2 THEN 1 ELSE 0 END')), 'inactive'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 3 THEN 1 ELSE 0 END')), 'review'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 4 THEN 1 ELSE 0 END')), 'suspended'],
+        ...(isAdministrator ? [] : [
+          [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 5 THEN 1 ELSE 0 END')), 'draft'],
+          [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN productStatusId = 6 THEN 1 ELSE 0 END')), 'deleted'],
+        ]),
+      ],
+      where: condition,
+      raw: true,
     });
 
-    const active = await db.product.count({
-      where: {
-        ...condition,
-        productStatusId: 1,
-      },
-    });
+    const response = {
+      all: statusCounts[0].all,
+      active: statusCounts[0].active,
+      inactive: statusCounts[0].inactive,
+      review: statusCounts[0].review,
+      suspended: statusCounts[0].suspended,
+    };
 
-    const inactive = await db.product.count({
-      where: {
-        ...condition,
-        productStatusId: 2,
-      },
-    });
+    if (!isAdministrator) {
+      response.draft = statusCounts[0].draft;
+      response.deleted = statusCounts[0].deleted;
+    }
 
-    const review = await db.product.count({
-      where: {
-        ...condition,
-        productStatusId: 3,
-      },
-    });
-
-    const suspended = await db.product.count({
-      where: {
-        ...condition,
-        productStatusId: 4,
-      },
-    });
-
-    res.json({
-      all,
-      active,
-      inactive,
-      review,
-      suspended,
-    });
+    res.json(response);
   } catch (err) {
     logger.error(err);
     res.status(500).send({
