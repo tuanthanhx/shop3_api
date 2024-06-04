@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const { getFilename, getExtension } = require('./utils');
+const { getExtension } = require('./utils');
 const logger = require('./logger');
 
 require('dotenv').config();
@@ -16,7 +16,7 @@ exports.upload = async (files, uploadPath) => {
   const uploadPromises = files.map(async (uploadedFile) => {
     const timestamp = Date.now().toString();
     const randomPart = Math.random().toString().slice(2, 9);
-    const fileName = `${timestamp}${randomPart}_${getFilename(uploadedFile.originalname)}.${getExtension(uploadedFile.originalname)}`;
+    const fileName = `${timestamp}${randomPart}.${getExtension(uploadedFile.originalname)}`;
     const filePath = `${uploadPath}/${fileName}`;
 
     const params = {

@@ -1,6 +1,6 @@
 const logger = require('../../utils/logger');
 const { checkOtp, removeOtp } = require('../../utils/otp');
-const gcs = require('../../utils/gcs');
+const s3 = require('../../utils/s3');
 const db = require('../../models');
 
 exports.getBusinessTypes = async (req, res) => {
@@ -140,15 +140,15 @@ exports.createVerification = async (req, res) => {
     if (businessType === 1) { // Household
       const { householdBusinessRegistrationDocument1, householdBusinessRegistrationDocument2, householdBusinessRegistrationDocument3 } = req.files;
       if (householdBusinessRegistrationDocument1?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument1 = await gcs.upload(householdBusinessRegistrationDocument1, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument1 = await s3.upload(householdBusinessRegistrationDocument1, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument1] = uploadedHouseholdBusinessRegistrationDocument1;
       }
       if (householdBusinessRegistrationDocument2?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument2 = await gcs.upload(householdBusinessRegistrationDocument2, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument2 = await s3.upload(householdBusinessRegistrationDocument2, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument2] = uploadedHouseholdBusinessRegistrationDocument2;
       }
       if (householdBusinessRegistrationDocument3?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument3 = await gcs.upload(householdBusinessRegistrationDocument3, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument3 = await s3.upload(householdBusinessRegistrationDocument3, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument3] = uploadedHouseholdBusinessRegistrationDocument3;
       }
       object.householdBusinessName = householdBusinessName;
@@ -158,11 +158,11 @@ exports.createVerification = async (req, res) => {
     } else if (businessType === 2) { // Individual
       const { individualIdentityCardFront, individualIdentityCardBack } = req.files;
       if (individualIdentityCardFront?.length) {
-        const uploadedIndividualIdentityCardFront = await gcs.upload(individualIdentityCardFront, 'private/seller/verification');
+        const uploadedIndividualIdentityCardFront = await s3.upload(individualIdentityCardFront, 'private/seller/verification');
         [object.individualIdentityCardFront] = uploadedIndividualIdentityCardFront;
       }
       if (individualIdentityCardBack?.length) {
-        const uploadedIndividualIdentityCardBack = await gcs.upload(individualIdentityCardBack, 'private/seller/verification');
+        const uploadedIndividualIdentityCardBack = await s3.upload(individualIdentityCardBack, 'private/seller/verification');
         [object.individualIdentityCardBack] = uploadedIndividualIdentityCardBack;
       }
       object.individualIdentityCardNumber = individualIdentityCardNumber;
@@ -173,15 +173,15 @@ exports.createVerification = async (req, res) => {
     } else if (businessType === 3) { // Corporate
       const { corporateCompanyRegistrationDocument1, corporateCompanyRegistrationDocument2, corporateCompanyRegistrationDocument3 } = req.files;
       if (corporateCompanyRegistrationDocument1?.length) {
-        const uploadedCorporateCompanyRegistrationDocument1 = await gcs.upload(corporateCompanyRegistrationDocument1, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument1 = await s3.upload(corporateCompanyRegistrationDocument1, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument1] = uploadedCorporateCompanyRegistrationDocument1;
       }
       if (corporateCompanyRegistrationDocument2?.length) {
-        const uploadedCorporateCompanyRegistrationDocument2 = await gcs.upload(corporateCompanyRegistrationDocument2, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument2 = await s3.upload(corporateCompanyRegistrationDocument2, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument2] = uploadedCorporateCompanyRegistrationDocument2;
       }
       if (corporateCompanyRegistrationDocument3?.length) {
-        const uploadedCorporateCompanyRegistrationDocument3 = await gcs.upload(corporateCompanyRegistrationDocument3, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument3 = await s3.upload(corporateCompanyRegistrationDocument3, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument3] = uploadedCorporateCompanyRegistrationDocument3;
       }
       object.corporateCompanyName = corporateCompanyName;
@@ -328,15 +328,15 @@ exports.updateVerification = async (req, res) => {
 
       const { householdBusinessRegistrationDocument1, householdBusinessRegistrationDocument2, householdBusinessRegistrationDocument3 } = req.files;
       if (householdBusinessRegistrationDocument1?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument1 = await gcs.upload(householdBusinessRegistrationDocument1, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument1 = await s3.upload(householdBusinessRegistrationDocument1, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument1] = uploadedHouseholdBusinessRegistrationDocument1;
       }
       if (householdBusinessRegistrationDocument2?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument2 = await gcs.upload(householdBusinessRegistrationDocument2, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument2 = await s3.upload(householdBusinessRegistrationDocument2, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument2] = uploadedHouseholdBusinessRegistrationDocument2;
       }
       if (householdBusinessRegistrationDocument3?.length) {
-        const uploadedHouseholdBusinessRegistrationDocument3 = await gcs.upload(householdBusinessRegistrationDocument3, 'private/seller/verification');
+        const uploadedHouseholdBusinessRegistrationDocument3 = await s3.upload(householdBusinessRegistrationDocument3, 'private/seller/verification');
         [object.householdBusinessRegistrationDocument3] = uploadedHouseholdBusinessRegistrationDocument3;
       }
       if (householdBusinessName) object.householdBusinessName = householdBusinessName;
@@ -350,11 +350,11 @@ exports.updateVerification = async (req, res) => {
 
       const { individualIdentityCardFront, individualIdentityCardBack } = req.files;
       if (individualIdentityCardFront?.length) {
-        const uploadedIndividualIdentityCardFront = await gcs.upload(individualIdentityCardFront, 'private/seller/verification');
+        const uploadedIndividualIdentityCardFront = await s3.upload(individualIdentityCardFront, 'private/seller/verification');
         [object.individualIdentityCardFront] = uploadedIndividualIdentityCardFront;
       }
       if (individualIdentityCardBack?.length) {
-        const uploadedIndividualIdentityCardBack = await gcs.upload(individualIdentityCardBack, 'private/seller/verification');
+        const uploadedIndividualIdentityCardBack = await s3.upload(individualIdentityCardBack, 'private/seller/verification');
         [object.individualIdentityCardBack] = uploadedIndividualIdentityCardBack;
       }
       if (individualIdentityCardNumber) object.individualIdentityCardNumber = individualIdentityCardNumber;
@@ -370,15 +370,15 @@ exports.updateVerification = async (req, res) => {
 
       const { corporateCompanyRegistrationDocument1, corporateCompanyRegistrationDocument2, corporateCompanyRegistrationDocument3 } = req.files;
       if (corporateCompanyRegistrationDocument1?.length) {
-        const uploadedCorporateCompanyRegistrationDocument1 = await gcs.upload(corporateCompanyRegistrationDocument1, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument1 = await s3.upload(corporateCompanyRegistrationDocument1, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument1] = uploadedCorporateCompanyRegistrationDocument1;
       }
       if (corporateCompanyRegistrationDocument2?.length) {
-        const uploadedCorporateCompanyRegistrationDocument2 = await gcs.upload(corporateCompanyRegistrationDocument2, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument2 = await s3.upload(corporateCompanyRegistrationDocument2, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument2] = uploadedCorporateCompanyRegistrationDocument2;
       }
       if (corporateCompanyRegistrationDocument3?.length) {
-        const uploadedCorporateCompanyRegistrationDocument3 = await gcs.upload(corporateCompanyRegistrationDocument3, 'private/seller/verification');
+        const uploadedCorporateCompanyRegistrationDocument3 = await s3.upload(corporateCompanyRegistrationDocument3, 'private/seller/verification');
         [object.corporateCompanyRegistrationDocument3] = uploadedCorporateCompanyRegistrationDocument3;
       }
       if (corporateCompanyName) object.corporateCompanyName = corporateCompanyName;

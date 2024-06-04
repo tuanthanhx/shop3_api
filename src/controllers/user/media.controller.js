@@ -1,12 +1,12 @@
 const logger = require('../../utils/logger');
-const gcs = require('../../utils/gcs');
+const s3 = require('../../utils/s3');
 
 exports.uploadReviewMedia = async (req, res) => {
   try {
     const { files } = req.files;
     let uploadedFiles = [];
     if (files && files.length) {
-      uploadedFiles = await gcs.upload(files, 'public/user/review/media');
+      uploadedFiles = await s3.upload(files, 'public/user/review/media');
     } else {
       res.status(400).send({
         message: 'No files to upload',
