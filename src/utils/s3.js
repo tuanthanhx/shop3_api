@@ -1,22 +1,27 @@
-const AWS = require('aws-sdk');
+const { S3Client } = require("@aws-sdk/client-s3");
+const { Upload } = require("@aws-sdk/lib-storage");
+const { v4: uuidv4 } = require('uuid');
 const { getExtension } = require('./utils');
 const logger = require('./logger');
 
 require('dotenv').config();
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3Client = new S3Client({
   region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
 
 const bucketName = process.env.S3_BUCKET_NAME || '';
 
 exports.upload = async (files, uploadPath) => {
   const uploadPromises = files.map(async (uploadedFile) => {
-    const timestamp = Date.now().toString();
-    const randomPart = Math.random().toString().slice(2, 9);
-    const fileName = `${timestamp}${randomPart}.${getExtension(uploadedFile.originalname)}`;
+    const timestamp = Date.now();
+    const uniqueId = uuidv4();
+    const ext = getExtension(uploadedFile.originalname);
+    const fileName = `${timestamp}-${uniqueId}.${ext}`;
     const filePath = `${uploadPath}/${fileName}`;
 
     const params = {
@@ -27,20 +32,23 @@ exports.upload = async (files, uploadPath) => {
       ACL: 'public-read',
     };
 
-    return new Promise((resolve, reject) => {
-      s3.upload(params, (err, data) => {
-        if (err) {
-          logger.error('Error uploading to S3:', err);
-          reject(err);
-        } else {
-          resolve(data.Location);
-        }
-      });
+    const upload = new Upload({
+      client: s3Client,
+      params,
     });
+
+    try {
+      await upload.done();
+      const region = process.env.AWS_REGION;
+      const url = `https://s3.${region}.amazonaws.com/${bucketName}/${filePath}`;
+      return url;
+    } catch (err) {
+      logger.error('Error uploading to S3:', err);
+      throw err;
+    }
   });
 
   const uploadedFiles = await Promise.all(uploadPromises);
 
-  const publicUrls = uploadedFiles.map((filePath) => filePath);
-  return publicUrls;
+  return uploadedFiles;
 };
