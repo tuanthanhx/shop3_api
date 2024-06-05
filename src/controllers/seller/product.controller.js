@@ -228,16 +228,16 @@ exports.statistics = async (req, res) => {
     });
 
     const response = {
-      all: statusCounts[0].all,
-      active: statusCounts[0].active,
-      inactive: statusCounts[0].inactive,
-      review: statusCounts[0].review,
-      suspended: statusCounts[0].suspended,
+      all: statusCounts[0].all || 0,
+      active: statusCounts[0].active || 0,
+      inactive: statusCounts[0].inactive || 0,
+      review: statusCounts[0].review || 0,
+      suspended: statusCounts[0].suspended || 0,
     };
 
     if (!isAdministrator) {
-      response.draft = statusCounts[0].draft;
-      response.deleted = statusCounts[0].deleted;
+      response.draft = statusCounts[0].draft || 0;
+      response.deleted = statusCounts[0].deleted || 0;
     }
 
     res.json(response);

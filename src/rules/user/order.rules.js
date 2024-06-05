@@ -13,6 +13,8 @@ exports.index = [
   validateRules,
 ];
 
+exports.getStatistics = [];
+
 exports.show = [
   param('id')
     .notEmpty()

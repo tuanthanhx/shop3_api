@@ -179,6 +179,60 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.getStatistics = async (req, res) => {
+  try {
+    const { user } = req;
+    const isUser = user.userGroupId === 1;
+    const isSeller = user.userGroupId === 2;
+    // const isAdministrator = user.userGroupId === 6;
+
+    const condition = {};
+
+    if (isSeller) {
+      const shop = await db.shop.findOne({ where: { userId: user.id } });
+      if (!shop) {
+        res.status(404).send({
+          message: 'Shop not found',
+        });
+        return;
+      }
+      condition.shopId = shop.id;
+    } else if (isUser) {
+      condition.userId = user.id;
+    }
+
+    const statusCounts = await db.order.findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'all'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (1, 2, 4, 23) THEN 1 ELSE 0 END')), 'order_placed'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (3, 5, 6, 7, 8) THEN 1 ELSE 0 END')), 'order_confirmed'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (9, 10, 11, 12, 13, 24, 25) THEN 1 ELSE 0 END')), 'shipping'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId = 14 THEN 1 ELSE 0 END')), 'completed'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId = 15 THEN 1 ELSE 0 END')), 'cancelled'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (16, 17, 18, 19, 20, 21, 22) THEN 1 ELSE 0 END')), 'refund'],
+      ],
+      where: condition,
+      raw: true,
+    });
+
+    const response = {
+      all: statusCounts[0].all || 0,
+      order_placed: statusCounts[0].order_placed || 0,
+      order_confirmed: statusCounts[0].order_confirmed || 0,
+      shipping: statusCounts[0].shipping || 0,
+      completed: statusCounts[0].completed || 0,
+      cancelled: statusCounts[0].cancelled || 0,
+    };
+
+    res.json(response);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.show = async (req, res) => {
   try {
     const { user } = req;
