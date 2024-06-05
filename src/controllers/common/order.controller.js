@@ -1,7 +1,7 @@
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
-exports.index = async (req, res) => {
+exports.getOrderStatuses = async (req, res) => {
   try {
     const data = await db.order_status.findAll({
       attributes: ['id', 'name', 'description'],
