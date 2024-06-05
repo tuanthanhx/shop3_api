@@ -1,29 +1,25 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const logger = require('./logger');
-
 require('dotenv').config();
 
-exports.sendEmail = (to, subject, message) => {
-  const transporter = nodemailer.createTransport({
-    service: process.env.NODEMAIL_SERVICE,
-    auth: {
-      user: process.env.NODEMAIL_SENDER,
-      pass: process.env.NODEMAIL_PASSWORD,
-    },
-  });
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-  const mailOptions = {
-    from: process.env.NODEMAIL_SENDER,
+exports.sendEmail = async (to, subject, message) => {
+  const msg = {
     to,
+    from: process.env.SENDGRID_FROM,
     subject,
     text: message,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      logger.error('Error occurred while sending email:', error);
+  try {
+    const response = await sgMail.send(msg);
+    logger.info('Email sent:', response);
+  } catch (error) {
+    if (error.response) {
+      logger.error('Error occurred while sending email:', error.response.body);
     } else {
-      logger.info('Email sent:', info.response);
+      logger.error('Error occurred while sending email:', error);
     }
-  });
+  }
 };
