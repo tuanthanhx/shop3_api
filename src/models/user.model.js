@@ -55,7 +55,7 @@ module.exports = function (sequelize, Sequelize) {
     },
     walletAddress: {
       type: Sequelize.STRING,
-    }
+    },
   }, {
     paranoid: false,
     defaultScope: {
