@@ -11,6 +11,7 @@ exports.registerByEmail = async (req, res) => {
       email,
       password,
       verificationCode,
+      userGroupId,
     } = req.body;
 
     const verifyOtpResult = await checkOtp(email, verificationCode);
@@ -31,7 +32,7 @@ exports.registerByEmail = async (req, res) => {
     const object = {
       email,
       password,
-      userGroupId: 2,
+      userGroupId: userGroupId || 2,
     };
 
     await User.create(object);
@@ -50,6 +51,7 @@ exports.registerByPhone = async (req, res) => {
       phone,
       password,
       verificationCode,
+      userGroupId,
     } = req.body;
 
     const verifyOtpResult = await checkOtp(phone, verificationCode);
@@ -70,7 +72,7 @@ exports.registerByPhone = async (req, res) => {
     const object = {
       phone,
       password,
-      userGroupId: 2,
+      userGroupId: userGroupId || 2,
     };
 
     await User.create(object);

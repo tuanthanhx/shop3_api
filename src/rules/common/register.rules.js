@@ -20,6 +20,16 @@ exports.registerByEmail = [
       }
       return true;
     }),
+  body('userGroupId')
+    .optional()
+    .isInt()
+    .withMessage('userGroupId must be integer')
+    .custom((value) => {
+      if (value !== undefined && ![1, 2].includes(value)) {
+        throw new Error('userGroupId must be either 1 or 2');
+      }
+      return true;
+    }),
   body('verificationCode')
     .notEmpty()
     .withMessage('verificationCode is required'),
@@ -41,6 +51,16 @@ exports.registerByPhone = [
     .custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error('passwordConfirm does not match password');
+      }
+      return true;
+    }),
+  body('userGroupId')
+    .optional()
+    .isInt()
+    .withMessage('userGroupId must be integer')
+    .custom((value) => {
+      if (value !== undefined && ![1, 2].includes(value)) {
+        throw new Error('userGroupId must be either 1 or 2');
       }
       return true;
     }),
