@@ -204,8 +204,8 @@ exports.getStatistics = async (req, res) => {
     const statusCounts = await db.order.findAll({
       attributes: [
         [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'all'],
-        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (1, 2, 4, 23) THEN 1 ELSE 0 END')), 'order_placed'],
-        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (3, 5, 6, 7, 8) THEN 1 ELSE 0 END')), 'order_confirmed'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (1, 2, 4, 23) THEN 1 ELSE 0 END')), 'orderPlaced'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (3, 5, 6, 7, 8) THEN 1 ELSE 0 END')), 'orderConfirmed'],
         [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId IN (9, 10, 11, 12, 13, 24, 25) THEN 1 ELSE 0 END')), 'shipping'],
         [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId = 14 THEN 1 ELSE 0 END')), 'completed'],
         [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN orderStatusId = 15 THEN 1 ELSE 0 END')), 'cancelled'],
@@ -217,11 +217,12 @@ exports.getStatistics = async (req, res) => {
 
     const response = {
       all: statusCounts[0].all || 0,
-      order_placed: statusCounts[0].order_placed || 0,
-      order_confirmed: statusCounts[0].order_confirmed || 0,
+      orderPlaced: statusCounts[0].orderPlaced || 0,
+      orderConfirmed: statusCounts[0].orderConfirmed || 0,
       shipping: statusCounts[0].shipping || 0,
       completed: statusCounts[0].completed || 0,
       cancelled: statusCounts[0].cancelled || 0,
+      refund: statusCounts[0].refund || 0,
     };
 
     res.json(response);
