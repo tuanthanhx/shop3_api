@@ -6,7 +6,7 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
-  router.get('/orders_statistics', rules.getOrdersStatistics, accounts.getOrdersStatistics);
+  router.get('/orders_statistics', rules.getOrdersStatistics, accounts.getOrdersStatistics); // TODO: Moved to /order/statistics. DELETE IT LATER
   router.post('/change_password', rules.changePassword, accounts.changePassword);
 
   router.get('/addresses', rules.getAddresses, accounts.getAddresses);
