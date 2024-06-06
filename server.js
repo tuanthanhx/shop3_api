@@ -44,8 +44,17 @@ app.use(bodyParserErrorHandler());
 app.use(authenticateToken);
 app.use([handleQueries, validateRules]);
 
+const customCssPath = path.join(__dirname, 'docs/theme.css');
+let customCss = '';
+try {
+  customCss = fs.readFileSync(customCssPath, 'utf8');
+} catch (err) {
+  console.error('Error reading custom CSS file:', err);
+}
+
 const options = {
   explorer: true,
+  customCss,
   swaggerOptions: {
     validatorUrl: null,
     urls: [
