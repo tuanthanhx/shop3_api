@@ -6,7 +6,7 @@ exports.uploadFiles = async (req, res) => {
     const { files } = req.files;
     let uploadedFiles = [];
     if (files && files.length) {
-      uploadedFiles = await s3.upload(files, 'public/uploaded/files');
+      uploadedFiles = await s3.upload(files, 'public24/uploaded/files');
     } else {
       res.status(400).send({
         message: 'No files to upload',

@@ -1,5 +1,6 @@
 const { S3Client } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
+const dayjs = require('dayjs');
 const { v4: uuidv4 } = require('uuid');
 const { getExtension } = require('./utils');
 const logger = require('./logger');
@@ -15,6 +16,7 @@ const s3Client = new S3Client({
 });
 
 const bucketName = process.env.S3_BUCKET_NAME || '';
+const datePath = dayjs().format('YYYYMM');
 
 exports.upload = async (files, uploadPath) => {
   const uploadPromises = files.map(async (uploadedFile) => {
@@ -22,7 +24,7 @@ exports.upload = async (files, uploadPath) => {
     const uniqueId = uuidv4();
     const ext = getExtension(uploadedFile.originalname);
     const fileName = `${timestamp}-${uniqueId}.${ext}`;
-    const filePath = `${uploadPath}/${fileName}`;
+    const filePath = `${uploadPath}/${datePath}/${fileName}`;
 
     const params = {
       Bucket: bucketName,
