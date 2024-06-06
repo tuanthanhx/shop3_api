@@ -8,16 +8,124 @@ servers:
   - url: http://localhost:3000
 
 paths:
-  /test/user:
-    post:
-      summary: A test API
+  /api-user/v1/shop:
+    get:
+      summary: Get all shops
       tags:
-        - Test
+        - Shops
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by name
+          example: Example
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'shopName', 'createdAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      example:
+                        id: 4
+                        uuid: '7d08d0e0-cd99-49b9-ae63-e83dee8a1f74'
+                        name: null
+                        email: 'test_user_101@shop3.com'
+                        phone: null
+                        isActive: true
+                        createdAt: '2024-05-23T09:34:29.000Z'
+                        updatedAt: '2024-05-23T09:34:29.000Z'
+                        reviewsCount: 3
+                        shop:
+                          id: 2
+                          shopName: 'Test Shop 101'
+                          productsCount: 2
         '400':
           description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-user/v1/shop/{id}:
+    get:
+      summary: Get detail of a Shop
+      tags:
+        - Shops
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of an Shop
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example:
+                      id: 41
+                      shopName: "Test Shop 101"
+                      sellerBusinessTypeId: 1
+                      email: null
+                      phone: null
+                      createdAt: "2024-05-23T12:13:56.000Z"
+                      productsCount: 0
+        '400':
+          description: Bad Request
+        '404':
+          description: User not found
         '500':
           description: Internal Server Error
 

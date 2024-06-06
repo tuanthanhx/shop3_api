@@ -1,7 +1,7 @@
 module.exports = (app) => {
   const router = require('express').Router();
-  const shops = require('../../controllers/user/shop.controller');
-  const rules = require('../../rules/user/shop.rules');
+  const shops = require('../../controllers/common/shop.controller');
+  const rules = require('../../rules/common/shop.rules');
 
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
@@ -9,5 +9,5 @@ module.exports = (app) => {
   router.get('/', rules.index, shops.index);
   router.get('/:id', rules.show, shops.show);
 
-  app.use(`/api-user/${apiVersion}/shops`, router);
+  app.use(`/api-common/${apiVersion}/shops`, router);
 };

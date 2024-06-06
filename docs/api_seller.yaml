@@ -43,7 +43,7 @@ paths:
                     maxItems: 9
                     items:
                       type: string
-                      example: https://storage.googleapis.com/dummy.jpg
+                      example: https://files.shop3.com/dummy.jpg
         '400':
           description: Bad Request
         '500':
@@ -78,7 +78,7 @@ paths:
                 properties:
                   data:
                     type: string
-                    example: https://storage.googleapis.com/dummy.jpg
+                    example: https://files.shop3.com/dummy.jpg
         '400':
           description: Bad Request
         '500':
@@ -113,7 +113,7 @@ paths:
                 properties:
                   data:
                     type: string
-                    example: https://storage.googleapis.com/dummy.jpg
+                    example: https://files.shop3.com/dummy.jpg
         '400':
           description: Bad Request
         '500':
@@ -823,11 +823,11 @@ paths:
                   items:
                     type: string
                     format: uri
-                    example: https://storage.googleapis.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
+                    example: https://files.shop3.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
                 video:
                   type: string
                   format: uri
-                  example: https://storage.googleapis.com/media-bucket-dev/public/product/videos/17138584443770356809_3209828-uhd_3840_2160_25fps.mp4
+                  example: https://files.shop3.com/media-bucket-dev/public/product/videos/17138584443770356809_3209828-uhd_3840_2160_25fps.mp4
                 packageWeight:
                   type: number
                   format: float
@@ -887,7 +887,7 @@ paths:
                             image:
                               type: string
                               format: uri
-                              example: https://storage.googleapis.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
+                              example: https://files.shop3.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
                 productVariants:
                   type: array
                   items:
@@ -1042,11 +1042,11 @@ paths:
                   items:
                     type: string
                     format: uri
-                    example: https://storage.googleapis.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
+                    example: https://files.shop3.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
                 video:
                   type: string
                   format: uri
-                  example: https://storage.googleapis.com/media-bucket-dev/public/product/videos/17138584443770356809_3209828-uhd_3840_2160_25fps.mp4
+                  example: https://files.shop3.com/media-bucket-dev/public/product/videos/17138584443770356809_3209828-uhd_3840_2160_25fps.mp4
                 packageWeight:
                   type: number
                   format: float
@@ -1112,7 +1112,7 @@ paths:
                             image:
                               type: string
                               format: uri
-                              example: https://storage.googleapis.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
+                              example: https://files.shop3.com/media-bucket-dev/public/product/images/17138566288107052426_cute_01.jpg
                 productVariants:
                   type: array
                   items:
@@ -1347,13 +1347,13 @@ components:
           example: true
         householdBusinessRegistrationDocument1:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument2:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument3:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessName:
           type: string
           example: 'My Company'
@@ -1368,10 +1368,10 @@ components:
           example: '123456789'
         individualIdentityCardFront:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardBack:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardNumber:
           type: string
           example: '123456789'
@@ -1389,13 +1389,13 @@ components:
           example: 1
         corporateCompanyRegistrationDocument1:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument2:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument3:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyName:
           type: string
           example: 'My Company'
@@ -1494,10 +1494,10 @@ components:
           example: 1
         thumbnailImage:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         thumbnailVideo:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productImages:
           type: array
           items:
@@ -1508,7 +1508,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+                example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productVideos:
           type: array
           items:
@@ -1519,7 +1519,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
+                example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
         variants:
           type: array
           items:

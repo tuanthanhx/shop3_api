@@ -108,7 +108,7 @@ paths:
                 image:
                   type: string
                   format: uri
-                  example: https://storage.googleapis.com/dummy.jpg
+                  example: https://files.shop3.com/dummy.jpg
                 parentId:
                   type: integer
                   example: 1
@@ -171,7 +171,7 @@ paths:
                 image:
                   type: string
                   format: uri
-                  example: https://storage.googleapis.com/dummy.jpg
+                  example: https://files.shop3.com/dummy.jpg
                 parentId:
                   type: integer
                   example: 1
@@ -1020,7 +1020,7 @@ paths:
                     items:
                       type: string
                       format: uri
-                      example: https://storage.googleapis.com/dummy.jpg
+                      example: https://files.shop3.com/dummy.jpg
         '400':
           description: Bad Request
         '500':
@@ -1263,7 +1263,7 @@ components:
         image:
           type: string
           format: uri
-          example: https://storage.googleapis.com/dummy.jpg
+          example: https://files.shop3.com/dummy.jpg
         parentId:
           type: integer
           example: 1
@@ -1374,7 +1374,7 @@ components:
           example: '0123456789'
         avatar:
           type: string
-          example: https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg
+          example: https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg
         gender:
           type: integer
           example: 1
@@ -1433,13 +1433,13 @@ components:
           example: true
         householdBusinessRegistrationDocument1:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument2:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessRegistrationDocument3:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         householdBusinessName:
           type: string
           example: 'My Company'
@@ -1454,10 +1454,10 @@ components:
           example: '123456789'
         individualIdentityCardFront:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardBack:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         individualIdentityCardNumber:
           type: string
           example: '123456789'
@@ -1475,13 +1475,13 @@ components:
           example: 1
         corporateCompanyRegistrationDocument1:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument2:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyRegistrationDocument3:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         corporateCompanyName:
           type: string
           example: 'My Company'

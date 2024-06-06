@@ -773,6 +773,137 @@ paths:
         '500':
           description: Internal Server Error
 
+  /api-user/v1/shop:
+    get:
+      summary: Get all shops
+      tags:
+        - Shops
+      parameters:
+        - name: keyword
+          in: query
+          description: Search by name
+          example: Example
+          required: false
+          style: form
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number for paginated results
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: sortField
+          in: query
+          description: Sort result by field
+          required: false
+          schema:
+            type: string
+            enum: ['id', 'shopName', 'createdAt']
+        - name: sortOrder
+          in: query
+          description: Sort result in direction
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalItems:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 43
+                        shopName:
+                          type: integer
+                          example: 'Test Shop 100'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /api-user/v1/shop/{id}:
+    get:
+      summary: Get detail of a Shop
+      tags:
+        - Shops
+      parameters:
+        - name: id
+          in: path
+          description: Shop Id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detail of an Shop
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      shopName:
+                        type: string
+                        example: 'Test Shop 100'
+                      sellerBusinessTypeId:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        format: email
+                        example: johnsm@example.com
+                      phone:
+                        type: string
+                        example: '0123456789'
+                      productsCount:
+                        type: integer
+                        example: 0
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: '2024-05-23T12:13:56.000Z'
+
+        '400':
+          description: Bad Request
+        '404':
+          description: Shop not found
+        '500':
+          description: Internal Server Error
+
 components:
   securitySchemes:
     bearerAuth:
@@ -822,7 +953,7 @@ components:
           example: '0123456789'
         avatar:
           type: string
-          example: https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg
+          example: https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg
         gender:
           type: integer
           example: 1
@@ -929,7 +1060,7 @@ components:
         image:
           type: string
           format: uri
-          example: https://storage.googleapis.com/dummy.jpg
+          example: https://files.shop3.com/dummy.jpg
         parentId:
           type: integer
           example: 1
@@ -1019,10 +1150,10 @@ components:
           example: 1
         thumbnailImage:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         thumbnailVideo:
           type: string
-          example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+          example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productImages:
           type: array
           items:
@@ -1033,7 +1164,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
+                example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.jpg'
         productVideos:
           type: array
           items:
@@ -1044,7 +1175,7 @@ components:
                 example: 1
               file:
                 type: string
-                example: 'https://storage.googleapis.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
+                example: 'https://files.shop3.com/dummy/file_44103033-d9f4-4933-bacc-11701c90e58a.mp4'
         variants:
           type: array
           items:
