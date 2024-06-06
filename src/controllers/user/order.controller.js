@@ -121,7 +121,7 @@ exports.index = async (req, res) => {
         },
         {
           model: db.order_shipping,
-          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'fee', 'status'],
+          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'logisticsServiceName', 'logisticsProviderName', 'logisticsTrackingCode', 'fee', 'status'],
           as: 'orderShipping',
         },
         {
