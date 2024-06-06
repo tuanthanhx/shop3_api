@@ -16,6 +16,15 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    logisticsServiceName: {
+      type: Sequelize.STRING,
+    },
+    logisticsProviderName: {
+      type: Sequelize.STRING,
+    },
+    logisticsTrackingCode: {
+      type: Sequelize.STRING,
+    },
     fee: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,

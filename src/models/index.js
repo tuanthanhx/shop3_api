@@ -106,8 +106,9 @@ db.product.belongsToMany(db.logistics_service, { through: 'logistics_services_pr
 db.logistics_provider.belongsToMany(db.logistics_service, { through: 'logistics_services_providers_maps' });
 db.logistics_service.belongsToMany(db.logistics_provider, { through: 'logistics_services_providers_maps', as: 'logisticsProviders' });
 
-db.logistics_provider_option.belongsTo(db.logistics_service);
+db.logistics_provider_option.belongsTo(db.logistics_service, { as: 'logisticsService' });
 db.logistics_service.hasMany(db.logistics_provider_option);
+
 db.logistics_provider_option.belongsTo(db.logistics_provider, { as: 'logisticsProvider' });
 db.logistics_provider.hasMany(db.logistics_provider_option, { as: 'logisticsProvidersOptions' });
 
@@ -162,12 +163,14 @@ db.order_item.belongsTo(db.order);
 db.product.hasMany(db.order_item, { onDelete: 'CASCADE' });
 db.order_item.belongsTo(db.product);
 
-// Relationship of order_payment, order_shipping
+// Relationship of order_payment
 
 db.order.hasOne(db.order_payment, { foreignKey: 'orderId', as: 'orderPayment', onDelete: 'CASCADE' });
 db.order_payment.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderPayment' });
 db.order_payment.belongsTo(db.user);
 db.order_payment.belongsTo(db.shop);
+
+// Relationship of order_shipping
 
 db.order.hasOne(db.order_shipping, { foreignKey: 'orderId', as: 'orderShipping', onDelete: 'CASCADE' });
 db.order_shipping.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderShipping' });

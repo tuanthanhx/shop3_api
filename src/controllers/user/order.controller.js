@@ -287,7 +287,7 @@ exports.show = async (req, res) => {
         },
         {
           model: db.order_shipping,
-          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'fee', 'status'],
+          attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'logisticsServiceName', 'logisticsProviderName', 'logisticsTrackingCode', 'fee', 'status'],
           as: 'orderShipping',
         },
         {
@@ -426,6 +426,11 @@ exports.create = async (req, res) => {
       },
       include: [
         {
+          model: db.logistics_service,
+          as: 'logisticsService',
+          attributes: ['name'],
+        },
+        {
           model: db.logistics_provider,
           as: 'logisticsProvider',
           attributes: ['name'],
@@ -435,7 +440,7 @@ exports.create = async (req, res) => {
 
     if (!logisticsProviderOption) {
       res.status(404).json({
-        error: 'Logistics provider not found',
+        error: 'Logistics provider not found 2',
       });
       return;
     }
@@ -450,7 +455,7 @@ exports.create = async (req, res) => {
 
     if (!userAddress) {
       res.status(404).json({
-        error: 'Logistics provider not found',
+        error: 'User address not found',
       });
       return;
     }
@@ -537,6 +542,8 @@ exports.create = async (req, res) => {
         userId,
         shopId,
         orderId: createdOrder.id,
+        logisticsServiceName: logisticsProviderOption.logisticsService?.name,
+        logisticsProviderName: logisticsProviderOption.logisticsProvider?.name,
         fee: 0, // TODO: Dummy
         status: 1,
         firstName: userAddress.firstName,
