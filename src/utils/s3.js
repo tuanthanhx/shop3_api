@@ -40,7 +40,16 @@ exports.upload = async (files, uploadPath, options = null) => {
           }).toBuffer(),
         };
       } else {
-        processedFile = uploadedFile;
+        const [width, height] = options.dimensions;
+        processedFile = {
+          ...uploadedFile,
+          buffer: await image.resize({
+            width,
+            height,
+            fit: sharp.fit.inside,
+            withoutEnlargement: true,
+          }).toBuffer(),
+        };
       }
     } else {
       processedFile = uploadedFile;

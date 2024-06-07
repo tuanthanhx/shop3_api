@@ -6,7 +6,7 @@ exports.uploadProductImages = async (req, res) => {
     const { files } = req.files;
     let uploadedFiles = [];
     if (files && files.length) {
-      uploadedFiles = await s3.upload(files, 'public24/product/images');
+      uploadedFiles = await s3.upload(files, 'public24/product/images', { dimensions: [1080, 1080], thumbnails: [404, 404] });
     } else {
       res.status(400).send({
         message: 'No files to upload',
@@ -52,7 +52,7 @@ exports.uploadProductVariantImage = async (req, res) => {
     const { file } = req.files;
     let uploadedFiles = [];
     if (file && file.length) {
-      uploadedFiles = await s3.upload(file, 'public24/product/variant_images');
+      uploadedFiles = await s3.upload(file, 'public24/product/variant_images', { dimensions: [1080, 1080], thumbnails: [404, 404] });
     } else {
       res.status(400).send({
         message: 'No files to upload',
