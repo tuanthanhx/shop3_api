@@ -1,3 +1,4 @@
+const path = require('path');
 const logger = require('./logger');
 
 exports.generateRandomNumber = (length) => {
@@ -16,6 +17,15 @@ exports.generateUniqueId = () => {
 exports.getFilename = (filename) => filename.split('.')[0];
 
 exports.getExtension = (filename) => filename.split('.').pop();
+
+exports.isImage = (file) => {
+  const { mimetype } = file;
+  const extname = path.extname(file.originalname).toLowerCase();
+  const isValidExtension = ['.jpeg', '.jpg', '.png', '.gif'].includes(extname);
+  const validImageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  const isValidMimeType = validImageMimeTypes.includes(mimetype);
+  return isValidExtension && isValidMimeType;
+};
 
 exports.isValidJson = (jsonString) => {
   try {

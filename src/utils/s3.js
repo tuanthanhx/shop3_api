@@ -1,8 +1,9 @@
 const { S3Client } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const dayjs = require('dayjs');
+const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
-const { getExtension } = require('./utils');
+const { getExtension, isImage } = require('./utils');
 const logger = require('./logger');
 
 require('dotenv').config();
@@ -19,19 +20,40 @@ const bucketName = process.env.S3_BUCKET_NAME || '';
 const datePath = dayjs().format('YYYYMM');
 const prefixPath = process.env.NODE_ENV !== 'production' ? '__dev/' : '';
 
-exports.upload = async (files, uploadPath) => {
+exports.upload = async (files, uploadPath, options = null) => {
   const uploadPromises = files.map(async (uploadedFile) => {
     const timestamp = Date.now();
     const uniqueId = uuidv4();
     const ext = getExtension(uploadedFile.originalname);
+
+    let processedFile;
+    if (isImage(uploadedFile)) {
+      const image = sharp(uploadedFile.buffer);
+      if (!options?.dimensions) {
+        processedFile = {
+          ...uploadedFile,
+          buffer: await image.resize({
+            width: 2000,
+            height: 2000,
+            fit: sharp.fit.inside,
+            withoutEnlargement: true,
+          }).toBuffer(),
+        };
+      } else {
+        processedFile = uploadedFile;
+      }
+    } else {
+      processedFile = uploadedFile;
+    }
+
     const fileName = `${timestamp}-${uniqueId}.${ext}`;
     const filePath = `${prefixPath}${uploadPath}/${datePath}/${fileName}`;
 
     const params = {
       Bucket: bucketName,
       Key: filePath,
-      Body: uploadedFile.buffer,
-      ContentType: uploadedFile.mimetype,
+      Body: processedFile.buffer,
+      ContentType: processedFile.mimetype,
       ACL: 'public-read',
     };
 
