@@ -26,6 +26,9 @@ module.exports = function (sequelize, Sequelize) {
     brandId: {
       type: Sequelize.INTEGER,
     },
+    thumbnailImage: {
+      type: Sequelize.STRING,
+    },
     packageWeight: {
       type: Sequelize.INTEGER,
     },

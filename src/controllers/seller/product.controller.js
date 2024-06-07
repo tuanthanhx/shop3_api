@@ -1,6 +1,8 @@
+const axios = require('axios');
 const { generateUniqueId, isOnlyUpdateProductVariants, getMinMaxPrice } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
+const s3 = require('../../utils/s3');
 
 const { Op } = db.Sequelize;
 
@@ -478,6 +480,21 @@ exports.create = async (req, res) => {
           productId: createdProduct.id,
         });
       });
+      const thumbnailUrl = images[0];
+      const response = await axios.get(thumbnailUrl, { responseType: 'arraybuffer' });
+      if (response) {
+        const contentType = response.headers['content-type'];
+        const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+        const fileObject = {
+          buffer: Buffer.from(response.data),
+          originalname: 'thumbnail.jpg',
+          mimetype,
+        };
+        uploadedFiles = await s3.upload([fileObject], 'public24/product/thumbnails', { dimensions: [404, 404] });
+        await createdProduct.update({
+          thumbnailImage: uploadedFiles[0],
+        });
+      }
     }
 
     // Handle video
@@ -652,6 +669,21 @@ exports.update = async (req, res) => {
           productId: product.id,
         });
       });
+      const thumbnailUrl = images[0];
+      const response = await axios.get(thumbnailUrl, { responseType: 'arraybuffer' });
+      if (response) {
+        const contentType = response.headers['content-type'];
+        const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+        const fileObject = {
+          buffer: Buffer.from(response.data),
+          originalname: 'thumbnail.jpg',
+          mimetype,
+        };
+        uploadedFiles = await s3.upload([fileObject], 'public24/product/thumbnails', { dimensions: [404, 404] });
+        await product.update({
+          thumbnailImage: uploadedFiles[0],
+        });
+      }
     }
 
     // Handle video
