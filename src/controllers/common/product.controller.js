@@ -68,6 +68,11 @@ exports.index = async (req, res) => {
 
     const includeOptions = [
       {
+        model: db.shop,
+        where: { isActive: true },
+        attributes: ['id', 'shopName'],
+      },
+      {
         model: db.category,
         as: 'category',
         attributes: ['id', 'name'],
@@ -95,7 +100,7 @@ exports.index = async (req, res) => {
       order: ordering,
       distinct: true,
       include: includeOptions,
-      attributes: { exclude: ['productStatusId', 'categoryId', 'brandId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
+      attributes: { exclude: ['productStatusId', 'categoryId', 'brandId', 'shopId', 'description', 'packageWeight', 'packageWidth', 'packageHeight', 'packageLength', 'cod'] },
     };
 
     if (limitPerPage !== -1) {

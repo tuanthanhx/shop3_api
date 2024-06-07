@@ -95,6 +95,7 @@ exports.index = async (req, res) => {
     const data = await db.order.findAndCountAll({
       where: condition,
       order: ordering,
+      distinct: true,
       limit: limitPerPage,
       offset,
       attributes: ['id', 'uniqueId', 'totalAmount', 'createdAt', 'updatedAt'],

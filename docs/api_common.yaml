@@ -773,7 +773,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-user/v1/shop:
+  /api-user/v1/shops:
     get:
       summary: Get all shops
       tags:
@@ -850,7 +850,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /api-user/v1/shop/{id}:
+  /api-user/v1/shops/{id}:
     get:
       summary: Get detail of a Shop
       tags:
