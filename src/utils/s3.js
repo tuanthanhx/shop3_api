@@ -1,4 +1,4 @@
-const { S3Client } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const dayjs = require('dayjs');
 const sharp = require('sharp');
@@ -85,4 +85,17 @@ exports.upload = async (files, uploadPath, options = null) => {
   const uploadedFiles = await Promise.all(uploadPromises);
 
   return uploadedFiles;
+};
+
+exports.delete = async (key) => {
+  try {
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+    };
+    await s3Client.send(new DeleteObjectCommand(params));
+  } catch (err) {
+    logger.error('Error deleting object from S3:', err);
+    throw err;
+  }
 };

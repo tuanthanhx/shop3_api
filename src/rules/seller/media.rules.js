@@ -42,7 +42,7 @@ exports.uploadProductVideo = [
       }
       return true;
     }
-    throw new Error('No file was provided.');
+    throw new Error('No file was provided');
   }),
   validateRules,
   handleMulterErrors,
@@ -62,7 +62,7 @@ exports.uploadProductVariantImage = [
       }
       return true;
     }
-    throw new Error('No file was provided.');
+    throw new Error('No file was provided');
   }),
   validateRules,
   handleMulterErrors,

@@ -193,6 +193,11 @@ db.review.belongsTo(db.order, { foreignKey: 'orderId', onDelete: 'CASCADE' });
 db.review.belongsTo(db.user, { foreignKey: 'userId', onDelete: 'CASCADE' });
 db.review.belongsTo(db.shop, { foreignKey: 'shopId', onDelete: 'CASCADE' });
 
+// Relationship of files
+
+db.user.hasMany(db.file, { as: 'files', onDelete: 'CASCADE' });
+db.file.belongsTo(db.user);
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
