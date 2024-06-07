@@ -6,7 +6,7 @@ exports.uploadReviewMedia = async (req, res) => {
     const { files } = req.files;
     let uploadedFiles = [];
     if (files && files.length) {
-      uploadedFiles = await s3.upload(files, 'public24/user/review', { dimensions: [1000, 1000], thumbnails: [200, 200] });
+      uploadedFiles = await s3.upload(files, 'public24/user/review', { dimensions: [1000, 1000] });
     } else {
       res.status(400).send({
         message: 'No files to upload',
