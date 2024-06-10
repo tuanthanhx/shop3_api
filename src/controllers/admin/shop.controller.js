@@ -35,8 +35,8 @@ exports.index = async (req, res) => {
         condition.isActive = false;
       }
       if (status === 'review') {
+        condition.isSubmitted = true;
         condition.isVerified = false;
-        condition.isActive = false;
       }
     }
 
