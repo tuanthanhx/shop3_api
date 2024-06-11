@@ -108,139 +108,24 @@ exports.getOrdersStatistics = async (req, res) => {
   }
 };
 
-exports.changeEmail = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
     const { user } = req;
     const userId = user.id;
 
     const {
-      otp,
       email,
-    } = req.body;
-
-    const me = await db.user.findByPk(userId);
-    if (!me) {
-      res.status(404).send({
-        message: 'User not found',
-      });
-      return;
-    }
-
-    if (me.email === email) {
-      res.status(400).send({
-        message: 'New email cannot be the same as the current email',
-      });
-      return;
-    }
-
-    const duplicate = await db.user.findOne({
-      where: {
-        email,
-        id: { [db.Sequelize.Op.ne]: userId },
-      },
-    });
-
-    if (duplicate) {
-      res.status(409).send({
-        message: 'Email already in use by another user',
-      });
-      return;
-    }
-
-    const verifyOtpResult = await checkOtp(email, otp);
-    if (!verifyOtpResult) {
-      res.status(400).json({ data: 'Invalid OTP' });
-      return;
-    }
-    await removeOtp(email);
-
-    await me.update({
-      email,
-    });
-
-    res.json({
-      data: {
-        message: 'Email updated successfully',
-      },
-    });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send({
-      message: err.message || 'Some error occurred',
-    });
-  }
-};
-
-exports.changePhone = async (req, res) => {
-  try {
-    const { user } = req;
-    const userId = user.id;
-
-    const {
-      otp,
+      emailOtp,
       phone,
-    } = req.body;
-
-    const me = await db.user.findByPk(userId);
-    if (!me) {
-      res.status(404).send({
-        message: 'User not found',
-      });
-      return;
-    }
-
-    if (me.phone === phone) {
-      res.status(400).send({
-        message: 'New phone number cannot be the same as the current phone number',
-      });
-      return;
-    }
-
-    const duplicate = await db.user.findOne({
-      where: {
-        phone,
-        id: { [db.Sequelize.Op.ne]: userId },
-      },
-    });
-
-    if (duplicate) {
-      res.status(409).send({
-        message: 'Phone number already in use by another user',
-      });
-      return;
-    }
-
-    const verifyOtpResult = await checkOtp(phone, otp);
-    if (!verifyOtpResult) {
-      res.status(400).json({ data: 'Invalid OTP' });
-      return;
-    }
-    await removeOtp(phone);
-
-    await me.update({
-      phone,
-    });
-
-    res.json({
-      data: {
-        message: 'Phone number updated successfully',
-      },
-    });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send({
-      message: err.message || 'Some error occurred',
-    });
-  }
-};
-
-exports.changeDob = async (req, res) => {
-  try {
-    const { user } = req;
-    const userId = user.id;
-
-    const {
+      phoneOtp,
       dob,
+      name,
+      avatar,
+      gender,
+      countryCode,
+      languageId,
+      currencyId,
+      subscribeMailingList,
     } = req.body;
 
     const me = await db.user.findByPk(userId);
@@ -251,60 +136,151 @@ exports.changeDob = async (req, res) => {
       return;
     }
 
-    await me.update({
-      dob,
-    });
+    const object = {};
+
+    if (email && emailOtp) {
+      if (me.email === email) {
+        res.status(400).send({
+          message: 'New email cannot be the same as the current email',
+        });
+        return;
+      }
+
+      const duplicate = await db.user.findOne({
+        where: {
+          email,
+          id: { [db.Sequelize.Op.ne]: userId },
+        },
+      });
+
+      if (duplicate) {
+        res.status(409).send({
+          message: 'Email already in use by another user',
+        });
+        return;
+      }
+
+      const verifyEmailOtp = await checkOtp(email, emailOtp);
+      if (!verifyEmailOtp) {
+        res.status(400).json({ data: 'Invalid Email OTP' });
+        return;
+      }
+
+      object.email = email;
+    }
+
+    if (phone && phoneOtp) {
+      if (me.phone === phone) {
+        res.status(400).send({
+          message: 'New phone number cannot be the same as the current phone',
+        });
+        return;
+      }
+
+      const duplicate = await db.user.findOne({
+        where: {
+          phone,
+          id: { [db.Sequelize.Op.ne]: userId },
+        },
+      });
+
+      if (duplicate) {
+        res.status(409).send({
+          message: 'Phone number already in use by another user',
+        });
+        return;
+      }
+
+      const verifyPhoneOtp = await checkOtp(phone, phoneOtp);
+      if (!verifyPhoneOtp) {
+        res.status(400).json({ data: 'Invalid Phone OTP' });
+        return;
+      }
+
+      object.phone = phone;
+    }
+
+    if (name !== undefined) {
+      object.name = name;
+    }
+
+    if (avatar !== undefined) {
+      object.avatar = avatar;
+    }
+
+    if (gender) {
+      object.gender = gender;
+    }
+
+    if (dob) {
+      object.dob = dob;
+    }
+
+    if (countryCode) {
+      const country = await db.country.findOne({
+        where: {
+          code: countryCode,
+        },
+      });
+
+      if (!country) {
+        res.status(404).send({
+          message: 'Country not found',
+        });
+        return;
+      }
+      object.countryCode = countryCode;
+    }
+
+    if (languageId) {
+      const language = await db.language.findOne({
+        where: {
+          id: languageId,
+        },
+      });
+
+      if (!language) {
+        res.status(404).send({
+          message: 'Language not found',
+        });
+        return;
+      }
+      object.languageId = languageId;
+    }
+
+    if (currencyId) {
+      const currency = await db.currency.findOne({
+        where: {
+          id: currencyId,
+        },
+      });
+
+      if (!currency) {
+        res.status(404).send({
+          message: 'Currency not found',
+        });
+        return;
+      }
+      object.currencyId = currencyId;
+    }
+
+    if (subscribeMailingList !== undefined) {
+      object.subscribeMailingList = subscribeMailingList;
+    }
+
+    await me.update(object);
+
+    if (email) {
+      await removeOtp(email);
+    }
+
+    if (phone) {
+      await removeOtp(phone);
+    }
 
     res.json({
       data: {
-        message: 'D.O.B updated successfully',
-      },
-    });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send({
-      message: err.message || 'Some error occurred',
-    });
-  }
-};
-
-exports.changeCountry = async (req, res) => {
-  try {
-    const { user } = req;
-    const userId = user.id;
-
-    const {
-      countryCode,
-    } = req.body;
-
-    const me = await db.user.findByPk(userId);
-    if (!me) {
-      res.status(404).send({
-        message: 'User not found',
-      });
-      return;
-    }
-
-    const country = await db.country.findOne({
-      where: {
-        code: countryCode,
-      },
-    });
-
-    if (!country) {
-      res.status(404).send({
-        message: 'Country not found',
-      });
-      return;
-    }
-
-    await me.update({
-      countryCode,
-    });
-
-    res.json({
-      data: {
-        message: 'Country updated successfully',
+        message: 'Profile updated successfully',
       },
     });
   } catch (err) {

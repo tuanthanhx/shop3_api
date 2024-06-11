@@ -8,10 +8,7 @@ module.exports = (app) => {
 
   router.get('/orders_statistics', rules.getOrdersStatistics, accounts.getOrdersStatistics); // TODO: Moved to /order/statistics. DELETE IT LATER
 
-  router.post('/change_email', rules.changeEmail, accounts.changeEmail);
-  router.post('/change_phone', rules.changePhone, accounts.changePhone);
-  router.post('/change_dob', rules.changeDob, accounts.changeDob);
-  router.post('/change_country', rules.changeCountry, accounts.changeCountry);
+  router.post('/profile', rules.updateProfile, accounts.updateProfile);
   router.post('/change_password', rules.changePassword, accounts.changePassword);
 
   router.get('/addresses', rules.getAddresses, accounts.getAddresses);

@@ -23,34 +23,27 @@ exports.disconnectWallet = [];
 
 exports.getOrdersStatistics = [];
 
-exports.changeEmail = [
+exports.updateProfile = [
   body('email')
-    .notEmpty()
-    .withMessage('email is required')
+    .optional()
     .isEmail()
     .withMessage('email is invalid format')
     .trim(),
-  body('otp')
+  body('emailOtp')
+    .if(body('email').exists())
     .notEmpty()
-    .withMessage('otp is required')
+    .withMessage('emailOtp is required if email is provided')
     .trim(),
-];
-
-exports.changePhone = [
-  body('phone')
+  body('email')
+    .optional()
+    .trim(),
+  body('phoneOtp')
+    .if(body('phone').exists())
     .notEmpty()
-    .withMessage('phone is required')
+    .withMessage('phoneOtp is required if phone is provided')
     .trim(),
-  body('otp')
-    .notEmpty()
-    .withMessage('otp is required')
-    .trim(),
-];
-
-exports.changeDob = [
   body('dob')
-    .notEmpty()
-    .withMessage('dob is required')
+    .optional()
     .isISO8601()
     .withMessage('dob must be in the format YYYY-MM-DD')
     .custom((value) => {
@@ -62,14 +55,30 @@ exports.changeDob = [
       return true;
     })
     .trim(),
-  validateRules,
-];
-
-exports.changeCountry = [
-  body('countryCode')
-    .notEmpty()
-    .withMessage('countryCode is required')
+  body('name')
+    .optional()
     .trim(),
+  body('avatar')
+    .optional()
+    .trim(),
+  body('gender')
+    .optional()
+    .isInt({ min: 1, max: 5 })
+    .withMessage('gender must be an integer between 1 and 5'),
+  body('countryCode')
+    .optional()
+    .trim(),
+  body('languageId')
+    .optional()
+    .isInt()
+    .withMessage('languageId must be integer'),
+  body('currencyId')
+    .optional()
+    .isInt()
+    .withMessage('currencyId must be integer'),
+  body('subscribeMailingList')
+    .optional()
+    .toBoolean(),
   validateRules,
 ];
 
