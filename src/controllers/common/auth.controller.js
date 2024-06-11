@@ -29,7 +29,25 @@ exports.isLogin = async (req, res) => {
 exports.findMe = async (req, res) => {
   try {
     const { id } = req.user;
-    const user = await db.user.findByPk(id);
+    const user = await db.user.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: db.country,
+          attributes: ['code', 'name'],
+        },
+        {
+          model: db.language,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: db.currency,
+          attributes: ['id', 'name', 'code', 'symbol'],
+        },
+      ],
+    });
     if (!user) {
       res.status(404).send({
         message: 'User not found',
