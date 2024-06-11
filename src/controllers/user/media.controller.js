@@ -1,6 +1,29 @@
 const logger = require('../../utils/logger');
 const s3 = require('../../utils/s3');
 
+exports.uploadAvatar = async (req, res) => {
+  try {
+    const { file } = req.files;
+    let uploadedFiles = [];
+    if (file && file.length) {
+      uploadedFiles = await s3.upload(file, 'public24/user/avatars', { dimensions: [404, 404] });
+    } else {
+      res.status(400).send({
+        message: 'No files to upload',
+      });
+      return;
+    }
+    res.send({
+      data: uploadedFiles[0],
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.uploadReviewMedia = async (req, res) => {
   try {
     const { files } = req.files;

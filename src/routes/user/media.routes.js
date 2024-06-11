@@ -9,6 +9,10 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
+  router.post('/avatar', upload.fields([
+    { name: 'file', maxCount: 1 },
+  ]), rules.uploadAvatar, media.uploadAvatar);
+
   router.post('/review_media', upload.fields([
     { name: 'files', maxCount: 10 },
   ]), rules.uploadReviewMedia, media.uploadReviewMedia);
