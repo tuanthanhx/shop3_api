@@ -37,6 +37,9 @@ npx sequelize-cli db:migrate --to 20240530185717-add-wallet-address-to-user.js -
 npx sequelize-cli db:migrate --to 20240530185720-add-shop-id-to-cart.js --env production
 npx sequelize-cli db:migrate --to 20240530185720-add-columns-to-products.js --env production
 
+npx sequelize-cli db:migrate --to 20240530185720-add-country-code-to-users.js --env production
+// UPDATE `users` SET `countryCode` = 'cn';
+
 ===========
 
 

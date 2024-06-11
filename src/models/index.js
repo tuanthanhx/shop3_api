@@ -37,6 +37,7 @@ Object.keys(db).forEach((modelName) => {
 
 db.user.belongsTo(db.language, { foreignKey: 'languageId' });
 db.user.belongsTo(db.currency, { foreignKey: 'currencyId' });
+db.user.belongsTo(db.country, { foreignKey: 'countryCode' });
 
 db.user.hasMany(db.user_refresh_token, { onDelete: 'CASCADE' });
 db.user_refresh_token.belongsTo(db.user);

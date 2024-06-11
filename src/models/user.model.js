@@ -29,6 +29,9 @@ module.exports = function (sequelize, Sequelize) {
     dob: {
       type: Sequelize.DATEONLY,
     },
+    countryCode: {
+      type: Sequelize.STRING(2),
+    },
     languageId: {
       type: Sequelize.INTEGER,
       defaultValue: 1,

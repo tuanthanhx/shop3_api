@@ -3,7 +3,9 @@ const db = require('../../models');
 
 exports.index = async (req, res) => {
   try {
-    const currencies = await db.country.findAll();
+    const currencies = await db.country.findAll({
+      attributes: ['code', 'name'],
+    });
     res.json({
       data: currencies,
     });

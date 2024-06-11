@@ -23,6 +23,56 @@ exports.disconnectWallet = [];
 
 exports.getOrdersStatistics = [];
 
+exports.changeEmail = [
+  body('email')
+    .notEmpty()
+    .withMessage('email is required')
+    .isEmail()
+    .withMessage('email is invalid format')
+    .trim(),
+  body('otp')
+    .notEmpty()
+    .withMessage('otp is required')
+    .trim(),
+];
+
+exports.changePhone = [
+  body('phone')
+    .notEmpty()
+    .withMessage('phone is required')
+    .trim(),
+  body('otp')
+    .notEmpty()
+    .withMessage('otp is required')
+    .trim(),
+];
+
+exports.changeDob = [
+  body('dob')
+    .notEmpty()
+    .withMessage('dob is required')
+    .isISO8601()
+    .withMessage('dob must be in the format YYYY-MM-DD')
+    .custom((value) => {
+      const today = new Date();
+      const dobDate = new Date(value);
+      if (dobDate >= today) {
+        throw new Error('dob must be in the past');
+      }
+      return true;
+    })
+    .trim(),
+  validateRules,
+];
+
+exports.changeCountry = [
+  body('countryCode')
+    .notEmpty()
+    .withMessage('countryCode is required')
+    .trim(),
+  validateRules,
+];
+
 exports.changePassword = [
   body('receiver')
     .notEmpty()
