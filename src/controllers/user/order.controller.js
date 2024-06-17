@@ -584,6 +584,76 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.pay = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const { id } = req.params;
+
+    const {
+      content,
+    } = req.body;
+
+    const order = await db.order.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (![1, 2, 4].includes(order.orderStatusId)) {
+      res.status(400).send({
+        message: 'Order is not ready to be paid',
+      });
+      return;
+    }
+
+    const orderPayment = await order.getOrderPayment();
+
+    if (!orderPayment) {
+      res.status(404).send({
+        message: 'Order payment not found',
+      });
+      return;
+    }
+
+    if (orderPayment.status !== 1) {
+      res.status(400).send({
+        message: 'Order payment is not ready to be paid',
+      });
+      return;
+    }
+
+    orderPayment.update({
+      status: 2,
+      content,
+    });
+
+    order.update({
+      orderStatusId: 3,
+    });
+
+    res.json({
+      data: {
+        message: 'Order paid successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.cancel = async (req, res) => {
   try {
     const { user } = req;
