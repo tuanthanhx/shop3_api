@@ -612,6 +612,7 @@ exports.createPaymentMethodWithCards = async (req, res) => {
     const userId = user.id;
 
     const {
+      cardName,
       cardNumber,
       expYear,
       expMonth,
@@ -621,10 +622,6 @@ exports.createPaymentMethodWithCards = async (req, res) => {
 
     const object = {
       userId,
-      cardNumber,
-      expYear,
-      expMonth,
-      ccv,
       paymentMethodTypeId: 1,
       isActive: true,
       isDefault,
@@ -633,6 +630,7 @@ exports.createPaymentMethodWithCards = async (req, res) => {
     const createdData = await db.payment_method.create(object);
     await db.payment_method_card.create({
       paymentMethodId: createdData.id,
+      cardName,
       cardNumber,
       expYear,
       expMonth,
@@ -676,7 +674,6 @@ exports.createPaymentMethodWithPaypal = async (req, res) => {
 
     const object = {
       userId,
-      accountName,
       paymentMethodTypeId: 2,
       isActive: true,
       isDefault,
@@ -725,7 +722,6 @@ exports.createPaymentMethodWithCryptocurrencies = async (req, res) => {
 
     const object = {
       userId,
-      walletAddress,
       paymentMethodTypeId: 3,
       isActive: true,
       isDefault,
@@ -775,8 +771,6 @@ exports.createPaymentMethodWithOnline = async (req, res) => {
 
     const object = {
       userId,
-      serviceName,
-      accountName,
       paymentMethodTypeId: 4,
       isActive: true,
       isDefault,

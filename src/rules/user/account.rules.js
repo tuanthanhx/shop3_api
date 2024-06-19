@@ -181,6 +181,10 @@ exports.deleteAddress = [
 exports.getPaymentMethods = [];
 
 exports.createPaymentMethodWithCards = [
+  body('cardName')
+    .notEmpty()
+    .withMessage('cardName is required')
+    .trim(),
   body('cardNumber')
     .notEmpty()
     .withMessage('cardNumber is required')
