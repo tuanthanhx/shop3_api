@@ -555,6 +555,12 @@ exports.create = async (req, res) => {
         address: userAddress.address,
       }, { transaction });
 
+      await db.order_tracking.create({
+        orderId: createdOrder.id,
+        userId,
+        message: 'Order has been created',
+      }, { transaction });
+
       orderCreationPromises.push(
         db.order_item.bulkCreate(orderItemsWithOrderId, { transaction }),
       );
@@ -632,13 +638,19 @@ exports.pay = async (req, res) => {
       return;
     }
 
-    orderPayment.update({
+    await orderPayment.update({
       status: 2,
       content,
     });
 
-    order.update({
+    await order.update({
       orderStatusId: 3,
+    });
+
+    await db.order_tracking.create({
+      orderId: order.id,
+      userId,
+      message: 'Order paid successfully',
     });
 
     res.json({
@@ -682,8 +694,14 @@ exports.cancel = async (req, res) => {
       return;
     }
 
-    order.update({
+    await order.update({
       orderStatusId: 15,
+    });
+
+    await db.order_tracking.create({
+      orderId: order.id,
+      userId,
+      message: 'Order has been cancelled',
     });
 
     res.json({
@@ -727,8 +745,14 @@ exports.complete = async (req, res) => {
       return;
     }
 
-    order.update({
+    await order.update({
       orderStatusId: 14,
+    });
+
+    await db.order_tracking.create({
+      orderId: order.id,
+      userId,
+      message: 'Order has been completed',
     });
 
     res.json({
@@ -789,8 +813,27 @@ exports.updateStatus = async (req, res) => {
       return;
     }
 
-    order.update({
+    const orderStatus = await db.order_status.findOne({
+      where: {
+        id: statusId,
+      },
+    });
+
+    if (!orderStatus) {
+      res.status(404).send({
+        message: 'Order Status not found',
+      });
+      return;
+    }
+
+    await order.update({
       orderStatusId: statusId,
+    });
+
+    await db.order_tracking.create({
+      orderId: order.id,
+      userId,
+      message: `The status of the order has been changed to ${orderStatus?.name}`, // TODO: Show status name instead
     });
 
     res.json({
