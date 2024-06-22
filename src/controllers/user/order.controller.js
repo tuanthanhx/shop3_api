@@ -833,7 +833,7 @@ exports.updateStatus = async (req, res) => {
     await db.order_tracking.create({
       orderId: order.id,
       userId,
-      message: `The status of the order has been changed to ${orderStatus?.name}`, // TODO: Show status name instead
+      message: `The status of the order has been changed to ${orderStatus?.name}`,
     });
 
     res.json({
