@@ -117,7 +117,7 @@ exports.index = async (req, res) => {
         },
         {
           model: db.order_payment,
-          attributes: ['id', 'paymenMethod', 'amount', 'status', 'content'],
+          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
           as: 'orderPayment',
         },
         {
@@ -284,7 +284,7 @@ exports.show = async (req, res) => {
         },
         {
           model: db.order_payment,
-          attributes: ['id', 'paymenMethod', 'amount', 'status', 'content'],
+          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
           as: 'orderPayment',
         },
         {
@@ -535,7 +535,7 @@ exports.create = async (req, res) => {
         shopId,
         orderId: createdOrder.id,
         amount: totalAmount,
-        paymenMethod: paymentMethod?.payment_method_type?.name,
+        paymentMethod: paymentMethod?.payment_method_type?.name,
         status: 1,
         content: '',
       }, { transaction });

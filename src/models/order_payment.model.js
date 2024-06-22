@@ -1,6 +1,6 @@
 module.exports = function (sequelize, Sequelize) {
   return sequelize.define('order_payment', {
-    paymenMethod: {
+    paymentMethod: {
       type: Sequelize.STRING,
       allowNull: false,
     },
