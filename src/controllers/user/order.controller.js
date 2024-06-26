@@ -582,9 +582,12 @@ exports.create = async (req, res) => {
     });
     await transaction.commit();
 
+    const orderIds = Array.from(shopOrdersMap.values(), (orderData) => orderData.createdOrder.id);
+
     res.json({
       data: {
         message: 'Orders created successfully',
+        orderIds,
       },
     });
   } catch (err) {
