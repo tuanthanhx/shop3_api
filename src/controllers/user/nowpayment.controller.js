@@ -100,6 +100,7 @@ exports.ipnCallback = async (req, res) => {
       res.status(400).send('IPN callback signature mismatch.');
     }
   } catch (err) {
+    console.error(err);
     logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
