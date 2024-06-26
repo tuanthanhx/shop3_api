@@ -56,7 +56,6 @@ exports.verifyTonProof = async (body) => {
 
       // const publicKey = tryParsePublicKey(stateInit) ?? await getWalletPublicKey(payload.address);
       const publicKey = tryParsePublicKey(stateInit) ?? null;
-      console.log(publicKey);
       if (!publicKey) {
         return false;
       }
