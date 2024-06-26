@@ -20,6 +20,7 @@ exports.verifyTonProof = async (body) => {
     'shop3.com',
     'test.shop3.com',
     'localhost:5173',
+    'localhost:8081',
   ];
 
   const tonProofPrefix = 'ton-proof-item-v2/';

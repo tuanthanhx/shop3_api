@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const db = require('../../models');
 const logger = require('../../utils/logger');
 
 require('dotenv').config();
@@ -32,6 +33,59 @@ exports.ipnCallback = async (req, res) => {
       // Signatures match - request is verified
       logger.info('IPN callback verified:', sortedParams);
       console.log('IPN callback verified:', sortedParams);
+
+      const orderId = parseInt(sortedParams.order_id, 10);
+
+      const order = await db.order.findOne({
+        where: {
+          id: orderId,
+        },
+      });
+
+      if (!order) {
+        res.status(404).send({
+          message: 'Order not found',
+        });
+        return;
+      }
+
+      // if (![1, 2, 4].includes(order.orderStatusId)) {
+      //   res.status(400).send({
+      //     message: 'Order is not ready to be paid',
+      //   });
+      //   return;
+      // }
+
+      const orderPayment = await order.getOrderPayment();
+
+      if (!orderPayment) {
+        res.status(404).send({
+          message: 'Order payment not found',
+        });
+        return;
+      }
+
+      // if (orderPayment.status !== 1) {
+      //   res.status(400).send({
+      //     message: 'Order payment is not ready to be paid',
+      //   });
+      //   return;
+      // }
+
+      await orderPayment.update({
+        status: 2,
+        content,
+      });
+
+      await order.update({
+        orderStatusId: 3,
+      });
+
+      await db.order_tracking.create({
+        orderId: order.id,
+        userId: 47, // TODO: DUMMY
+        message: 'Order paid successfully',
+      });
 
       // Handle the IPN data here, update your database, trigger actions, etc.
 
