@@ -394,7 +394,7 @@ exports.create = async (req, res) => {
 
     let paymentMethod;
 
-    if (paymentMethodId !== 0) {
+    if (paymentMethodId > 0) {
       paymentMethod = await db.payment_method.findOne({
         where: {
           userId,
@@ -414,10 +414,16 @@ exports.create = async (req, res) => {
         });
         return;
       }
-    } else {
+    } else if (paymentMethodId === 0) {
       paymentMethod = {
         payment_method_type: {
           name: 'COD',
+        },
+      };
+    } else if (paymentMethodId === -1) {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'NOWPayments',
         },
       };
     }
