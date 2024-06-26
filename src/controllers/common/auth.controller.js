@@ -1,9 +1,13 @@
 const jwt = require('jsonwebtoken');
 const { ethers } = require('ethers');
+const { Buffer } = require('buffer');
+const { randomBytes } = require('tweetnacl');
 const logger = require('../../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
 const { sendEmail } = require('../../utils/email');
 const { generateRandomNumber } = require('../../utils/utils');
+const { createPayloadToken } = require('../../utils/jwt');
+const { verifyTonProof } = require('../../utils/ton');
 const db = require('../../models');
 
 require('dotenv').config();
@@ -226,6 +230,85 @@ exports.loginByWallet = async (req, res) => {
     console.log(error);
     logger.error(error);
     res.status(500).json({ error: 'Login failed' });
+  }
+};
+
+exports.generateTonPayload = async (req, res) => {
+  try {
+    const payload = Buffer.from(randomBytes(32)).toString('hex');
+    const payloadToken = await createPayloadToken({ payload });
+    res.json({
+      payload: payloadToken,
+    });
+  } catch (error) {
+    logger.error(error);
+    res.status(500).send({
+      message: error.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.checkTonProof = async (req, res) => {
+  try {
+    const { payload, userGroupId } = req.body;
+
+    const isValid = await verifyTonProof(payload);
+
+    if (!isValid) {
+      res.status(401).send({
+        message: 'Invalid proof',
+      });
+      return;
+    }
+
+    // const payloadToken = body.proof.payload;
+    // if (!await verifyToken(payloadToken)) {
+    //   res.status(401).send({
+    //     message: 'Invalid token',
+    //   });
+    //   return;
+    // }
+
+    // const accessToken = await createAuthToken({ address: body.address, network: body.network });
+
+    const { address } = payload;
+    const tmpPassword = generateRandomNumber(6);
+
+    const [user, createdUser] = await db.user.findOrCreate({
+      where: { walletAddress: address },
+      defaults: {
+        password: tmpPassword,
+        userGroupId: userGroupId || 1,
+      },
+    });
+
+    const userData = user || createdUser;
+
+    const userIdentity = {
+      id: userData.id,
+      uuid: userData.uuid,
+      userGroupId: userData.userGroupId,
+    };
+    const accessToken = jwt.sign(userIdentity, accessTokenSecret, { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' });
+    const refreshToken = jwt.sign(userIdentity, refreshTokenSecret, { expiresIn: process.env.JWT_REFRESH_EXPIRATION || '30d' });
+
+    const [token, createdToken] = await UserRefreshToken.findOrCreate({
+      where: { userId: userData.id },
+      defaults: { token: refreshToken },
+    });
+
+    if (!createdToken) {
+      await token.update({ token: refreshToken });
+    }
+
+    res.json({
+      data: { accessToken, refreshToken },
+    });
+  } catch (error) {
+    logger.error(error);
+    res.status(500).send({
+      message: error.message || 'Some error occurred',
+    });
   }
 };
 
