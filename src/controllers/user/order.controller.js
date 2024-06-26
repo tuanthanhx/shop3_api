@@ -513,6 +513,7 @@ exports.create = async (req, res) => {
     }
 
     const orderCreationPromises = [];
+    const orderIds = [];
     for (const orderData of shopOrdersMap.values()) {
       const { shopId, totalAmount, orderItems } = orderData;
 
@@ -530,6 +531,8 @@ exports.create = async (req, res) => {
         });
         return;
       }
+
+      orderIds.push(createdOrder.id);
 
       const orderItemsWithOrderId = orderItems.map((item) => ({
         ...item,
@@ -581,9 +584,6 @@ exports.create = async (req, res) => {
       transaction,
     });
     await transaction.commit();
-
-    const orderIds = Array.from(shopOrdersMap.values(), (orderData) => orderData.createdOrder.id);
-
     res.json({
       data: {
         message: 'Orders created successfully',
