@@ -13,6 +13,7 @@ exports.authenticateToken = (req, res, next) => {
     '/docs',
     '/api-docs',
     '/api-common',
+    `/api-user/${apiVersion}/nowpayments/ipn_callback`,
   ];
   const adminPaths = [
     '/api-admin',
