@@ -248,7 +248,7 @@ exports.generateTonPayload = async (req, res) => {
   }
 };
 
-exports.checkTonProof = async (req, res) => {
+exports.loginByTonWallet = async (req, res) => {
   try {
     const { payload, userGroupId } = req.body;
 

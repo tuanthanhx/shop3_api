@@ -1,4 +1,5 @@
 const { ethers } = require('ethers');
+const { verifyTonProof } = require('../../utils/ton');
 const logger = require('../../utils/logger');
 const { checkOtp, removeOtp } = require('../../utils/otp');
 const db = require('../../models');
@@ -38,6 +39,59 @@ exports.connectWallet = async (req, res) => {
 
     me.update({
       walletAddress: signerAddress,
+    });
+
+    res.json({
+      data: {
+        message: 'Wallet connected successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.connectTonWallet = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const {
+      payload,
+    } = req.body;
+
+    const isValid = await verifyTonProof(payload);
+
+    if (!isValid) {
+      res.status(401).send({
+        message: 'Invalid proof',
+      });
+      return;
+    }
+
+    const { address } = payload;
+
+    const duplicate = await db.user.findOne({
+      where: { walletAddress: address },
+    });
+
+    if (duplicate) {
+      res.status(400).json({ error: 'This wallet address is already used by other user' });
+      return;
+    }
+
+    const me = await db.user.findByPk(userId);
+
+    if (!me) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    me.update({
+      walletAddress: address,
     });
 
     res.json({

@@ -13,9 +13,9 @@ module.exports = (app) => {
   router.post('/login/email', rules.loginByEmail, auth.loginByEmail);
   router.post('/login/phone', rules.loginByPhone, auth.loginByPhone);
   router.post('/login/wallet', rules.loginByWallet, auth.loginByWallet);
+  router.post('/login/wallet/ton', auth.loginByTonWallet);
 
   router.post('/generate_ton_payload', auth.generateTonPayload);
-  router.post('/check_ton_proof', auth.checkTonProof);
 
   router.post('/logout', rules.logout, auth.logout);
   router.post('/reset_password/email', rules.resetPasswordByEmail, auth.resetPasswordByEmail);
