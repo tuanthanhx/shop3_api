@@ -373,18 +373,18 @@ exports.getReviews = async (req, res) => {
     const { count, rows } = data;
     const totalPages = limitPerPage === -1 ? 1 : Math.ceil(count / limitPerPage);
 
-    const formatedRows = rows.map((row) => {
+    const formattedRows = rows.map((row) => {
       const rowObj = row.toJSON();
       if (rowObj.orderItem?.productVariant) {
         rowObj.productVariant = tryParseJSON(rowObj.orderItem?.productVariant);
         delete rowObj.orderItem;
       }
       if (rowObj.images) {
-        rowObj.formatedImages = tryParseJSON(rowObj.images);
+        rowObj.formattedImages = tryParseJSON(rowObj.images);
         // delete rowObj.images;
       }
       if (rowObj.videos) {
-        rowObj.formatedVideos = tryParseJSON(rowObj.videos);
+        rowObj.formattedVideos = tryParseJSON(rowObj.videos);
         // delete rowObj.videos;
       }
       return {
@@ -396,7 +396,7 @@ exports.getReviews = async (req, res) => {
       totalItems: count,
       totalPages,
       currentPage: pageNo,
-      data: formatedRows,
+      data: formattedRows,
     });
   } catch (err) {
     logger.error(err);

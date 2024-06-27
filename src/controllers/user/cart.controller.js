@@ -60,7 +60,7 @@ exports.index = async (req, res) => {
       ],
     });
 
-    const formatedData = data.map((item) => {
+    const formattedData = data.map((item) => {
       const itemObject = item.toJSON();
       const newOptions = itemObject.productVariant.options.map((option) => ({
         variantId: option.variantId,
@@ -87,7 +87,7 @@ exports.index = async (req, res) => {
       };
     });
 
-    const groupedData = formatedData.reduce((acc, cartItem) => {
+    const groupedData = formattedData.reduce((acc, cartItem) => {
       const shopId = cartItem.shop.id;
       if (!acc[shopId]) {
         acc[shopId] = {
@@ -105,7 +105,7 @@ exports.index = async (req, res) => {
       return acc;
     }, {});
 
-    const formatedLogisticsProviderOptions = logisticsProviderOptions.map((option) => {
+    const formattedLogisticsProviderOptions = logisticsProviderOptions.map((option) => {
       const optionObj = option.toJSON();
       const logisticsProvider = optionObj?.logisticsProvider?.name;
       delete optionObj.logisticsProvider;
@@ -117,7 +117,7 @@ exports.index = async (req, res) => {
 
     res.json({
       data: Object.values(groupedData),
-      shippingOptions: formatedLogisticsProviderOptions,
+      shippingOptions: formattedLogisticsProviderOptions,
     });
   } catch (err) {
     logger.error(err);

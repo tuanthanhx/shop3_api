@@ -334,7 +334,7 @@ exports.show = async (req, res) => {
 
     const orderObj = order.toJSON();
 
-    const formatedOrderItems = orderObj.orderItems.map((orderItem) => ({
+    const formattedOrderItems = orderObj.orderItems.map((orderItem) => ({
       ...orderItem,
       productVariant: tryParseJSON(orderItem.productVariant),
     }));
@@ -344,7 +344,7 @@ exports.show = async (req, res) => {
     res.json({
       data: {
         ...orderObj,
-        orderItems: formatedOrderItems,
+        orderItems: formattedOrderItems,
       },
     });
   } catch (err) {
