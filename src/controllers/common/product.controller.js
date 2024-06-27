@@ -379,6 +379,14 @@ exports.getReviews = async (req, res) => {
         rowObj.productVariant = tryParseJSON(rowObj.orderItem?.productVariant);
         delete rowObj.orderItem;
       }
+      if (rowObj.images) {
+        rowObj.formatedImages = tryParseJSON(rowObj.images);
+        // delete rowObj.images;
+      }
+      if (rowObj.videos) {
+        rowObj.formatedVideos = tryParseJSON(rowObj.videos);
+        // delete rowObj.videos;
+      }
       return {
         ...rowObj,
       };
