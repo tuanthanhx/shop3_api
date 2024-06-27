@@ -6,7 +6,7 @@ const logger = require('../../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
 const { sendEmail } = require('../../utils/email');
 const { generateRandomNumber } = require('../../utils/utils');
-const { createPayloadToken } = require('../../utils/jwt');
+// const { createPayloadToken } = require('../../utils/jwt');
 const { verifyTonProof } = require('../../utils/ton');
 const db = require('../../models');
 
@@ -234,10 +234,16 @@ exports.loginByWallet = async (req, res) => {
 
 exports.generateTonPayload = async (req, res) => {
   try {
-    const payload = Buffer.from(randomBytes(32)).toString('hex');
-    const payloadToken = await createPayloadToken({ payload });
+    // const payload = Buffer.from(randomBytes(32)).toString('hex'); // e.g., bea5db304a7678c23df57255d024435f0bda649ff85c6df8fd46b899a60b270b
+    // console.log(payload);
+    // const payloadToken = await createPayloadToken({ payload });
+    // res.json({
+    //   payload: payloadToken,
+    // });
+    const object = { data: Buffer.from(randomBytes(32)).toString('hex') };
+    const accessToken = jwt.sign(object, accessTokenSecret, { expiresIn: '15m' });
     res.json({
-      payload: payloadToken,
+      payload: accessToken,
     });
   } catch (error) {
     logger.error(error);

@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { Buffer } = require('buffer');
 const { sha256 } = require('@ton/crypto');
 const { sign } = require('tweetnacl');
@@ -14,6 +15,8 @@ const { tryParsePublicKey } = require('./ton_wallet_data');
 // const logger = require('./logger');
 
 require('dotenv').config();
+
+const accessTokenSecret = process.env.JWT_ACCESS_SECRET;
 
 exports.verifyTonProof = async (body) => {
   const allowedDomains = [
@@ -48,7 +51,17 @@ exports.verifyTonProof = async (body) => {
   // const checkProof = async (payload, getWalletPublicKey) => {
   const checkProof = async (payload) => {
     try {
+      // 0. Verify payload.proof.payload
+      try {
+        jwt.verify(payload.proof.payload, accessTokenSecret);
+      } catch (errVerify) {
+        return false;
+      }
+
       const stateInit = loadStateInit(Cell.fromBase64(payload.proof.state_init).beginParse());
+      // console.log('START_stateInit');
+      // console.log(stateInit);
+      // console.log('END_stateInit');
 
       // 1. First, try to obtain public key via get_public_key get-method on smart contract deployed at Address.
       // 2. If the smart contract is not deployed yet, or the get-method is missing, you need:
@@ -57,6 +70,11 @@ exports.verifyTonProof = async (body) => {
 
       // const publicKey = tryParsePublicKey(stateInit) ?? await getWalletPublicKey(payload.address);
       const publicKey = tryParsePublicKey(stateInit) ?? null;
+
+      // console.log('START_publicKey');
+      // console.log(publicKey);
+      // console.log('END_publicKey');
+
       if (!publicKey) {
         return false;
       }
