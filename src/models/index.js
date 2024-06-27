@@ -191,6 +191,7 @@ db.order_shipping.belongsTo(db.user, { foreignKey: 'userId' });
 db.order_item.hasOne(db.review, { foreignKey: 'orderItemId', onDelete: 'CASCADE' });
 db.review.belongsTo(db.order_item, { foreignKey: 'orderItemId', as: 'orderItem', onDelete: 'CASCADE' });
 db.review.belongsTo(db.order, { foreignKey: 'orderId', onDelete: 'CASCADE' });
+db.order.hasMany(db.review, { foreignKey: 'orderId', onDelete: 'CASCADE' });
 db.review.belongsTo(db.user, { foreignKey: 'userId', onDelete: 'CASCADE' });
 db.review.belongsTo(db.shop, { foreignKey: 'shopId', onDelete: 'CASCADE' });
 

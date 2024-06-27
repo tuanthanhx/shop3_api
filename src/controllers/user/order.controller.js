@@ -126,6 +126,10 @@ exports.index = async (req, res) => {
           as: 'orderShipping',
         },
         {
+          model: db.review,
+          attributes: ['id'],
+        },
+        {
           model: db.order_item,
           attributes: ['id', 'quantity', 'price', 'productVariant'],
           as: 'orderItems',
@@ -151,17 +155,23 @@ exports.index = async (req, res) => {
     const { count, rows } = data;
     const totalPages = Math.ceil(count / limitPerPage);
 
-    const formattedData = rows.map((order) => {
-      const formattedItems = order.orderItems.map((refItem) => {
-        const orderItem = refItem.toJSON();
-        return {
-          ...orderItem,
-          productVariant: tryParseJSON(orderItem.productVariant),
-        };
-      });
+    const formattedData = rows.map((row) => {
+      const order = row.toJSON();
+      const formattedItems = order.orderItems.map((orderItem) => ({
+        ...orderItem,
+        productVariant: tryParseJSON(orderItem.productVariant),
+      }));
+      const isReviewed = !!order.reviews?.length;
+      const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
       delete order.orderItems;
+      delete order.reviews;
       return {
-        ...order.toJSON(),
+        ...order,
+        isReviewed,
+        orderPayment: {
+          ...order.orderPayment,
+          content: orderPaymentContent,
+        },
         orderItems: formattedItems,
       };
     });
