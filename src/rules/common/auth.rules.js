@@ -49,6 +49,22 @@ exports.loginByWallet = [
   validateRules,
 ];
 
+exports.loginByTonWallet = [
+  body('payload')
+    .optional(), // TODO: Validate payload object later
+  body('userGroupId')
+    .optional()
+    .isInt()
+    .withMessage('userGroupId must be integer')
+    .custom((value) => {
+      if (value !== undefined && ![1, 2].includes(value)) {
+        throw new Error('userGroupId must be either 1 or 2');
+      }
+      return true;
+    }),
+  validateRules,
+];
+
 exports.isLogin = [];
 
 exports.findMe = [];
