@@ -136,6 +136,13 @@ exports.loginByEmail = async (req, res) => {
       await UserRefreshToken.create({ token: refreshToken, userId: user.id });
     }
 
+    // Write user_log
+    await db.user_log.create({
+      userId: user.id,
+      event: 'Login by email',
+      description: email,
+    });
+
     res.json({
       data: { accessToken, refreshToken },
     });
@@ -169,6 +176,13 @@ exports.loginByPhone = async (req, res) => {
     } else {
       await UserRefreshToken.create({ token: refreshToken, userId: user.id });
     }
+
+    // Write user_log
+    await db.user_log.create({
+      userId: user.id,
+      event: 'Login by phone',
+      description: phone,
+    });
 
     res.json({
       data: { accessToken, refreshToken },
@@ -222,6 +236,13 @@ exports.loginByWallet = async (req, res) => {
     if (!createdToken) {
       await token.update({ token: refreshToken });
     }
+
+    // Write user_log
+    await db.user_log.create({
+      userId: userData.id,
+      event: 'Login by wallet',
+      description: address,
+    });
 
     res.json({
       data: { accessToken, refreshToken },
@@ -305,6 +326,13 @@ exports.loginByTonWallet = async (req, res) => {
     if (!createdToken) {
       await token.update({ token: refreshToken });
     }
+
+    // Write user_log
+    await db.user_log.create({
+      userId: userData.id,
+      event: 'Login by wallet',
+      description: address,
+    });
 
     res.json({
       data: { accessToken, refreshToken },
