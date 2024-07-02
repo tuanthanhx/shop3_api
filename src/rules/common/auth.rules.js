@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, query } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.loginByEmail = [
@@ -70,6 +70,19 @@ exports.isLogin = [];
 exports.findMe = [];
 
 exports.statistics = [];
+
+exports.getLoginHistory = [
+  query('type')
+    .optional()
+    .trim()
+    .custom((value) => {
+      if (value !== undefined && !['email', 'phone', 'wallet'].includes(value)) {
+        throw new Error('userGroupId must be either email, phone or wallet');
+      }
+      return true;
+    }),
+  validateRules,
+];
 
 exports.logout = [];
 

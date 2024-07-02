@@ -111,6 +111,74 @@ exports.statistics = async (req, res) => {
   }
 };
 
+exports.getLoginHistory = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    const {
+      type,
+      page,
+      limit,
+    } = req.query;
+
+    const user = await db.user.findByPk(id);
+    if (!user) {
+      res.status(404).send({
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const condition = {
+      userId: id,
+    };
+
+    switch (type) {
+      case 'email':
+        condition.event = 'Login by email';
+        break;
+      case 'phone':
+        condition.event = 'Login by phone';
+        break;
+      case 'wallet':
+        condition.event = 'Login by wallet';
+        break;
+      default:
+        break;
+    }
+
+    const ordering = [['id', 'DESC']];
+
+    const pageNo = parseInt(page, 10) || 1;
+    const limitPerPage = parseInt(limit, 10) || 10;
+    const offset = (pageNo - 1) * limitPerPage;
+
+    const data = await db.user_log.findAndCountAll({
+      where: condition,
+      order: ordering,
+      distinct: true,
+      limit: limitPerPage,
+      offset,
+      attributes: ['createdAt', 'event', 'description'],
+    });
+
+    const { count, rows } = data;
+    const totalPages = Math.ceil(count / limitPerPage);
+
+    res.json({
+      totalItems: count,
+      totalPages,
+      currentPage: pageNo,
+      data: rows,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.loginByEmail = async (req, res) => {
   const { email, password } = req.body;
 

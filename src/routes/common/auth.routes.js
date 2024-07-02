@@ -9,6 +9,7 @@ module.exports = (app) => {
   router.get('/is_login', rules.isLogin, auth.isLogin);
   router.get('/me', rules.findMe, auth.findMe);
   router.get('/statistics', rules.statistics, auth.statistics);
+  router.get('/login_history', rules.getLoginHistory, auth.getLoginHistory);
   router.post('/refresh_token', rules.refreshToken, auth.refreshToken);
   router.post('/login/email', rules.loginByEmail, auth.loginByEmail);
   router.post('/login/phone', rules.loginByPhone, auth.loginByPhone);
