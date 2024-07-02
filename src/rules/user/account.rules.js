@@ -19,6 +19,12 @@ exports.connectWallet = [
   validateRules,
 ];
 
+exports.connectTonWallet = [
+  body('payload')
+    .optional(),
+  validateRules,
+];
+
 exports.disconnectWallet = [];
 
 exports.getOrdersStatistics = [];

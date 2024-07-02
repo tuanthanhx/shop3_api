@@ -26,7 +26,7 @@ module.exports = (app) => {
   router.get('/payment_method_types', rules.getPaymentMethodTypes, accounts.getPaymentMethodTypes);
 
   router.post('/connect_wallet', rules.connectWallet, accounts.connectWallet);
-  router.post('/connect_wallet/ton', accounts.connectTonWallet); // TODO: ADD RULE LATER
+  router.post('/connect_wallet/ton', rules.connectTonWallet, accounts.connectTonWallet);
   router.post('/disconnect_wallet', rules.disconnectWallet, accounts.disconnectWallet);
 
   app.use(`/api-user/${apiVersion}/account`, router);
