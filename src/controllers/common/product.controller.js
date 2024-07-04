@@ -342,8 +342,11 @@ exports.getReviews = async (req, res) => {
     const pageNo = parseInt(page, 10) || 1;
     const limitPerPage = parseInt(limit, 10) || 10;
 
+    const ordering = [['id', 'DESC']];
+
     const queryOptions = {
       where: condition,
+      order: ordering,
       attributes: ['createdAt', 'updatedAt', 'rate', 'message', 'images', 'videos'],
       include: [
         {
