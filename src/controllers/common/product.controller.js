@@ -402,3 +402,70 @@ exports.getReviews = async (req, res) => {
     });
   }
 };
+
+exports.getReviewStatistics = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await db.product.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      res.status(404).send({
+        message: 'Product not found',
+      });
+      return;
+    }
+
+    const productId = product.id;
+
+    const reviewsCounts = await db.review.findAll({
+      attributes: [
+        [db.sequelize.fn('COUNT', '*'), 'totalReviews'],
+        [db.sequelize.fn('AVG', db.sequelize.col('rate')), 'averageRating'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN rate = 1 THEN 1 ELSE 0 END')), 'star_1'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN rate = 2 THEN 1 ELSE 0 END')), 'star_2'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN rate = 3 THEN 1 ELSE 0 END')), 'star_3'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN rate = 4 THEN 1 ELSE 0 END')), 'star_4'],
+        [db.sequelize.fn('SUM', db.sequelize.literal('CASE WHEN rate = 5 THEN 1 ELSE 0 END')), 'star_5'],
+      ],
+      include: [
+        {
+          model: db.order_item,
+          as: 'orderItem',
+          where: {
+            productId,
+          },
+        },
+      ],
+      raw: true,
+    });
+
+    const totalReviews = parseInt(reviewsCounts[0].totalReviews, 10) || 0;
+    const averageRating = parseFloat(reviewsCounts[0].averageRating) || 0;
+
+    const reviewsCount = [
+      parseInt(reviewsCounts[0].star_1, 10) || 0,
+      parseInt(reviewsCounts[0].star_2, 10) || 0,
+      parseInt(reviewsCounts[0].star_3, 10) || 0,
+      parseInt(reviewsCounts[0].star_4, 10) || 0,
+      parseInt(reviewsCounts[0].star_5, 10) || 0,
+    ];
+
+    res.json({
+      data: {
+        totalReviews,
+        averageRating: parseFloat(averageRating.toFixed(1)),
+        reviewsCount,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};

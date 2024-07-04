@@ -56,3 +56,12 @@ exports.getReviews = [
     .withMessage('rate must be an integer between 1 and 5'),
   validateRules,
 ];
+
+exports.getReviewStatistics = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];

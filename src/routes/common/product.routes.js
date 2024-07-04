@@ -9,6 +9,7 @@ module.exports = (app) => {
   router.get('/', rules.index, products.index);
   router.get('/:id', rules.show, products.show);
   router.get('/:id/reviews', rules.getReviews, products.getReviews);
+  router.get('/:id/review_statistics', rules.getReviewStatistics, products.getReviewStatistics);
 
   app.use(`/api-common/${apiVersion}/products`, router);
 };
