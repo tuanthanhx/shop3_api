@@ -436,6 +436,12 @@ exports.create = async (req, res) => {
           name: 'NOWPayments',
         },
       };
+    } else if (paymentMethodId === -2) {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'CoinGate',
+        },
+      };
     }
 
     const logisticsProviderOption = await db.logistics_provider_option.findOne({

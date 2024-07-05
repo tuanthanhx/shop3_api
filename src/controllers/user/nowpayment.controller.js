@@ -74,6 +74,7 @@ exports.ipnCallback = async (req, res) => {
 
       await orderPayment.update({
         status: 2,
+        paymentMethod: 'NOWPayments',
         content: JSON.stringify(sortedParams),
       });
 
