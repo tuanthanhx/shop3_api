@@ -1,27 +1,27 @@
 module.exports = (app) => {
   const axios = require('axios');
   const router = require('express').Router();
-  const coingate = require('../../controllers/user/coingate.controller');
-  // const rules = require('../../rules/user/coingate.rules');
+  const blockonomics = require('../../controllers/user/blockonomics.controller');
+  // const rules = require('../../rules/user/blockonomics.rules');
 
   require('dotenv').config();
 
   const apiVersion = process.env.VERSION || 'v1';
 
-  const coingateApi = process.env.COINGATE_API_URL;
+  const blockonomicsApi = process.env.BLOCKONOMICS_API_URL;
 
   const setHeaders = (req, res, next) => {
-    req.headers.Authorization = `Token ${process.env.COINGATE_API_KEY}`;
+    req.headers.Authorization = `Bearer ${process.env.BLOCKONOMICS_API_KEY}`;
     next();
   };
 
-  router.post('/ipn_callback', coingate.ipnCallback);
+  router.get('/ipn_callback', blockonomics.ipnCallback);
 
-  app.use(`/api-user/${apiVersion}/coingate`, router);
-  app.use(`/api-user/${apiVersion}/coingate/forward`, setHeaders);
-  app.use(`/api-user/${apiVersion}/coingate/forward/*`, async (req, res) => {
+  app.use(`/api-user/${apiVersion}/blockonomics`, router);
+  app.use(`/api-user/${apiVersion}/blockonomics/forward`, setHeaders);
+  app.use(`/api-user/${apiVersion}/blockonomics/forward/*`, async (req, res) => {
     try {
-      const url = `${coingateApi}${req.originalUrl.replace(`/api-user/${apiVersion}/coingate/forward`, '')}`;
+      const url = `${blockonomicsApi}${req.originalUrl.replace(`/api-user/${apiVersion}/blockonomics/forward`, '')}`;
       const config = {
         method: req.method,
         url,
