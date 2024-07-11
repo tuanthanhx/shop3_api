@@ -25,7 +25,15 @@ exports.ipnCallback = async (req, res) => {
     });
 
     const extraData = response.data?.data?.extradata;
-    const amount = response.data?.value;
+    const resAmount = response.data?.value;
+    const resStatus = response.data?.status;
+
+    if (!resStatus === 2) {
+      res.status(400).send({
+        message: 'Not paid.',
+      });
+      return;
+    }
 
     if (!extraData) {
       res.status(400).send({
@@ -58,7 +66,7 @@ exports.ipnCallback = async (req, res) => {
       return;
     }
 
-    if (amount < orderPayment.amount) {
+    if (resAmount < orderPayment.amount) {
       res.status(400).send({
         message: 'amount is not enough',
       });
