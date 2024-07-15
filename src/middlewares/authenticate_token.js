@@ -16,6 +16,7 @@ exports.authenticateToken = (req, res, next) => {
     `/api-user/${apiVersion}/nowpayments/ipn_callback`,
     `/api-user/${apiVersion}/coingate/ipn_callback`,
     `/api-user/${apiVersion}/blockonomics/ipn_callback`,
+    `/api-user/${apiVersion}/crypto/ipn_callback`,
   ];
   const adminPaths = [
     '/api-admin',

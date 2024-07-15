@@ -442,6 +442,18 @@ exports.create = async (req, res) => {
           name: 'CoinGate',
         },
       };
+    } else if (paymentMethodId === -3) {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'Blockonomics',
+        },
+      };
+    } else if (paymentMethodId === -4) {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'Crypto.com Pay',
+        },
+      };
     }
 
     const logisticsProviderOption = await db.logistics_provider_option.findOne({
