@@ -15,6 +15,13 @@ exports.ipnCallback = async (req, res) => {
 
     const payment = data.object;
 
+    if (!payment) {
+      res.status(400).send({
+        message: 'No payment data.',
+      });
+      return;
+    }
+
     const orderId = parseInt(payment.order_id, 10);
     const resAmount = payment.amount;
     const resStatus = payment.status;
@@ -58,7 +65,7 @@ exports.ipnCallback = async (req, res) => {
     await orderPayment.update({
       status: 2,
       paymentMethod: 'Crypto.com Pay',
-      content: JSON.stringify(response.data),
+      content: JSON.stringify(payment),
     });
 
     await order.update({
