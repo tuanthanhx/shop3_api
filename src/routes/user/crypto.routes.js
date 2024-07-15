@@ -15,7 +15,7 @@ module.exports = (app) => {
     next();
   };
 
-  router.get('/ipn_callback', crypto.ipnCallback);
+  router.post('/ipn_callback', crypto.ipnCallback);
 
   app.use(`/api-user/${apiVersion}/crypto`, router);
   app.use(`/api-user/${apiVersion}/crypto/forward`, setHeaders);
