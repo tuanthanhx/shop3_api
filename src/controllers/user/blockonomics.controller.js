@@ -11,6 +11,13 @@ exports.ipnCallback = async (req, res) => {
       order_id: cbOrderId,
     } = req.query;
 
+    if (!status || !cbOrderId) {
+      res.status(400).send({
+        message: 'No status or order_id queries',
+      });
+      return;
+    }
+
     if (!parseInt(status, 10) === 2) {
       res.status(400).send({
         message: 'Not paid.',
@@ -79,18 +86,21 @@ exports.ipnCallback = async (req, res) => {
       content: JSON.stringify(response.data),
     });
 
-    await order.update({
-      orderStatusId: 3,
-    });
+    if (order.orderStatusId === 1 || order.orderStatusId === 2 || order.orderStatusId === 4) {
+      await order.update({
+        orderStatusId: 3,
+      });
 
-    await db.order_tracking.create({
-      orderId: order.id,
-      userId: 47, // TODO: DUMMY
-      message: 'Order paid successfully',
-    });
+      await db.order_tracking.create({
+        orderId: order.id,
+        userId: 47, // TODO: DUMMY
+        message: 'Order paid successfully',
+      });
+    }
 
     // Respond with a success status
-    res.status(200).send('IPN callback received and verified.');
+    // res.status(200).send('IPN callback received and verified.');
+    res.redirect(`https://test.shop3.com/product/checkout/${orderId}/complete`);
   } catch (err) {
     console.error(err);
     logger.error(err);
