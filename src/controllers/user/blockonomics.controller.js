@@ -12,8 +12,8 @@ exports.ipnCallback = async (req, res) => {
     } = req.query;
 
     if (!status || !cbOrderId) {
-      res.status(400).send({
-        message: 'No status or order_id queries',
+      res.status(201).send({
+        message: 'Your payment has been processed. Now you can close this tab.',
       });
       return;
     }
