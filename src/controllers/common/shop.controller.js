@@ -81,7 +81,23 @@ exports.show = async (req, res) => {
       },
     });
 
-    const [shop, productsCount] = await Promise.all([shopPromise, productsCountPromise]);
+    const averageRatePromise = db.review.findAll({
+      where: {
+        shopId: id,
+      },
+      attributes: [[db.Sequelize.fn('AVG', db.Sequelize.col('rate')), 'averageRate']],
+    }).then((reviews) => reviews[0]?.dataValues?.averageRate || 0);
+
+    const salesCountPromise = db.order_item.findAll({
+      include: [{
+        model: db.product,
+        where: { shopId: id },
+        required: true,
+      }],
+      attributes: [[db.Sequelize.fn('SUM', db.Sequelize.col('quantity')), 'salesCount']],
+    }).then((orderItems) => orderItems[0]?.dataValues?.salesCount || 0);
+
+    const [shop, productsCount, averageRate, salesCount] = await Promise.all([shopPromise, productsCountPromise, averageRatePromise, salesCountPromise]);
 
     if (!shop) {
       res.status(404).send({
@@ -92,6 +108,8 @@ exports.show = async (req, res) => {
 
     const shopObj = shop.toJSON();
     shopObj.productsCount = productsCount || 0;
+    shopObj.averageRate = averageRate;
+    shopObj.salesCount = salesCount;
 
     res.json({
       data: shopObj,
