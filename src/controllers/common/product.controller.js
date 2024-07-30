@@ -7,6 +7,7 @@ const { Op } = db.Sequelize;
 exports.index = async (req, res) => {
   try {
     const {
+      shopId,
       keyword,
       minPrice,
       maxPrice,
@@ -21,6 +22,10 @@ exports.index = async (req, res) => {
     const condition = {
       productStatusId: 1,
     };
+
+    if (shopId) {
+      condition.shopId = shopId;
+    }
 
     if (keyword) {
       condition[Op.or] = [
@@ -115,7 +120,7 @@ exports.index = async (req, res) => {
     const { count, rows } = data;
     const totalPages = limitPerPage === -1 ? 1 : Math.ceil(count / limitPerPage);
 
-    const formattedRows = rows?.map((row) => {
+    const formattedRows = await Promise.all(rows?.map(async (row) => {
       const rowData = row.toJSON();
 
       const variants = rowData.variants?.map((variant) => ({
@@ -147,6 +152,24 @@ exports.index = async (req, res) => {
 
       const minMaxPrice = getMinMaxPrice(rowData.productVariants);
 
+      const totalSale = await db.order_item.sum('quantity', {
+        where: { productId: row.id },
+      });
+
+      const reviews = await db.review.findAll({
+        include: [{
+          model: db.order_item,
+          as: 'orderItem',
+          where: { productId: row.id },
+          attributes: [],
+        }],
+      });
+
+      const totalReviews = reviews.length;
+      const averageRating = totalReviews > 0
+        ? reviews.reduce((sum, review) => sum + review.rate, 0) / totalReviews
+        : 0;
+
       delete rowData.variants;
       delete rowData.productVariants;
 
@@ -155,8 +178,11 @@ exports.index = async (req, res) => {
         ...minMaxPrice,
         variants,
         productVariants,
+        totalSale: totalSale || 0,
+        totalReviews,
+        averageRating,
       };
-    });
+    }));
 
     res.json({
       totalItems: count,
@@ -283,6 +309,24 @@ exports.show = async (req, res) => {
       value: tryParseJSON(attr.value),
     }));
 
+    const totalSale = await db.order_item.sum('quantity', {
+      where: { productId: product.id },
+    });
+
+    const reviews = await db.review.findAll({
+      include: [{
+        model: db.order_item,
+        as: 'orderItem',
+        where: { productId: product.id },
+        attributes: [],
+      }],
+    });
+
+    const totalReviews = reviews.length;
+    const averageRating = totalReviews > 0
+      ? reviews.reduce((sum, review) => sum + review.rate, 0) / totalReviews
+      : 0;
+
     const productObject = product.toJSON();
     const productDescriptionObject = productDescription.toJSON();
     delete productObject.variants;
@@ -298,6 +342,9 @@ exports.show = async (req, res) => {
       variants: formattedVariants,
       productVariants: formattedProductVariants,
       productAttributes: formattedProductAttributes,
+      totalSale: totalSale || 0,
+      totalReviews,
+      averageRating,
     };
 
     res.status(200).json({

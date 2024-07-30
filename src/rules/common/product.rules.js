@@ -2,6 +2,9 @@ const { param, query } = require('express-validator');
 const { validateRules } = require('../../middlewares/validators');
 
 exports.index = [
+  query('shopId')
+    .optional()
+    .toInt(),
   query('keyword')
     .optional()
     .trim(),
