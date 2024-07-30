@@ -81,7 +81,7 @@ exports.statistics = async (req, res) => {
       attributes: [
         'id',
         'uuid',
-        [db.sequelize.literal('(SELECT COUNT(*) FROM products)'), 'reviewsCount'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews AS r WHERE r.userId = user.id)'), 'reviewsCount'],
       ],
       include: [
         {
