@@ -3,11 +3,11 @@ const db = require('../../models');
 
 exports.getOrderStatuses = async (req, res) => {
   try {
-    const data = await db.order_status.findAll({
+    const orderStatuses = await db.order_status.findAll({
       attributes: ['id', 'name', 'description'],
     });
     res.json({
-      data,
+      data: orderStatuses,
     });
   } catch (err) {
     logger.error(err);

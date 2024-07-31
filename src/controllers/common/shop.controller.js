@@ -23,7 +23,7 @@ exports.index = async (req, res) => {
       ];
     }
 
-    let ordering = [['id', 'DESC']];
+    let ordering = [['id', 'ASC']];
 
     if (sortField && sortOrder) {
       const validSortFields = ['id', 'shopName', 'createdAt'];

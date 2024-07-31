@@ -3,7 +3,9 @@ const db = require('../../models');
 
 exports.index = async (req, res) => {
   try {
-    const languages = await db.language.findAll();
+    const languages = await db.language.findAll({
+      attributes: ['id', 'name'],
+    });
     res.json({
       data: languages,
     });
