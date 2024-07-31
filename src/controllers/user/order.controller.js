@@ -116,11 +116,6 @@ exports.index = async (req, res) => {
           as: 'orderStatus',
         },
         {
-          model: db.order_payment,
-          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
-          as: 'orderPayment',
-        },
-        {
           model: db.order_shipping,
           attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'logisticsServiceName', 'logisticsProviderName', 'logisticsTrackingCode', 'fee', 'status'],
           as: 'orderShipping',
@@ -162,16 +157,16 @@ exports.index = async (req, res) => {
         productVariant: tryParseJSON(orderItem.productVariant),
       }));
       const isReviewed = !!order.reviews?.length;
-      const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
+      // const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
       delete order.orderItems;
       delete order.reviews;
       return {
         ...order,
         isReviewed,
-        orderPayment: {
-          ...order.orderPayment,
-          content: orderPaymentContent,
-        },
+        // orderPayment: {
+        //   ...order.orderPayment,
+        //   content: orderPaymentContent,
+        // },
         orderItems: formattedItems,
       };
     });
@@ -291,11 +286,6 @@ exports.show = async (req, res) => {
           model: db.order_status,
           attributes: ['name'],
           as: 'orderStatus',
-        },
-        {
-          model: db.order_payment,
-          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
-          as: 'orderPayment',
         },
         {
           model: db.order_shipping,
@@ -567,15 +557,15 @@ exports.create = async (req, res) => {
         orderId: createdOrder.id,
       }));
 
-      await db.order_payment.create({
-        userId,
-        shopId,
-        orderId: createdOrder.id,
-        amount: totalAmount,
-        paymentMethod: paymentMethod?.payment_method_type?.name,
-        status: 1,
-        content: '',
-      }, { transaction });
+      // await db.order_payment.create({
+      //   userId,
+      //   shopId,
+      //   orderId: createdOrder.id,
+      //   amount: totalAmount,
+      //   paymentMethod: paymentMethod?.payment_method_type?.name,
+      //   status: 1,
+      //   content: '',
+      // }, { transaction });
 
       await db.order_shipping.create({
         userId,
@@ -659,26 +649,26 @@ exports.pay = async (req, res) => {
       return;
     }
 
-    const orderPayment = await order.getOrderPayment();
+    // const orderPayment = await order.getOrderPayment();
 
-    if (!orderPayment) {
-      res.status(404).send({
-        message: 'Order payment not found',
-      });
-      return;
-    }
+    // if (!orderPayment) {
+    //   res.status(404).send({
+    //     message: 'Order payment not found',
+    //   });
+    //   return;
+    // }
 
-    if (orderPayment.status !== 1) {
-      res.status(400).send({
-        message: 'Order payment is not ready to be paid',
-      });
-      return;
-    }
+    // if (orderPayment.status !== 1) {
+    //   res.status(400).send({
+    //     message: 'Order payment is not ready to be paid',
+    //   });
+    //   return;
+    // }
 
-    await orderPayment.update({
-      status: 2,
-      content,
-    });
+    // await orderPayment.update({
+    //   status: 2,
+    //   content,
+    // });
 
     await order.update({
       orderStatusId: 3,

@@ -169,10 +169,10 @@ db.order_item.belongsTo(db.product);
 
 // Relationship of order_payment
 
-db.order.hasOne(db.order_payment, { foreignKey: 'orderId', as: 'orderPayment', onDelete: 'CASCADE' });
-db.order_payment.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderPayment' });
-db.order_payment.belongsTo(db.user);
-db.order_payment.belongsTo(db.shop);
+// db.order.hasOne(db.order_payment, { foreignKey: 'orderId', as: 'orderPayment', onDelete: 'CASCADE' });
+// db.order_payment.belongsTo(db.order, { foreignKey: 'orderId', as: 'orderPayment' });
+// db.order_payment.belongsTo(db.user);
+// db.order_payment.belongsTo(db.shop);
 
 // Relationship of order_shipping
 

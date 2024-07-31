@@ -29,20 +29,20 @@ exports.ipnCallback = async (req, res) => {
       return;
     }
 
-    const orderPayment = await order.getOrderPayment();
+    // const orderPayment = await order.getOrderPayment();
 
-    if (!orderPayment) {
-      res.status(404).send({
-        message: 'Order payment not found',
-      });
-      return;
-    }
+    // if (!orderPayment) {
+    //   res.status(404).send({
+    //     message: 'Order payment not found',
+    //   });
+    //   return;
+    // }
 
-    await orderPayment.update({
-      status: 2,
-      paymentMethod: 'CoinGate',
-      content: JSON.stringify(body),
-    });
+    // await orderPayment.update({
+    //   status: 2,
+    //   paymentMethod: 'CoinGate',
+    //   content: JSON.stringify(body),
+    // });
 
     await order.update({
       orderStatusId: 3,

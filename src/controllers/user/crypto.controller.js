@@ -46,27 +46,27 @@ exports.ipnCallback = async (req, res) => {
       return;
     }
 
-    const orderPayment = await order.getOrderPayment();
+    // const orderPayment = await order.getOrderPayment();
 
-    if (!orderPayment) {
-      res.status(404).send({
-        message: 'Order payment not found',
-      });
-      return;
-    }
+    // if (!orderPayment) {
+    //   res.status(404).send({
+    //     message: 'Order payment not found',
+    //   });
+    //   return;
+    // }
 
-    if (resAmount < orderPayment.amount) {
-      res.status(400).send({
-        message: 'amount is not enough',
-      });
-      return;
-    }
+    // if (resAmount < orderPayment.amount) {
+    //   res.status(400).send({
+    //     message: 'amount is not enough',
+    //   });
+    //   return;
+    // }
 
-    await orderPayment.update({
-      status: 2,
-      paymentMethod: 'Crypto.com Pay',
-      content: JSON.stringify(payment),
-    });
+    // await orderPayment.update({
+    //   status: 2,
+    //   paymentMethod: 'Crypto.com Pay',
+    //   content: JSON.stringify(payment),
+    // });
 
     await order.update({
       orderStatusId: 3,
