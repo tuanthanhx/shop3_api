@@ -4,7 +4,7 @@ const { Buffer } = require('buffer');
 const { randomBytes } = require('tweetnacl');
 const logger = require('../../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
-const { sendEmail } = require('../../utils/email');
+const { sendOtpEmail } = require('../../utils/email');
 const { generateRandomNumber } = require('../../utils/utils');
 // const { createPayloadToken } = require('../../utils/jwt');
 const { verifyTonProof } = require('../../utils/ton');
@@ -480,7 +480,7 @@ exports.generateOtpByEmail = async (req, res) => {
     res.status(500).json({ data: 'Cannot generate a verification code' });
     return;
   }
-  sendEmail(email, 'Verification Code', `Your verification code is: ${code}`);
+  sendOtpEmail(email, code);
   res.send({ data: true });
 };
 
