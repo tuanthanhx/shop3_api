@@ -79,10 +79,13 @@ exports.ipnCallback = async (req, res) => {
     });
 
     // Respond with a success status
-    res.status(200).send('IPN callback received and verified.');
+    res.json({
+      data: {
+        message: 'IPN callback received and verified.',
+      },
+    });
   } catch (err) {
     console.error(err);
-    logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',
     });

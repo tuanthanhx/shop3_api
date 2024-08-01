@@ -19,6 +19,13 @@ exports.ipnCallback = async (req, res) => {
     // Extract the signature from the request headers
     const receivedSignature = req.get('x-nowpayments-sig');
 
+    if (!receivedSignature) {
+      res.status(400).send({
+        message: 'Cannot find x-nowpayments-sig',
+      });
+      return;
+    }
+
     // Sort and stringify the request body parameters
     const sortedParams = sortObject(req.body);
     const stringifiedParams = JSON.stringify(sortedParams);
@@ -32,35 +39,25 @@ exports.ipnCallback = async (req, res) => {
     if (receivedSignature === calculatedSignature) {
       // Signatures match - request is verified
       logger.info('IPN callback verified:', sortedParams);
-      console.log('IPN callback verified:', sortedParams);
 
-      const orderId = parseInt(sortedParams.order_id, 10);
+      const paymentId = parseInt(sortedParams.order_id?.replace('PID-', ''), 10);
 
-      const order = await db.order.findOne({
-        where: {
-          id: orderId,
-        },
-      });
-
-      if (!order) {
+      if (!paymentId) {
         res.status(404).send({
-          message: 'Order not found',
+          message: 'paymentId not found',
         });
         return;
       }
 
-      // if (![1, 2, 4].includes(order.orderStatusId)) {
-      //   res.status(400).send({
-      //     message: 'Order is not ready to be paid',
-      //   });
-      //   return;
-      // }
-
-      const orderPayment = await order.getOrderPayment();
+      const orderPayment = await db.order_payment.findOne({
+        where: {
+          id: paymentId,
+        },
+      });
 
       if (!orderPayment) {
         res.status(404).send({
-          message: 'Order payment not found',
+          message: 'Payment not found',
         });
         return;
       }
@@ -72,36 +69,49 @@ exports.ipnCallback = async (req, res) => {
       //   return;
       // }
 
+      // TODO: Later need to check if price_amount is ok or should use another field, I am still worried that user might be able to pay lower amount than that field
+      if (sortedParams.price_amount < orderPayment.amount) {
+        res.status(400).send({
+          message: 'Actual payment amount is lower than requested amount',
+        });
+        return;
+      }
+
       await orderPayment.update({
         status: 2,
         paymentMethod: 'NOWPayments',
         content: JSON.stringify(sortedParams),
       });
 
-      await order.update({
-        orderStatusId: 3,
-      });
+      const orders = await orderPayment.getOrders();
 
-      await db.order_tracking.create({
-        orderId: order.id,
-        userId: 47, // TODO: DUMMY
-        message: 'Order paid successfully',
-      });
-
-      // Handle the IPN data here, update your database, trigger actions, etc.
+      if (orders?.length) {
+        const updateOrderPromises = orders.map(async (order) => {
+          await order.update({
+            orderStatusId: 3,
+          });
+          await db.order_tracking.create({
+            orderId: order.id,
+            userId: 47, // TODO: DUMMY
+            message: 'Order paid successfully',
+          });
+        });
+        await Promise.all(updateOrderPromises);
+      }
 
       // Respond with a success status
-      res.status(200).send('IPN callback received and verified.');
+      res.json({
+        data: {
+          message: 'IPN callback received and verified.',
+        },
+      });
     } else {
-      // Signatures do not match - potential security issue
-      logger.error('IPN callback signature mismatch:', receivedSignature, calculatedSignature);
-      console.error('IPN callback signature mismatch:', receivedSignature, calculatedSignature);
-
       // Respond with an error status
-      res.status(400).send('IPN callback signature mismatch.');
+      res.status(400).send({
+        message: 'IPN callback signature mismatch.',
+      });
     }
   } catch (err) {
-    console.error(err);
     logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',

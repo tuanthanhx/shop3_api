@@ -102,7 +102,6 @@ exports.ipnCallback = async (req, res) => {
     // res.status(200).send('IPN callback received and verified.');
     res.redirect(`https://test.shop3.com/product/checkout/${orderId}/complete`);
   } catch (err) {
-    console.error(err);
     logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',

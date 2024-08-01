@@ -919,8 +919,8 @@ exports.createReview = async (req, res) => {
           defaults: {
             rate,
             message,
-            images: images || [],
-            videos: videos || [],
+            images: images || null,
+            videos: videos || null,
           },
         });
 
@@ -928,8 +928,8 @@ exports.createReview = async (req, res) => {
           await review.update({
             rate,
             message,
-            images: images || [],
-            videos: videos || [],
+            images: images || null,
+            videos: videos || null,
           });
         }
       }
