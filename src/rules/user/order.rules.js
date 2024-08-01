@@ -43,19 +43,6 @@ exports.create = [
   validateRules,
 ];
 
-exports.pay = [
-  param('id')
-    .notEmpty()
-    .withMessage('id is required')
-    .isInt()
-    .withMessage('id must be integer'),
-  body('content')
-    .notEmpty()
-    .withMessage('content is required')
-    .trim(),
-  validateRules,
-];
-
 exports.cancel = [
   param('id')
     .notEmpty()

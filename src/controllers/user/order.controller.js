@@ -1,4 +1,4 @@
-const { generateUniqueId, tryParseJSON } = require('../../utils/utils');
+const { generateUniqueId, tryParseJSON, toHex } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -508,6 +508,7 @@ exports.create = async (req, res) => {
       }
 
       const productVariantObj = productVariant?.toJSON();
+      const optionsImages = productVariantObj.options?.map((option) => option.image || null).filter((image) => image !== null);
 
       const orderItem = {
         shopId,
@@ -517,7 +518,7 @@ exports.create = async (req, res) => {
         productVariant: {
           refId: productVariantObj.id,
           price: productVariantObj.price,
-          images: productVariantObj.options?.map((option) => option.image).filter((image) => image !== null),
+          images: optionsImages?.length ? optionsImages : null,
           variants: productVariantObj.options?.map((option) => ({
             name: option.variant.name,
             value: option.name,
@@ -530,8 +531,21 @@ exports.create = async (req, res) => {
       order.orderItems.push(orderItem);
     }
 
+    let paymentAmount = 0;
+    shopOrdersMap.forEach((order) => {
+      paymentAmount += order.totalAmount;
+    });
+
+    const createdOrderPayment = await db.order_payment.create({
+      paymentMethod: paymentMethod?.payment_method_type?.name,
+      amount: paymentAmount,
+      status: 1,
+      content: null,
+      userId,
+    }, { transaction });
+
     const orderCreationPromises = [];
-    const orderIds = [];
+    const orderObjects = [];
     for (const orderData of shopOrdersMap.values()) {
       const { shopId, totalAmount, orderItems } = orderData;
 
@@ -550,22 +564,14 @@ exports.create = async (req, res) => {
         return;
       }
 
-      orderIds.push(createdOrder.id);
+      orderObjects.push(createdOrder.toJSON());
 
       const orderItemsWithOrderId = orderItems.map((item) => ({
         ...item,
         orderId: createdOrder.id,
       }));
 
-      // await db.order_payment.create({
-      //   userId,
-      //   shopId,
-      //   orderId: createdOrder.id,
-      //   amount: totalAmount,
-      //   paymentMethod: paymentMethod?.payment_method_type?.name,
-      //   status: 1,
-      //   content: '',
-      // }, { transaction });
+      createdOrderPayment.addOrder(createdOrder);
 
       await db.order_shipping.create({
         userId,
@@ -594,98 +600,33 @@ exports.create = async (req, res) => {
     }
 
     await Promise.all([...orderCreationPromises]);
-    await db.cart.destroy({
-      where: {
-        id: cartIds,
-        userId,
-      },
-      transaction,
-    });
+    // await db.cart.destroy({
+    //   where: {
+    //     id: cartIds,
+    //     userId,
+    //   },
+    //   transaction,
+    // });
+
     await transaction.commit();
+
+    const orderIds = orderObjects.map((i) => i.id);
+    const payment = {
+      id: createdOrderPayment.id,
+      code: toHex(`shop3_pid_${createdOrderPayment.id}`),
+      amount: createdOrderPayment.amount,
+    };
+
     res.json({
       data: {
         message: 'Orders created successfully',
+        // orderObjects,
         orderIds,
+        orderPayment: payment,
       },
     });
   } catch (err) {
     if (transaction) await transaction.rollback();
-    logger.error(err);
-    res.status(500).send({
-      message: err.message || 'Some error occurred',
-    });
-  }
-};
-
-exports.pay = async (req, res) => {
-  try {
-    const { user } = req;
-    const userId = user.id;
-
-    const { id } = req.params;
-
-    const {
-      content,
-    } = req.body;
-
-    const order = await db.order.findOne({
-      where: {
-        id,
-        userId,
-      },
-    });
-
-    if (!order) {
-      res.status(404).send({
-        message: 'Order not found',
-      });
-      return;
-    }
-
-    if (![1, 2, 4].includes(order.orderStatusId)) {
-      res.status(400).send({
-        message: 'Order is not ready to be paid',
-      });
-      return;
-    }
-
-    // const orderPayment = await order.getOrderPayment();
-
-    // if (!orderPayment) {
-    //   res.status(404).send({
-    //     message: 'Order payment not found',
-    //   });
-    //   return;
-    // }
-
-    // if (orderPayment.status !== 1) {
-    //   res.status(400).send({
-    //     message: 'Order payment is not ready to be paid',
-    //   });
-    //   return;
-    // }
-
-    // await orderPayment.update({
-    //   status: 2,
-    //   content,
-    // });
-
-    await order.update({
-      orderStatusId: 3,
-    });
-
-    await db.order_tracking.create({
-      orderId: order.id,
-      userId,
-      message: 'Order paid successfully',
-    });
-
-    res.json({
-      data: {
-        message: 'Order paid successfully',
-      },
-    });
-  } catch (err) {
     logger.error(err);
     res.status(500).send({
       message: err.message || 'Some error occurred',

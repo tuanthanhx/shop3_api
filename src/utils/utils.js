@@ -117,3 +117,7 @@ exports.verifyCryptoPaySignature = (header, payload, timestampTolerance = 600) =
 
   return isSignatureValid && isTimestampValid;
 };
+
+exports.toHex = (str) => Buffer.from(str, 'utf8').toString('hex');
+
+exports.fromHex = (hex) => Buffer.from(hex, 'hex').toString('utf8');
