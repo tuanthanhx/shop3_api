@@ -49,58 +49,73 @@ exports.ipnCallback = async (req, res) => {
       return;
     }
 
-    const orderId = parseInt(extraData.replace('order_id-', ''), 10);
+    const paymentId = parseInt(extraData.replace('payment_id-', ''), 10);
 
-    const order = await db.order.findOne({
-      where: {
-        id: orderId,
-      },
-    });
-
-    if (!order) {
+    if (!paymentId) {
       res.status(404).send({
-        message: 'Order not found',
+        message: 'paymentId not found',
       });
       return;
     }
 
-    // const orderPayment = await order.getOrderPayment();
+    const orderPayment = await db.order_payment.findOne({
+      where: {
+        id: paymentId,
+      },
+    });
 
-    // if (!orderPayment) {
-    //   res.status(404).send({
-    //     message: 'Order payment not found',
-    //   });
-    //   return;
-    // }
+    if (!orderPayment) {
+      res.status(404).send({
+        message: 'Payment not found',
+      });
+      return;
+    }
 
-    // if (resAmount < orderPayment.amount) {
+    // if (orderPayment.status !== 1) {
     //   res.status(400).send({
-    //     message: 'amount is not enough',
+    //     message: 'Order payment is not ready to be paid',
     //   });
     //   return;
     // }
 
-    // await orderPayment.update({
-    //   status: 2,
-    //   paymentMethod: 'Blockonomics',
-    //   content: JSON.stringify(response.data),
-    // });
-
-    if (order.orderStatusId === 1 || order.orderStatusId === 2 || order.orderStatusId === 4) {
-      await order.update({
-        orderStatusId: 3,
+    // TODO: Later need to check if data.value is ok or should use another field, I am still worried that user might be able to pay lower amount than that field
+    if (resAmount < orderPayment.amount) {
+      res.status(400).send({
+        message: 'Actual payment amount is lower than requested amount',
       });
+      return;
+    }
 
-      await db.order_tracking.create({
-        orderId: order.id,
-        userId: 47, // TODO: DUMMY
-        message: 'Order paid successfully',
+    await orderPayment.update({
+      status: 2,
+      paymentMethod: 'Blockonomics',
+      content: JSON.stringify(response.data),
+    });
+
+    const orders = await orderPayment.getOrders();
+
+    if (orders?.length) {
+      const updateOrderPromises = orders.map(async (order) => {
+        if (order.orderStatusId === 1 || order.orderStatusId === 2 || order.orderStatusId === 4) {
+          await order.update({
+            orderStatusId: 3,
+          });
+          await db.order_tracking.create({
+            orderId: order.id,
+            userId: 47, // TODO: DUMMY
+            message: 'Order paid successfully',
+          });
+        }
       });
+      await Promise.all(updateOrderPromises);
     }
 
     // Respond with a success status
-    // res.status(200).send('IPN callback received and verified.');
-    res.redirect(`https://test.shop3.com/product/checkout/${orderId}/complete`);
+    res.json({
+      data: {
+        message: 'IPN callback received and verified.',
+      },
+    });
   } catch (err) {
     logger.error(err);
     res.status(500).send({

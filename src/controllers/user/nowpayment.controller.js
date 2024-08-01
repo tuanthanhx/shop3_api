@@ -87,14 +87,16 @@ exports.ipnCallback = async (req, res) => {
 
       if (orders?.length) {
         const updateOrderPromises = orders.map(async (order) => {
-          await order.update({
-            orderStatusId: 3,
-          });
-          await db.order_tracking.create({
-            orderId: order.id,
-            userId: 47, // TODO: DUMMY
-            message: 'Order paid successfully',
-          });
+          if (order.orderStatusId === 1 || order.orderStatusId === 2 || order.orderStatusId === 4) {
+            await order.update({
+              orderStatusId: 3,
+            });
+            await db.order_tracking.create({
+              orderId: order.id,
+              userId: 47, // TODO: DUMMY
+              message: 'Order paid successfully',
+            });
+          }
         });
         await Promise.all(updateOrderPromises);
       }
