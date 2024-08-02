@@ -202,6 +202,19 @@ db.review.belongsTo(db.shop, { foreignKey: 'shopId', onDelete: 'CASCADE' });
 db.user.hasMany(db.file, { as: 'files', onDelete: 'CASCADE' });
 db.file.belongsTo(db.user);
 
+// Relationship of news, news_category, news_comment, likes, users
+
+db.news.belongsToMany(db.news_category, { through: 'news_category_map', as: 'newsCategory' });
+
+db.news.belongsTo(db.user, { as: 'author', foreignKey: 'userId' });
+db.user.hasMany(db.news, { as: 'news', foreignKey: 'userId' });
+
+db.user.belongsToMany(db.news, { through: 'news_like_map', as: 'likedNews' });
+db.news.belongsToMany(db.user, { through: 'news_like_map', as: 'likedByUsers' });
+
+db.news_comment.hasMany(db.news_comment, { as: 'replies', foreignKey: 'parentId' });
+db.news_comment.belongsTo(db.news_comment, { as: 'parent', foreignKey: 'parentId' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
