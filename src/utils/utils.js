@@ -1,3 +1,5 @@
+const axios = require('axios');
+const { ethers } = require('ethers');
 const crypto = require('crypto');
 const path = require('path');
 const logger = require('./logger');
@@ -118,6 +120,88 @@ exports.verifyCryptoPaySignature = (header, payload, timestampTolerance = 600) =
   return isSignatureValid && isTimestampValid;
 };
 
+exports.delay = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
 exports.toHex = (str) => Buffer.from(str, 'utf8').toString('hex');
 
 exports.fromHex = (hex) => Buffer.from(hex, 'hex').toString('utf8');
+
+const networks = {
+  ETH: {
+    name: 'ETH',
+    url: process.env.ETHSCAN_API_URL,
+    apiKey: process.env.ETHSCAN_API_KEY,
+    unit: 6,
+  },
+  BSC: {
+    name: 'BSC',
+    url: process.env.BSCSCAN_API_URL,
+    apiKey: process.env.BSCSCAN_API_KEY,
+    unit: 18,
+  },
+  POLYGON: {
+    name: 'POLYGON',
+    url: process.env.POLYGONSCAN_API_URL,
+    apiKey: process.env.POLYGONSCAN_API_KEY,
+    unit: 6,
+  },
+};
+
+const getTransaction = async (hash, network) => {
+  const response = await axios.get(`${network.url}?module=proxy&action=eth_getTransactionByHash&txhash=${hash}&apikey=${network.apiKey}`);
+  if (response.data && response.data.result) {
+    const inputData = response.data.result.input;
+    const receipt = await axios.get(`${network.url}?module=proxy&action=eth_getTransactionReceipt&txhash=${hash}&apikey=${network.apiKey}`);
+    const status = receipt.data?.result?.status === '0x1' ? 2 : 1;
+    return { inputData, status };
+  }
+  return null;
+};
+
+const decodeInputData = (inputData, unit) => {
+  try {
+    if (inputData && inputData.startsWith('0xa9059cbb')) {
+      const addressLength = 64;
+      const uint256Length = 64;
+
+      const toData = `0x${inputData.slice(10, 10 + addressLength)}`;
+      const rawAmountData = `0x${inputData.slice(10 + addressLength, 10 + addressLength + uint256Length)}`;
+
+      const to = ethers.AbiCoder.defaultAbiCoder().decode(['address'], toData)[0];
+      const weiAmount = ethers.AbiCoder.defaultAbiCoder().decode(['uint256'], rawAmountData)[0];
+      const amount = ethers.formatUnits(weiAmount, unit);
+
+      const customDataHex = `0x${inputData.slice(10 + addressLength + uint256Length)}`;
+      const customData = ethers.toUtf8String(customDataHex);
+
+      return { to, amount, customData };
+    }
+  } catch (error) {
+    console.error('Error decoding input data:', error);
+  }
+  return {};
+};
+
+exports.scanHash = async (hash, chainName = null) => {
+  const chains = chainName ? [networks[chainName]] : Object.values(networks);
+
+  for (const network of chains) {
+    const result = await getTransaction(hash, network);
+    if (result) {
+      const { inputData, status } = result;
+      const { to, amount, customData } = decodeInputData(inputData, network.unit);
+      return {
+        inputData,
+        hash,
+        network: network.name,
+        to,
+        amount,
+        status,
+        customData,
+      };
+    }
+  }
+
+  console.log(hash, 'Transaction not found on any network');
+  return false;
+};
