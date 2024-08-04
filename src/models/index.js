@@ -204,7 +204,8 @@ db.file.belongsTo(db.user);
 
 // Relationship of news, news_category, users
 
-db.news.belongsToMany(db.news_category, { through: 'news_category_map', as: 'newsCategory' });
+db.news.belongsToMany(db.news_category, { through: 'news_category_map', as: 'newsCategories' });
+db.news_category.belongsToMany(db.news, { through: 'news_category_map' });
 
 db.news.belongsTo(db.user, { as: 'author', foreignKey: 'userId' });
 db.user.hasMany(db.news, { as: 'news', foreignKey: 'userId' });
