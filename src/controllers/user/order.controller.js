@@ -444,6 +444,12 @@ exports.create = async (req, res) => {
           name: 'Crypto.com Pay',
         },
       };
+    } else if (paymentMethodId === -10) {
+      paymentMethod = {
+        payment_method_type: {
+          name: 'Web3 Wallet',
+        },
+      };
     }
 
     const logisticsProviderOption = await db.logistics_provider_option.findOne({
@@ -600,13 +606,13 @@ exports.create = async (req, res) => {
     }
 
     await Promise.all([...orderCreationPromises]);
-    // await db.cart.destroy({
-    //   where: {
-    //     id: cartIds,
-    //     userId,
-    //   },
-    //   transaction,
-    // });
+    await db.cart.destroy({
+      where: {
+        id: cartIds,
+        userId,
+      },
+      transaction,
+    });
 
     await transaction.commit();
 
