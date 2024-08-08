@@ -23,3 +23,23 @@ exports.uploadFiles = [
   validateRules,
   handleMulterErrors,
 ];
+
+exports.uploadNewsImage = [
+  body('file').custom((value, { req }) => {
+    if (req.files && req.files.file) {
+      const file = req.files.file[0];
+      const fileSize = file.size;
+      const fileType = file.mimetype;
+      if (fileSize > 10485760) {
+        throw new Error('News image must be less than 10MB');
+      }
+      if (!['image/jpeg', 'image/png'].includes(fileType)) {
+        throw new Error('News image must be in JPEG or PNG format');
+      }
+      return true;
+    }
+    throw new Error('No file was provided');
+  }),
+  validateRules,
+  handleMulterErrors,
+];

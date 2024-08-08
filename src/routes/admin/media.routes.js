@@ -13,5 +13,9 @@ module.exports = (app) => {
     { name: 'files', maxCount: 10 },
   ]), rules.uploadFiles, media.uploadFiles);
 
+  router.post('/news_image', upload.fields([
+    { name: 'file', maxCount: 1 },
+  ]), rules.uploadNewsImage, media.uploadNewsImage);
+
   app.use(`/api-admin/${apiVersion}/media`, router);
 };

@@ -52,9 +52,6 @@ exports.create = [
     }
     return true;
   }),
-  body('thumbnail')
-    .optional()
-    .trim(),
   body('image')
     .optional()
     .trim(),
@@ -91,9 +88,6 @@ exports.update = [
     }
     return true;
   }),
-  body('thumbnail')
-    .optional()
-    .trim(),
   body('image')
     .optional()
     .trim(),

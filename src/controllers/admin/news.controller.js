@@ -1,5 +1,7 @@
+const axios = require('axios');
 const logger = require('../../utils/logger');
 const db = require('../../models');
+const s3 = require('../../utils/s3');
 
 const { Op } = db.Sequelize;
 
@@ -127,7 +129,6 @@ exports.create = async (req, res) => {
       excerpt,
       content,
       catIds,
-      thumbnail,
       image,
       isPublished,
     } = req.body;
@@ -136,7 +137,6 @@ exports.create = async (req, res) => {
       title,
       excerpt,
       content,
-      thumbnail,
       image,
       isPublished,
       userId,
@@ -147,6 +147,37 @@ exports.create = async (req, res) => {
     if (catIds && catIds.length > 0) {
       const categories = await db.news_category.findAll({ where: { id: catIds } });
       await createdNews.setNewsCategories(categories);
+    }
+
+    if (image) {
+      const thumbnailUrl = image;
+      const response = await axios.get(thumbnailUrl, { responseType: 'arraybuffer' });
+      if (response) {
+        const contentType = response.headers['content-type'];
+        const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+
+        // Map of MIME types to file extensions
+        const mimeTypes = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/gif': 'gif',
+          'image/webp': 'webp',
+          // Add more mappings as needed
+        };
+
+        const extension = mimeTypes[mimetype] || 'bin'; // Default to 'bin' if MIME type is unknown
+        const originalname = `thumbnail.${extension}`;
+
+        const fileObject = {
+          buffer: Buffer.from(response.data),
+          originalname,
+          mimetype,
+        };
+        uploadedFiles = await s3.upload([fileObject], 'public24/news/news_thumbnails', { dimensions: [736, 736] });
+        await createdNews.update({
+          thumbnail: uploadedFiles[0],
+        });
+      }
     }
 
     res.json({
@@ -171,7 +202,6 @@ exports.update = async (req, res) => {
       excerpt,
       content,
       catIds,
-      thumbnail,
       image,
       isPublished,
     } = req.body;
@@ -188,7 +218,6 @@ exports.update = async (req, res) => {
       title,
       excerpt,
       content,
-      thumbnail,
       image,
       isPublished,
     };
@@ -198,6 +227,37 @@ exports.update = async (req, res) => {
     if (catIds && catIds.length > 0) {
       const newsCategories = await db.news_category.findAll({ where: { id: catIds } });
       await news.setNewsCategories(newsCategories);
+    }
+
+    if (image) {
+      const thumbnailUrl = image;
+      const response = await axios.get(thumbnailUrl, { responseType: 'arraybuffer' });
+      if (response) {
+        const contentType = response.headers['content-type'];
+        const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+
+        // Map of MIME types to file extensions
+        const mimeTypes = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/gif': 'gif',
+          'image/webp': 'webp',
+          // Add more mappings as needed
+        };
+
+        const extension = mimeTypes[mimetype] || 'bin'; // Default to 'bin' if MIME type is unknown
+        const originalname = `thumbnail.${extension}`;
+
+        const fileObject = {
+          buffer: Buffer.from(response.data),
+          originalname,
+          mimetype,
+        };
+        uploadedFiles = await s3.upload([fileObject], 'public24/news/news_thumbnails', { dimensions: [736, 736] });
+        await news.update({
+          thumbnail: uploadedFiles[0],
+        });
+      }
     }
 
     res.json({
