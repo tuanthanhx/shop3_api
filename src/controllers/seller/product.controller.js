@@ -485,9 +485,22 @@ exports.create = async (req, res) => {
       if (response) {
         const contentType = response.headers['content-type'];
         const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+
+        // Map of MIME types to file extensions
+        const mimeTypes = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/gif': 'gif',
+          'image/webp': 'webp',
+          // Add more mappings as needed
+        };
+
+        const extension = mimeTypes[mimetype] || 'bin'; // Default to 'bin' if MIME type is unknown
+        const originalname = `thumbnail.${extension}`;
+
         const fileObject = {
           buffer: Buffer.from(response.data),
-          originalname: 'thumbnail.jpg',
+          originalname,
           mimetype,
         };
         uploadedFiles = await s3.upload([fileObject], 'public24/product/thumbnails', { dimensions: [404, 404] });
@@ -674,9 +687,22 @@ exports.update = async (req, res) => {
       if (response) {
         const contentType = response.headers['content-type'];
         const mimetype = contentType ? contentType.split(';')[0] : 'application/octet-stream';
+
+        // Map of MIME types to file extensions
+        const mimeTypes = {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/gif': 'gif',
+          'image/webp': 'webp',
+          // Add more mappings as needed
+        };
+
+        const extension = mimeTypes[mimetype] || 'bin'; // Default to 'bin' if MIME type is unknown
+        const originalname = `thumbnail.${extension}`;
+
         const fileObject = {
           buffer: Buffer.from(response.data),
-          originalname: 'thumbnail.jpg',
+          originalname,
           mimetype,
         };
         uploadedFiles = await s3.upload([fileObject], 'public24/product/thumbnails', { dimensions: [404, 404] });
