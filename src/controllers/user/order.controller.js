@@ -116,6 +116,11 @@ exports.index = async (req, res) => {
           as: 'orderStatus',
         },
         {
+          model: db.order_payment,
+          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
+          as: 'orderPayment',
+        },
+        {
           model: db.order_shipping,
           attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'logisticsServiceName', 'logisticsProviderName', 'logisticsTrackingCode', 'fee', 'status'],
           as: 'orderShipping',
@@ -152,22 +157,22 @@ exports.index = async (req, res) => {
 
     const formattedData = rows.map((row) => {
       const order = row.toJSON();
-      const formattedItems = order.orderItems.map((orderItem) => ({
+      const formattedOrderItems = order.orderItems.map((orderItem) => ({
         ...orderItem,
         productVariant: tryParseJSON(orderItem.productVariant),
       }));
       const isReviewed = !!order.reviews?.length;
-      // const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
+      const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
       delete order.orderItems;
       delete order.reviews;
       return {
         ...order,
         isReviewed,
-        // orderPayment: {
-        //   ...order.orderPayment,
-        //   content: orderPaymentContent,
-        // },
-        orderItems: formattedItems,
+        orderPayment: {
+          ...order.orderPayment,
+          content: orderPaymentContent,
+        },
+        orderItems: formattedOrderItems,
       };
     });
 
@@ -288,6 +293,11 @@ exports.show = async (req, res) => {
           as: 'orderStatus',
         },
         {
+          model: db.order_payment,
+          attributes: ['id', 'paymentMethod', 'amount', 'status', 'content'],
+          as: 'orderPayment',
+        },
+        {
           model: db.order_shipping,
           attributes: ['id', 'firstName', 'lastName', 'phone', 'countryCode', 'address', 'logisticsServiceName', 'logisticsProviderName', 'logisticsTrackingCode', 'fee', 'status'],
           as: 'orderShipping',
@@ -328,12 +338,18 @@ exports.show = async (req, res) => {
       ...orderItem,
       productVariant: tryParseJSON(orderItem.productVariant),
     }));
-
+    const isReviewed = !!orderObj.reviews?.length;
+    const orderPaymentContent = tryParseJSON(order.orderPayment?.content);
     delete orderObj.orderItems;
 
     res.json({
       data: {
         ...orderObj,
+        isReviewed,
+        orderPayment: {
+          ...orderObj.orderPayment,
+          content: orderPaymentContent,
+        },
         orderItems: formattedOrderItems,
       },
     });
