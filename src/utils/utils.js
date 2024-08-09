@@ -197,7 +197,7 @@ exports.scanHash = async (hash, chainName = null) => {
         to,
         amount,
         status,
-        customData,
+        customData: this.fromHex(customData),
       };
     }
   }
