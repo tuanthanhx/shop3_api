@@ -1,4 +1,4 @@
-const { toHex, delay, scanHash, depositHash } = require('../../utils/utils');
+const { toHex, delay, scanHash } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
@@ -147,11 +147,10 @@ exports.payWithCrypto = async (req, res) => {
       const {
         to,
         amount,
-        customData,
+        customData: customData2,
       } = transaction;
 
-      const paymentId = parseInt(customData?.replace('shop3_pid_', ''), 10);
-      // const paymentId = 1; // DUMMY
+      const paymentId = parseInt(customData2?.replace('shop3_pid_', ''), 10);
 
       if (!paymentId) {
         processErrors.push('Cannot find payment ID from the transaction');
@@ -159,9 +158,9 @@ exports.payWithCrypto = async (req, res) => {
       }
 
       const targetWallets = new Set([
-        // process.env.ETHSCAN_USDT_WALLET.toLowerCase(),
+        process.env.ETHSCAN_USDT_WALLET.toLowerCase(),
         process.env.BSCSCAN_USDT_WALLET.toLowerCase(),
-        // process.env.POLYGONSCAN_USDT_WALLET.toLowerCase(),
+        process.env.POLYGONSCAN_USDT_WALLET.toLowerCase(),
       ]);
 
       if (!targetWallets.has(to.toLowerCase())) {

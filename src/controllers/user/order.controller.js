@@ -171,6 +171,7 @@ exports.index = async (req, res) => {
         orderPayment: {
           ...order.orderPayment,
           content: orderPaymentContent,
+          code: toHex(`shop3_pid_${order.orderPayment.id}`),
         },
         orderItems: formattedOrderItems,
       };
@@ -349,6 +350,7 @@ exports.show = async (req, res) => {
         orderPayment: {
           ...orderObj.orderPayment,
           content: orderPaymentContent,
+          code: toHex(`shop3_pid_${orderObj.orderPayment.id}`),
         },
         orderItems: formattedOrderItems,
       },
