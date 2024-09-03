@@ -5,6 +5,9 @@ exports.index = [
   query('keyword')
     .optional()
     .trim(),
+  query('shopId')
+    .optional()
+    .toInt(),
   query('minPrice')
     .optional()
     .toInt(),

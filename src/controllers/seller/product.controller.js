@@ -13,6 +13,7 @@ exports.index = async (req, res) => {
 
     const {
       keyword,
+      shopId,
       minPrice,
       maxPrice,
       categoryId,
@@ -37,7 +38,8 @@ exports.index = async (req, res) => {
         });
         return;
       }
-      const shopId = foundShop.id;
+      condition.shopId = foundShop.id;
+    } else if (shopId) {
       condition.shopId = shopId;
     }
 
