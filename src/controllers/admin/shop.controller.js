@@ -7,6 +7,7 @@ exports.index = async (req, res) => {
   try {
     const {
       keyword,
+      sellerBusinessTypeId,
       status,
       page,
       limit,
@@ -38,6 +39,10 @@ exports.index = async (req, res) => {
         condition.isSubmitted = true;
         condition.isVerified = false;
       }
+    }
+
+    if (sellerBusinessTypeId) {
+      condition.sellerBusinessTypeId = sellerBusinessTypeId;
     }
 
     let ordering = [['id', 'DESC']];

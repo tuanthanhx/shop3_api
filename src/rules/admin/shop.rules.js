@@ -5,6 +5,9 @@ exports.index = [
   query('keyword')
     .optional()
     .trim(),
+  query('sellerBusinessTypeId')
+    .optional()
+    .toInt(),
   query('status')
     .optional()
     .trim(),
