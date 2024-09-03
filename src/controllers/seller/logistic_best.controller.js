@@ -11,7 +11,7 @@ exports.estimateFee = async (req, res) => {
     // const contentString = JSON.stringify(content);
     const contentString = `{
       "customerName": "YiNian Fashion (Shanghai) Co., Ltd. - Shanghai O2O",
-      "txLogisticId": "TO1702200461625999",
+      "txLogisticId": "TO1725248886000001",
       "serviceType": "1",
       "goodsValue": "100",
       "itemsValue": "0",
@@ -20,26 +20,26 @@ exports.estimateFee = async (req, res) => {
       "certificateType": "01",
       "certificateNo": "1769900274531",
       "sender": {
-        "name": "sender",
-        "postCode": "10254",
-        "mobile": "13668122696",
-        "prov": "Kampong Thom",
-        "city": "Stoung",
-        "county": "Chamna Leu",
-        "address": "123",
-        "email": "kkk@email.com",
-        "country": "01"
+        "name": "Zhang Wei",
+        "postCode": "200000",
+        "mobile": "13800138000",
+        "prov": "Shanghai",
+        "city": "Shanghai",
+        "county": "Pudong New District",
+        "address": "2000 Pudong Avenue",
+        "email": "sender@example.com",
+        "country": "03"
       },
       "receiver": {
-        "name": "receiver",
-        "postCode": "50110",
-        "mobile": "13927089988",
-        "prov": "Kandal",
-        "city": "Kandal Stueng",
-        "county": "Ampov Prey",
-        "address": "456",
-        "email": "kkk@email.com",
-        "country": "01"
+        "name": "Li Jing",
+        "postCode": "100000",
+        "mobile": "13911112222",
+        "prov": "Beijing",
+        "city": "Beijing",
+        "county": "Chaoyang District",
+        "address": "88 Jianguo Road",
+        "email": "receiver@example.com",
+        "country": "03"
       },
       "items": {
         "item": {

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const qs = require('qs');
+const fs = require('fs');
 const logger = require('../../utils/logger');
 const { generateSignature } = require('../../utils/logistic');
 // const db = require('../../models');
@@ -159,13 +160,7 @@ exports.cancelOrder = async (req, res) => {
 exports.getOrder = async (req, res) => {
   try {
     const { content } = req.body; // TODO: Pass Shop3 order detail to here
-    // const contentString = JSON.stringify(content);
-    const contentString = `{
-        "waybillType": 1,
-        "orderCode": "LP00672818399569",
-        "locale": "zh_CN",
-        "needSelfDrawLabels": true
-    }`;
+    const contentString = JSON.stringify(content);
     const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
@@ -173,6 +168,102 @@ exports.getOrder = async (req, res) => {
       logistic_provider_id: process.env.CAINIAO_RESOURCE_CODE,
       data_digest: signature,
       to_code: 'CGOP',
+      logistics_interface: contentString,
+    };
+
+    const response = await axios.post(process.env.CAINIAO_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
+    const base64Data = response.data.data.waybillPdfData;
+
+    // Convert the base64 string to a Buffer
+    const pdfBuffer = Buffer.from(base64Data, 'base64');
+
+    // Write the Buffer to a PDF file
+    fs.writeFileSync('output2.pdf', pdfBuffer);
+
+    console.log('PDF file created successfully.');
+
+    res.status(200).json({
+      data: response.data,
+      debug: { // TODO: Remove debug later
+        signature,
+        content,
+        contentString,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getTrack = async (req, res) => {
+  try {
+    const { content } = req.body; // TODO: Pass Shop3 order detail to here
+    const contentString = JSON.stringify(content);
+    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+
+    const data = {
+      msg_type: 'cnge.track.get',
+      logistic_provider_id: process.env.CAINIAO_RESOURCE_CODE,
+      data_digest: signature,
+      to_code: 'TRACK',
+      logistics_interface: contentString,
+    };
+
+    const response = await axios.post(process.env.CAINIAO_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      data: response.data,
+      debug: { // TODO: Remove debug later
+        signature,
+        content,
+        contentString,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.updateOrder = async (req, res) => {
+  try {
+    const { content } = req.body; // TODO: Pass Shop3 order detail to here
+    const contentString = JSON.stringify(content);
+    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+
+    const data = {
+      msg_type: 'cnge.order.update',
+      logistic_provider_id: process.env.CAINIAO_RESOURCE_CODE,
+      data_digest: signature,
+      to_code: 'CNGCP-OPEN',
       logistics_interface: contentString,
     };
 

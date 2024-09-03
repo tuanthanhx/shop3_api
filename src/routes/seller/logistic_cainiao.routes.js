@@ -8,6 +8,8 @@ module.exports = (app) => {
 
   router.post('/orders', controller.createOrder);
   router.post('/orders/:id', controller.getOrder);
+  router.post('/orders/:id/update', controller.updateOrder);
+  router.post('/orders/:id/track', controller.getTrack);
   router.post('/orders/:id/cancel', controller.cancelOrder);
 
   app.use(`/api-seller/${apiVersion}/logistic/cainiao`, router);
