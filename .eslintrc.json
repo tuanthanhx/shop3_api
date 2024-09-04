@@ -16,6 +16,14 @@
     "global-require": 0,
     "func-names": 0,
     "no-param-reassign": ["error", { "props": false }],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "always",
+        "asyncArrow": "always"
+      }
+    ],
     "max-len": 0,
     "no-plusplus": 0,
     "no-restricted-syntax": 0,

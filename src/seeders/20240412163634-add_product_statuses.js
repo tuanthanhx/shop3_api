@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('product_statuses', [
       {
         name: 'Active',
@@ -40,7 +40,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('product_statuses', null, {});
     await queryInterface.sequelize.query('ALTER TABLE product_statuses AUTO_INCREMENT = 1;');
   },

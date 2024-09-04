@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('countries', [
       {
         code: 'af',
@@ -1498,7 +1498,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('countries', null, {});
     await queryInterface.sequelize.query('ALTER TABLE countries AUTO_INCREMENT = 1;');
   },

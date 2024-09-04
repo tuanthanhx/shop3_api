@@ -2,7 +2,7 @@ const { generateUniqueId } = require('../utils/utils');
 const db = require('../models');
 
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     const shop101 = await db.shop.findOne({ where: { shopName: 'Test Shop 101' } });
     const shop102 = await db.shop.findOne({ where: { shopName: 'Test Shop 102' } });
     await queryInterface.bulkInsert('products', [
@@ -39,7 +39,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('products', {
       name: [
         'Test Product 101',

@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('logistics_services_providers_maps', [
       {
         logisticsServiceId: 1,
@@ -70,7 +70,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('logistics_services_providers_maps', null, {});
     await queryInterface.sequelize.query('ALTER TABLE logistics_services_providers_maps AUTO_INCREMENT = 1;');
   },

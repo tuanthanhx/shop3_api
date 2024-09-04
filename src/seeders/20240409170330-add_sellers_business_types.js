@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('seller_business_types', [
       {
         name: 'Household',
@@ -22,7 +22,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('seller_business_types', null, {});
     await queryInterface.sequelize.query('ALTER TABLE seller_business_types AUTO_INCREMENT = 1;');
   },

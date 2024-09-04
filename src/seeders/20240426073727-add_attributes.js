@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('attributes', [
       {
         name: 'Season',
@@ -134,7 +134,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('attributes', null, {});
     await queryInterface.sequelize.query('ALTER TABLE attributes AUTO_INCREMENT = 1;');
     await queryInterface.bulkDelete('attribute_values', null, {});

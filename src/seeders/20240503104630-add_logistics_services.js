@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     const { generateUniqueId } = require('../utils/utils');
     await queryInterface.bulkInsert('logistics_services', [
       {
@@ -19,7 +19,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('logistics_services', null, {});
     await queryInterface.sequelize.query('ALTER TABLE logistics_services AUTO_INCREMENT = 1;');
   },

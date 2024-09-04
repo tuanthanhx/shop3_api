@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('payment_method_types', [
       {
         name: 'Credit / Debit Card',
@@ -28,7 +28,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('payment_method_types', null, {});
     await queryInterface.sequelize.query('ALTER TABLE payment_method_types AUTO_INCREMENT = 1;');
   },

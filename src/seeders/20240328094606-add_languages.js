@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     const languages = [
       'Chinese',
       'English',
@@ -20,7 +20,7 @@ module.exports = {
     await queryInterface.bulkInsert('languages', languageObjects, {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('languages', null, {});
     await queryInterface.sequelize.query('ALTER TABLE languages AUTO_INCREMENT = 1;');
   },

@@ -14,26 +14,26 @@ const {
 const { Buffer } = require('buffer');
 const { WalletContractV4R1 } = require('./wallet-contract-v4-r1');
 
-function loadWalletV1Data(cs) {
+function loadWalletV1Data (cs) {
   const seqno = cs.loadUint(32);
   const publicKey = cs.loadBuffer(32);
   return { seqno, publicKey };
 }
 
-function loadWalletV2Data(cs) {
+function loadWalletV2Data (cs) {
   const seqno = cs.loadUint(32);
   const publicKey = cs.loadBuffer(32);
   return { seqno, publicKey };
 }
 
-function loadWalletV3Data(cs) {
+function loadWalletV3Data (cs) {
   const seqno = cs.loadUint(32);
   const walletId = cs.loadUint(32);
   const publicKey = cs.loadBuffer(32);
   return { seqno, publicKey, walletId };
 }
 
-function loadWalletV4Data(cs) {
+function loadWalletV4Data (cs) {
   const seqno = cs.loadUint(32);
   const walletId = cs.loadUint(32);
   const publicKey = cs.loadBuffer(32);
@@ -59,7 +59,7 @@ const knownWallets = [
   wallet: contract.create({ workchain: 0, publicKey: Buffer.alloc(32) }),
 }));
 
-function tryParsePublicKey(stateInit) {
+function tryParsePublicKey (stateInit) {
   if (!stateInit.code || !stateInit.data) {
     return null;
   }

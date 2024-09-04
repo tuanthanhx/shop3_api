@@ -1,7 +1,7 @@
 const db = require('../models');
 
 module.exports = {
-  async up() {
+  async up () {
     await db.user.create({
       email: 'test_user_601@shop3.com',
       password: 'AvTMhT',
@@ -39,7 +39,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('users', { email: 'test_user_601@shop3.com' }, {});
     await queryInterface.bulkDelete('users', { email: 'test_user_602@shop3.com' }, {});
     await queryInterface.bulkDelete('users', { email: 'test_user_603@shop3.com' }, {});

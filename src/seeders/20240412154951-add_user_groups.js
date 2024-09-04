@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface) {
+  async up (queryInterface) {
     await queryInterface.bulkInsert('user_groups', [
       {
         name: 'Users',
@@ -40,7 +40,7 @@ module.exports = {
     ], {});
   },
 
-  async down(queryInterface) {
+  async down (queryInterface) {
     await queryInterface.bulkDelete('user_groups', null, {});
     await queryInterface.sequelize.query('ALTER TABLE user_groups AUTO_INCREMENT = 1;');
   },

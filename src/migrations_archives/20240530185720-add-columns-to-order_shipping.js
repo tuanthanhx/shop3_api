@@ -1,5 +1,5 @@
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up (queryInterface, Sequelize) {
     await queryInterface.addColumn('order_shippings', 'logisticsServiceName', {
       type: Sequelize.STRING,
     });
