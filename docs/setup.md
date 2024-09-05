@@ -44,6 +44,7 @@ npx sequelize-cli db:migrate --to 20240530185720-add-country-code-to-users.js --
 // UPDATE `users` SET `countryCode` = 'cn';
 
 npx sequelize-cli db:migrate --to 20240904042204-add_columns_to_user_address.js --env production
+npx sequelize-cli db:migrate --to 20240905000001-add_columns_to_order.js --env production
 
 ===========
 

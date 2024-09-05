@@ -138,3 +138,12 @@ exports.createTracking = [
     .trim(),
   validateRules,
 ];
+
+exports.withdraw = [
+  param('id')
+    .notEmpty()
+    .withMessage('id is required')
+    .isInt()
+    .withMessage('id must be integer'),
+  validateRules,
+];

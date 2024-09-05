@@ -218,6 +218,15 @@ db.wallet.belongsTo(db.wallet_type, { as: 'walletType' });
 db.user.hasMany(db.wallet, { onDelete: 'CASCADE' });
 db.wallet.belongsTo(db.user);
 
+db.user.hasMany(db.order_withdrawal);
+db.order_withdrawal.belongsTo(db.user);
+
+db.wallet.hasMany(db.order_withdrawal);
+db.order_withdrawal.belongsTo(db.wallet);
+
+db.order.hasOne(db.order_withdrawal);
+db.order_withdrawal.belongsTo(db.order);
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

@@ -9,6 +9,9 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
     },
+    isWithdrawn: {
+      type: Sequelize.BOOLEAN,
+    },
   }, {
     paranoid: false,
   });

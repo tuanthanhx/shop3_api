@@ -1,7 +1,7 @@
 const db = require('../models');
 
 module.exports = {
-  async up() {
+  async up () {
     await db.wallet_type.create({
       name: 'Default',
       unit: 'USDT',

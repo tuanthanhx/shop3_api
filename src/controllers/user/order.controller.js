@@ -1,3 +1,4 @@
+const walletService = require('../../services/wallet');
 const { generateUniqueId, tryParseJSON, toHex } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
@@ -750,6 +751,83 @@ exports.complete = async (req, res) => {
     res.json({
       data: {
         message: 'Order marked as completed successfully',
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.withdraw = async (req, res) => {
+  try {
+    const { user } = req;
+    const userId = user.id;
+
+    const isSeller = user.userGroupId === 2;
+
+    const { id } = req.params;
+
+    condition = {
+      id,
+    };
+
+    if (!isSeller) {
+      res.status(403).send({
+        message: 'You do not have permission to use this API',
+      });
+      return;
+    }
+
+    const shop = await db.shop.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!shop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+
+    condition.shopId = shop?.id;
+
+    const order = await db.order.findOne({
+      where: condition,
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (order.isWithdrawn) {
+      res.status(400).send({
+        message: 'Already withdrawn',
+      });
+      return;
+    }
+
+    const wallet = await db.wallet.findOne({
+      where: {
+        userId,
+      },
+    });
+
+    await walletService.increaseAmount(wallet.id, order.totalAmount);
+
+    await order.update({
+      isWithdrawn: true,
+    });
+
+    res.json({
+      data: {
+        message: 'Withdrawn order successfully',
       },
     });
   } catch (err) {

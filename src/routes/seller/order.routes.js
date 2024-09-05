@@ -12,6 +12,7 @@ module.exports = (app) => {
   router.post('/:id/update_status', rules.updateStatus, orders.updateStatus);
   router.get('/:id/tracking', rules.getTracking, orders.getTracking);
   router.post('/:id/tracking', rules.createTracking, orders.createTracking);
+  router.post('/:id/withdraw', rules.withdraw, orders.withdraw);
 
   app.use(`/api-seller/${apiVersion}/orders`, router);
 };
