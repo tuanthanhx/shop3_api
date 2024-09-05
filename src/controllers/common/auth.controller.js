@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { ethers } = require('ethers');
 const { Buffer } = require('buffer');
 const { randomBytes } = require('tweetnacl');
+const walletService = require('../../services/wallet');
 const logger = require('../../utils/logger');
 const { createOtp, checkOtp, removeOtp } = require('../../utils/otp');
 const { sendOtpEmail } = require('../../utils/email');
@@ -286,6 +287,10 @@ exports.loginByWallet = async (req, res) => {
       },
     });
 
+    if (createdUser) {
+      await walletService.createWallet(createdUser.id, 1);
+    }
+
     const userData = user || createdUser;
 
     const userIdentity = {
@@ -375,6 +380,10 @@ exports.loginByTonWallet = async (req, res) => {
         userGroupId: userGroupId || 1,
       },
     });
+
+    if (createdUser) {
+      await walletService.createWallet(createdUser.id, 1);
+    }
 
     const userData = user || createdUser;
 

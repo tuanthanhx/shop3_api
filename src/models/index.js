@@ -210,6 +210,14 @@ db.news_category.belongsToMany(db.news, { through: 'news_category_map' });
 db.news.belongsTo(db.user, { as: 'author', foreignKey: 'userId' });
 db.user.hasMany(db.news, { as: 'news', foreignKey: 'userId' });
 
+// Relationship of wallets
+
+db.wallet_type.hasMany(db.wallet);
+db.wallet.belongsTo(db.wallet_type, { as: 'walletType' });
+
+db.user.hasMany(db.wallet, { onDelete: 'CASCADE' });
+db.wallet.belongsTo(db.user);
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

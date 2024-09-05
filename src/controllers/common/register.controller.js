@@ -1,3 +1,4 @@
+const walletService = require('../../services/wallet');
 const logger = require('../../utils/logger');
 const { checkOtp, removeOtp } = require('../../utils/otp');
 const db = require('../../models');
@@ -35,7 +36,8 @@ exports.registerByEmail = async (req, res) => {
       userGroupId: userGroupId || 2,
     };
 
-    await User.create(object);
+    const createdUser = await User.create(object);
+    await walletService.createWallet(createdUser.id, 1);
     await auth.loginByEmail(req, res);
   } catch (err) {
     logger.error(err);
@@ -75,7 +77,8 @@ exports.registerByPhone = async (req, res) => {
       userGroupId: userGroupId || 2,
     };
 
-    await User.create(object);
+    const createdUser = await User.create(object);
+    await walletService.createWallet(createdUser.id, 1);
     await auth.loginByPhone(req, res);
   } catch (err) {
     logger.error(err);
