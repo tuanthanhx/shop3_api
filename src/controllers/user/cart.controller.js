@@ -50,6 +50,7 @@ exports.index = async (req, res) => {
       attributes: ['id'],
       where: {
         logisticsServiceId: 2,
+        id: 12, // TODO: Show only Shop3 Express for now
       },
       include: [
         {
