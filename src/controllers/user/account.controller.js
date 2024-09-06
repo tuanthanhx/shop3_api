@@ -404,7 +404,7 @@ exports.getAddresses = async (req, res) => {
       where: {
         userId,
       },
-      attributes: ['id', 'firstName', 'lastName', 'phone', 'address', 'isDefault'],
+      attributes: ['id', 'firstName', 'lastName', 'phone', 'zipCode', 'state', 'city', 'district', 'address', 'isDefault'],
       include: [
         {
           model: db.country,

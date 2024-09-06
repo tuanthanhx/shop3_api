@@ -15,24 +15,18 @@ exports.index = async (req, res) => {
       return;
     }
 
-    // const data = await db.user_address.findAll({
-    //   where: {
-    //     userId,
-    //   },
-    //   attributes: ['id', 'firstName', 'lastName', 'phone', 'address', 'isDefault'],
-    //   include: [
-    //     {
-    //       model: db.country,
-    //       as: 'country',
-    //       attributes: ['code', 'name'],
-    //     },
-    //   ],
-    // });
-
     const warehouses = await db.warehouse.findAll({
       where: {
         shopId: shop.id,
       },
+      attributes: ['id', 'firstName', 'lastName', 'phone', 'zipCode', 'state', 'city', 'district', 'address', 'isDefault'],
+      include: [
+        {
+          model: db.country,
+          as: 'country',
+          attributes: ['code', 'name'],
+        },
+      ],
     });
     res.send({
       data: warehouses,
