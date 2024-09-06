@@ -2,7 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 const fs = require('fs');
 const logger = require('../../utils/logger');
-const { generateSignature } = require('../../utils/logistic');
+const logisticService = require('../../services/logistic');
 // const db = require('../../models');
 
 exports.createOrder = async (req, res) => {
@@ -77,7 +77,7 @@ exports.createOrder = async (req, res) => {
     "syncGetTrackingNumber": "true"
 }`;
 */
-    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+    const signature = logisticService.generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
       msg_type: 'cnge.order.create',
@@ -119,7 +119,7 @@ exports.cancelOrder = async (req, res) => {
   try {
     const { content } = req.body; // TODO: Pass Shop3 order detail to here
     const contentString = JSON.stringify(content);
-    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+    const signature = logisticService.generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
       msg_type: 'cnge.order.cancel',
@@ -161,7 +161,7 @@ exports.getOrder = async (req, res) => {
   try {
     const { content } = req.body; // TODO: Pass Shop3 order detail to here
     const contentString = JSON.stringify(content);
-    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+    const signature = logisticService.generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
       msg_type: 'cnge.waybill.get',
@@ -214,7 +214,7 @@ exports.getTrack = async (req, res) => {
   try {
     const { content } = req.body; // TODO: Pass Shop3 order detail to here
     const contentString = JSON.stringify(content);
-    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+    const signature = logisticService.generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
       msg_type: 'cnge.track.get',
@@ -257,7 +257,7 @@ exports.updateOrder = async (req, res) => {
   try {
     const { content } = req.body; // TODO: Pass Shop3 order detail to here
     const contentString = JSON.stringify(content);
-    const signature = generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
+    const signature = logisticService.generateSignature(contentString, process.env.CAINIAO_APP_SECRET);
 
     const data = {
       msg_type: 'cnge.order.update',

@@ -2,7 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 // const fs = require('fs');
 const logger = require('../../utils/logger');
-const { generateSignature } = require('../../utils/logistic');
+const logisticService = require('../../services/logistic');
 // const db = require('../../models');
 
 exports.estimateFee = async (req, res) => {
@@ -50,7 +50,7 @@ exports.estimateFee = async (req, res) => {
       "piece": "1",
       "remark": ""
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_ORDER_FEE',
@@ -133,7 +133,7 @@ exports.createOrder = async (req, res) => {
       "piece": "1",
       "remark": ""
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_CREATE_WAYBILL_ORDER_NOTIFY',
@@ -216,7 +216,7 @@ exports.createOrderPdf = async (req, res) => {
       "piece": "1",
       "remark": ""
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_CREATE_WAYBILL_ORDER_PDF_NOTIFY',
@@ -281,7 +281,7 @@ exports.updateStatus = async (req, res) => {
       "remark": "Shipment【signPOD】,Recipient type【Consignee】, POD by 【123】,POD station is 【testsiteA】, POD scan updated by 【testsitea】",
       "weight": "3.0"
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_ORDER_STATUS_PUSH',
@@ -331,7 +331,7 @@ exports.getStatus = async (req, res) => {
         ]
       },
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_TRACE_QUERY',
@@ -377,7 +377,7 @@ exports.cancelOrder = async (req, res) => {
       "txLogisticId": "TO1702200461625999",
       "reason": "Don't want to buy."
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_CANCEL_ORDER_NOTIFY',
@@ -426,7 +426,7 @@ exports.updateOrder = async (req, res) => {
       },
       "txLogisticId": "TO1702200461625999"
     }`;
-    const signature = generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
 
     const data = {
       serviceType: 'KD_UPDATE_ORDER_NOTIFY',
