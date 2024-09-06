@@ -14,5 +14,12 @@ module.exports = (app) => {
   router.post('/:id/tracking', rules.createTracking, orders.createTracking);
   router.post('/:id/withdraw', rules.withdraw, orders.withdraw);
 
+  // TODO: Update rules later
+  router.get('/:id/logistic', orders.getLogisticDetail);
+  router.get('/:id/logistic/track', orders.getLogisticTrack);
+  router.post('/:id/logistic', orders.createLogistic);
+  router.put('/:id/logistic', orders.updateLogistic);
+  router.post('/:id/logistic/cancel', orders.cancelLogistic);
+
   app.use(`/api-seller/${apiVersion}/orders`, router);
 };

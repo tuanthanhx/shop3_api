@@ -434,6 +434,10 @@ exports.createAddress = async (req, res) => {
       lastName,
       phone,
       countryCode,
+      zipCode,
+      state,
+      city,
+      district,
       address,
       isDefault,
     } = req.body;
@@ -444,6 +448,10 @@ exports.createAddress = async (req, res) => {
       lastName,
       phone,
       countryCode,
+      zipCode,
+      state,
+      city,
+      district,
       address,
       isDefault,
     };
@@ -487,6 +495,10 @@ exports.updateAddress = async (req, res) => {
       lastName,
       phone,
       countryCode,
+      zipCode,
+      state,
+      city,
+      district,
       address,
       isDefault,
     } = req.body;
@@ -510,6 +522,10 @@ exports.updateAddress = async (req, res) => {
       lastName,
       phone,
       countryCode,
+      zipCode,
+      state,
+      city,
+      district,
       address,
       isDefault,
     };

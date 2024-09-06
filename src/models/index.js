@@ -59,6 +59,9 @@ db.shop.belongsTo(db.user, { foreignKey: 'userId' });
 
 db.shop.belongsTo(db.seller_business_type, { foreignKey: 'sellerBusinessTypeId' });
 
+db.shop.hasMany(db.warehouse, { onDelete: 'CASCADE' });
+db.warehouse.belongsTo(db.shop);
+
 db.product.belongsTo(db.category, { foreignKey: 'categoryId' });
 db.category.hasMany(db.product, { foreignKey: 'categoryId' });
 

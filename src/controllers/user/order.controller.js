@@ -1,3 +1,4 @@
+const shopService = require('../../services/shop');
 const walletService = require('../../services/wallet');
 const { generateUniqueId, tryParseJSON, toHex } = require('../../utils/utils');
 const logger = require('../../utils/logger');
@@ -1150,6 +1151,121 @@ exports.createTracking = async (req, res) => {
       data: {
         message: 'Created tracking successfully',
       },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getLogisticDetail = async (req, res) => {
+  try {
+    res.json({
+      data: 'test ok',
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.getLogisticTrack = async (req, res) => {
+  try {
+    res.json({
+      data: 'test ok',
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.createLogistic = async (req, res) => {
+  try {
+    const { id: orderId } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const shop = await shopService.findByUser(userId);
+    if (!shop) {
+      res.status(404).send({
+        message: 'Shop not found',
+      });
+      return;
+    }
+
+    const warehouse = await db.warehouse.findOne({
+      where: {
+        shopId: shop.id,
+        isDefault: true,
+      },
+    });
+
+    if (!warehouse) {
+      res.status(404).send({
+        message: 'Default warehouse not found',
+      });
+      return;
+    }
+
+    const order = await db.order.findOne({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const shipping = await db.order_shipping.findOne({
+      orderId,
+    });
+
+    res.json({
+      data: 'test ok',
+      debug: {
+        shop,
+        warehouse,
+        order,
+        shipping,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.updateLogistic = async (req, res) => {
+  try {
+    res.json({
+      data: 'test ok',
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
+exports.cancelLogistic = async (req, res) => {
+  try {
+    res.json({
+      data: 'test ok',
     });
   } catch (err) {
     logger.error(err);
