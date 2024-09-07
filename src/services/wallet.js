@@ -53,3 +53,33 @@ exports.increaseAmount = async (to, amount) => {
     return false;
   }
 };
+
+exports.decreaseAmount = async (to, amount) => {
+  try {
+    const condition = {};
+    if (to.toString().length === 32) {
+      condition.address = to;
+    } else {
+      condition.id = to;
+    }
+
+    const wallet = await db.wallet.findOne({
+      where: condition,
+    });
+
+    if (!wallet) {
+      logger.error('Wallet not found');
+      return false;
+    }
+
+    wallet.balance -= parseFloat(amount);
+    await wallet.save();
+
+    // TODO: Write logs
+
+    return true;
+  } catch (error) {
+    logger.error('Error occurred while decreasing amount:', error);
+    return false;
+  }
+};

@@ -233,6 +233,12 @@ db.order_withdrawal.belongsTo(db.wallet);
 db.order.hasOne(db.order_withdrawal);
 db.order_withdrawal.belongsTo(db.order);
 
+db.wallet.hasMany(db.withdrawal);
+db.withdrawal.belongsTo(db.wallet);
+
+db.withdrawal_status.hasMany(db.withdrawal);
+db.withdrawal.belongsTo(db.withdrawal_status, { as: 'withdrawalStatus' });
+
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

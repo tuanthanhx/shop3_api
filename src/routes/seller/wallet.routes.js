@@ -8,5 +8,10 @@ module.exports = (app) => {
 
   router.get('/', wallets.index);
 
+  router.get('/withdrawals', wallets.getWithdrawals);
+  router.get('/withdrawals/:id', wallets.getWithdrawal);
+  router.post('/withdrawals', wallets.createWithdrawal);
+  router.post('/withdrawals/:id/cancel', wallets.cancelWithdrawal);
+
   app.use(`/api-seller/${apiVersion}/wallets`, router);
 };
