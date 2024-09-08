@@ -83,6 +83,27 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.getShopNames = async (req, res) => {
+  try {
+    const data = await db.shop.findAll({
+      where: {
+        isSubmitted: true,
+      },
+      order: [['shopName', 'asc']],
+      attributes: ['id', 'shopName'],
+    });
+
+    res.json({
+      data,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.statistics = async (req, res) => {
   try {
     const all = await db.shop.count({

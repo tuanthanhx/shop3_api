@@ -20,6 +20,8 @@ exports.index = [
   validateRules,
 ];
 
+exports.getShopNames = [];
+
 exports.statistics = [];
 
 exports.show = [
