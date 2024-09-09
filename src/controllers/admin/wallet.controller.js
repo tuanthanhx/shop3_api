@@ -1,58 +1,21 @@
-const walletService = require('../../services/wallet');
 const logger = require('../../utils/logger');
 const db = require('../../models');
 
-exports.index = async (req, res) => {
-  try {
-    const { user } = req;
-    const wallet = await db.wallet.findOne({
-      where: {
-        userId: user.id,
-      },
-      attributes: ['id', 'address', 'balance'],
-      include: [{
-        model: db.wallet_type,
-        as: 'walletType',
-        attributes: ['name', 'unit'],
-      }],
-    });
-
-    const walletObj = wallet.toJSON();
-    walletObj.name = walletObj.walletType.name;
-    walletObj.unit = walletObj.walletType.unit;
-    delete walletObj.walletType;
-
-    res.send({
-      data: walletObj,
-    });
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send({
-      message: err.message || 'Some error occurred',
-    });
-  }
-};
-
 exports.getWithdrawals = async (req, res) => {
   try {
-    const { user } = req;
     const {
+      withdrawalStatusId,
       page,
       limit,
       sortField,
       sortOrder = 'asc',
     } = req.query;
 
-    const wallet = await db.wallet.findOne({
-      where: {
-        userId: user.id,
-      },
-      attributes: ['id'],
-    });
+    const condition = {};
 
-    const condition = {
-      walletId: wallet.id,
-    };
+    if (withdrawalStatusId) {
+      condition.withdrawalStatusId = withdrawalStatusId;
+    }
 
     let ordering = [['id', 'DESC']];
 
@@ -95,20 +58,11 @@ exports.getWithdrawals = async (req, res) => {
 
 exports.getWithdrawal = async (req, res) => {
   try {
-    const { user } = req;
     const { id } = req.params;
-
-    const wallet = await db.wallet.findOne({
-      where: {
-        userId: user.id,
-      },
-      attributes: ['id'],
-    });
 
     const withdrawal = await db.withdrawal.findOne({
       where: {
         id,
-        walletId: wallet.id,
       },
       include: [{
         model: db.withdrawal_status,
@@ -139,50 +93,40 @@ exports.getWithdrawal = async (req, res) => {
   }
 };
 
-exports.createWithdrawal = async (req, res) => {
+exports.approveWithdrawal = async (req, res) => {
   try {
-    const { user } = req;
+    const { id } = req.params;
+    const { hash } = req.body;
 
-    const {
-      network,
-      address,
-      memo,
-      amount,
-    } = req.body;
-
-    const wallet = await db.wallet.findOne({
+    const withdrawal = await db.withdrawal.findOne({
       where: {
-        userId: user.id,
+        id,
       },
     });
 
-    const object = {
-      walletId: wallet.id,
-      network,
-      address,
-      memo,
-      amount,
-      withdrawalStatusId: 1,
-    };
-
-    console.log(wallet.balance);
-    console.log(amount);
-    console.log(wallet.balance < amount);
-
-    if (wallet.balance < amount) {
-      res.status(400).send({
-        message: 'Your balance is not enough',
+    if (!withdrawal) {
+      res.status(404).send({
+        message: 'Withdrawal not found',
       });
       return;
     }
 
-    await walletService.decreaseAmount(wallet.id, amount);
+    if (withdrawal.withdrawalStatusId !== 1) {
+      res.status(404).send({
+        message: 'This withdrawal is not available',
+      });
+      return;
+    }
 
-    await db.withdrawal.create(object);
+    // TODO: Need to provide transaction hash too
+    await withdrawal.update({
+      withdrawalStatusId: 2,
+      hash,
+    });
 
     res.json({
       data: {
-        message: 'Created withdrawal successfully',
+        message: 'Approved withdrawal',
       },
     });
   } catch (err) {
@@ -193,22 +137,14 @@ exports.createWithdrawal = async (req, res) => {
   }
 };
 
-exports.cancelWithdrawal = async (req, res) => {
+exports.declineWithdrawal = async (req, res) => {
   try {
-    const { user } = req;
     const { id } = req.params;
-
-    const wallet = await db.wallet.findOne({
-      where: {
-        userId: user.id,
-      },
-      attributes: ['id'],
-    });
+    const { message } = req.body;
 
     const withdrawal = await db.withdrawal.findOne({
       where: {
         id,
-        walletId: wallet.id,
       },
     });
 
@@ -227,12 +163,13 @@ exports.cancelWithdrawal = async (req, res) => {
     }
 
     await withdrawal.update({
-      withdrawalStatusId: 3,
+      withdrawalStatusId: 4,
+      message,
     });
 
     res.json({
       data: {
-        message: 'Canceled withdrawal successfully',
+        message: 'Declined withdrawal',
       },
     });
   } catch (err) {

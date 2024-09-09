@@ -15,6 +15,12 @@ module.exports = function (sequelize, Sequelize) {
     memo: {
       type: Sequelize.STRING,
     },
+    hash: {
+      type: Sequelize.STRING,
+    },
+    message: {
+      type: Sequelize.STRING,
+    },
   }, {
     paranoid: false,
   });
