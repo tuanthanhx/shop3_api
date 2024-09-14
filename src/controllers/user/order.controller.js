@@ -100,7 +100,7 @@ exports.index = async (req, res) => {
       distinct: true,
       limit: limitPerPage,
       offset,
-      attributes: ['id', 'uniqueId', 'totalAmount', 'createdAt', 'updatedAt'],
+      attributes: ['id', 'uniqueId', 'totalAmount', 'isWithdrawn', 'createdAt', 'updatedAt'],
       include: [
         {
           model: db.shop,

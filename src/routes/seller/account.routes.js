@@ -10,5 +10,8 @@ module.exports = (app) => {
   router.post('/connect_wallet/ton', rules.connectTonWallet, accounts.connectTonWallet);
   router.post('/disconnect_wallet', rules.disconnectWallet, accounts.disconnectWallet);
 
+  router.post('/profile', rules.updateProfile, accounts.updateProfile);
+  router.post('/change_password', rules.changePassword, accounts.changePassword);
+
   app.use(`/api-seller/${apiVersion}/account`, router);
 };
