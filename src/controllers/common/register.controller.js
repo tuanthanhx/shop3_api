@@ -13,6 +13,7 @@ exports.registerByEmail = async (req, res) => {
       password,
       verificationCode,
       userGroupId,
+      referrerId,
     } = req.body;
 
     const verifyOtpResult = await checkOtp(email, verificationCode);
@@ -36,6 +37,13 @@ exports.registerByEmail = async (req, res) => {
       userGroupId: userGroupId || 2,
     };
 
+    if (referrerId !== undefined) {
+      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
+      if (referrer) {
+        object.referrerId = referrerId;
+      }
+    }
+
     const createdUser = await User.create(object);
     await walletService.createWallet(createdUser.id, 1);
     await auth.loginByEmail(req, res);
@@ -54,6 +62,7 @@ exports.registerByPhone = async (req, res) => {
       password,
       verificationCode,
       userGroupId,
+      referrerId,
     } = req.body;
 
     const verifyOtpResult = await checkOtp(phone, verificationCode);
@@ -76,6 +85,13 @@ exports.registerByPhone = async (req, res) => {
       password,
       userGroupId: userGroupId || 2,
     };
+
+    if (referrerId !== undefined) {
+      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
+      if (referrer) {
+        object.referrerId = referrerId;
+      }
+    }
 
     const createdUser = await User.create(object);
     await walletService.createWallet(createdUser.id, 1);

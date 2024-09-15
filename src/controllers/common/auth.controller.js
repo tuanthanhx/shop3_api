@@ -269,6 +269,7 @@ exports.loginByWallet = async (req, res) => {
       signature,
       message,
       userGroupId,
+      referrerId,
     } = req.body;
     const signerAddress = ethers.verifyMessage(message, signature);
 
@@ -279,12 +280,21 @@ exports.loginByWallet = async (req, res) => {
 
     const tmpPassword = generateRandomNumber(6);
 
+    const object = {
+      password: tmpPassword,
+      userGroupId: userGroupId || 1,
+    };
+
+    if (referrerId !== undefined) {
+      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
+      if (referrer) {
+        object.referrerId = referrerId;
+      }
+    }
+
     const [user, createdUser] = await db.user.findOrCreate({
       where: { walletAddress: address },
-      defaults: {
-        password: tmpPassword,
-        userGroupId: userGroupId || 1,
-      },
+      defaults: object,
     });
 
     if (createdUser) {
@@ -349,7 +359,7 @@ exports.generateTonPayload = async (req, res) => {
 
 exports.loginByTonWallet = async (req, res) => {
   try {
-    const { payload, userGroupId } = req.body;
+    const { payload, userGroupId, referrerId } = req.body;
 
     const isValid = await verifyTonProof(payload);
 
@@ -371,14 +381,24 @@ exports.loginByTonWallet = async (req, res) => {
     // const accessToken = await createAuthToken({ address: body.address, network: body.network });
 
     const { address } = payload;
+
     const tmpPassword = generateRandomNumber(6);
+
+    const object = {
+      password: tmpPassword,
+      userGroupId: userGroupId || 1,
+    };
+
+    if (referrerId !== undefined) {
+      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
+      if (referrer) {
+        object.referrerId = referrerId;
+      }
+    }
 
     const [user, createdUser] = await db.user.findOrCreate({
       where: { walletAddress: address },
-      defaults: {
-        password: tmpPassword,
-        userGroupId: userGroupId || 1,
-      },
+      defaults: object,
     });
 
     if (createdUser) {
