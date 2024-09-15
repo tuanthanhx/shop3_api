@@ -71,6 +71,14 @@ exports.findMe = [];
 
 exports.statistics = [];
 
+exports.getReferrals = [
+  query('referrerId')
+    .notEmpty()
+    .withMessage('referrerId is required')
+    .trim(),
+  validateRules,
+];
+
 exports.getLoginHistory = [
   query('type')
     .optional()

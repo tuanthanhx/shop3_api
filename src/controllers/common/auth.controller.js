@@ -112,6 +112,40 @@ exports.statistics = async (req, res) => {
   }
 };
 
+exports.getReferrals = async (req, res) => {
+  try {
+    const { referrerId } = req.query;
+    const user = await db.user.findOne({
+      where: {
+        uuid: referrerId,
+      },
+    });
+    if (!user) {
+      res.status(404).send({
+        message: 'Referrer not found',
+      });
+      return;
+    }
+
+    const refferals = await db.user.findAll({
+      where: {
+        referrerId,
+      },
+      order: [['id', 'asc']],
+      attributes: ['id', 'uuid', 'name', 'email', 'phone', 'walletAddress', 'createdAt', 'referrerId'],
+    });
+
+    res.json({
+      data: refferals,
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.getLoginHistory = async (req, res) => {
   try {
     const { id } = req.user;
