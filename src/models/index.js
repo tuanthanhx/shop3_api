@@ -2,12 +2,10 @@ const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
-const dbConfigs = require('../config/config');
+const dbConfigs = require('../config/config.json');
 
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = dbConfigs[env];
-
-console.log(dbConfig);
 
 const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
   host: dbConfig.host,
