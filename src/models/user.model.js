@@ -59,6 +59,9 @@ module.exports = function (sequelize, Sequelize) {
     walletAddress: {
       type: Sequelize.STRING,
     },
+    referrerId: {
+      type: Sequelize.STRING,
+    },
   }, {
     paranoid: false,
     defaultScope: {

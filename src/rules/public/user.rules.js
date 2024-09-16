@@ -8,3 +8,12 @@ exports.getStatistics = [
     .trim(),
   validateRules,
 ];
+
+exports.getReferrals = [
+  query('referrerId')
+    .notEmpty()
+    .withMessage('referrerId is required')
+    .trim()
+    .escape(),
+  validateRules,
+];

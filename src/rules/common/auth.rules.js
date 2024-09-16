@@ -46,6 +46,10 @@ exports.loginByWallet = [
       }
       return true;
     }),
+  body('referrerId')
+    .optional()
+    .trim()
+    .escape(),
   validateRules,
 ];
 
@@ -62,6 +66,10 @@ exports.loginByTonWallet = [
       }
       return true;
     }),
+  body('referrerId')
+    .optional()
+    .trim()
+    .escape(),
   validateRules,
 ];
 
@@ -70,14 +78,6 @@ exports.isLogin = [];
 exports.findMe = [];
 
 exports.statistics = [];
-
-exports.getReferrals = [
-  query('referrerId')
-    .notEmpty()
-    .withMessage('referrerId is required')
-    .trim(),
-  validateRules,
-];
 
 exports.getLoginHistory = [
   query('type')

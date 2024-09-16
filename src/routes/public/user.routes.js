@@ -7,6 +7,7 @@ module.exports = (app) => {
   const apiVersion = process.env.VERSION || 'v1';
 
   router.get('/statistics', rules.getStatistics, users.getStatistics);
+  router.get('/referrals', rules.getReferrals, users.getReferrals);
 
   app.use(`/api-public/${apiVersion}/users`, router);
 };

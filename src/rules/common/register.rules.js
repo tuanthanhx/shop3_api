@@ -33,6 +33,10 @@ exports.registerByEmail = [
   body('verificationCode')
     .notEmpty()
     .withMessage('verificationCode is required'),
+  body('referrerId')
+    .optional()
+    .trim()
+    .escape(),
   validateRules,
 ];
 
@@ -67,5 +71,9 @@ exports.registerByPhone = [
   body('verificationCode')
     .notEmpty()
     .withMessage('verificationCode is required'),
+  body('referrerId')
+    .optional()
+    .trim()
+    .escape(),
   validateRules,
 ];

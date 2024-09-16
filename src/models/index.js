@@ -35,9 +35,6 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-db.user.belongsTo(db.user, { as: 'referrer', foreignKey: 'referrerId', targetKey: 'uuid' });
-db.user.hasMany(db.user, { as: 'referrals', foreignKey: 'referrerId', sourceKey: 'uuid' });
-
 db.user.belongsTo(db.language, { foreignKey: 'languageId' });
 db.user.belongsTo(db.currency, { foreignKey: 'currencyId' });
 db.user.belongsTo(db.country, { foreignKey: 'countryCode' });

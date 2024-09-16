@@ -35,14 +35,8 @@ exports.registerByEmail = async (req, res) => {
       email,
       password,
       userGroupId: userGroupId || 2,
+      referrerId,
     };
-
-    if (referrerId !== undefined) {
-      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
-      if (referrer) {
-        object.referrerId = referrerId;
-      }
-    }
 
     const createdUser = await User.create(object);
     await walletService.createWallet(createdUser.id, 1);
@@ -84,14 +78,8 @@ exports.registerByPhone = async (req, res) => {
       phone,
       password,
       userGroupId: userGroupId || 2,
+      referrerId,
     };
-
-    if (referrerId !== undefined) {
-      const referrer = await db.user.findOne({ where: { uuid: referrerId } });
-      if (referrer) {
-        object.referrerId = referrerId;
-      }
-    }
 
     const createdUser = await User.create(object);
     await walletService.createWallet(createdUser.id, 1);
