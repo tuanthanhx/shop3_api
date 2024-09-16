@@ -13,6 +13,7 @@ exports.authenticateToken = (req, res, next) => {
     '/docs',
     '/api-docs',
     '/api-common',
+    '/api-public',
     `/api-user/${apiVersion}/nowpayments/ipn_callback`,
     `/api-user/${apiVersion}/coingate/ipn_callback`,
     `/api-user/${apiVersion}/blockonomics/ipn_callback`,
