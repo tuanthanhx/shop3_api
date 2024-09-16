@@ -8,7 +8,8 @@
     "start": "cross-env NODE_ENV=production node server.js",
     "lint": "npx eslint server.js src/**/*.js --fix",
     "migrate": "cd src && npx sequelize-cli db:migrate",
-    "seed": "cd src && npx sequelize-cli db:seed:all",
+    "seed:dev": "cd src && npx sequelize-cli db:seed:all --env=development",
+    "seed:prod": "cd src && npx sequelize-cli db:seed:all --env=production",
     "sync:test": "cross-env NODE_ENV=test node ./test/setup/jest.sync.js",
     "seed:test": "cd src && npx sequelize-cli db:seed:all --env=test",
     "test": "cross-env NODE_ENV=test PORT=3100 jest --detectOpenHandles"

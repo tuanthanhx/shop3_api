@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bodyParserErrorHandler = require('express-body-parser-error-handler');
 const helmet = require('helmet');
-const https = require('https');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -18,11 +17,6 @@ require('dotenv').config();
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
 const baseUrl = env === 'production' ? process.env.APP_URL_PROD : process.env.APP_URL_DEV;
-
-const sslOptions = {
-  key: env === 'production' ? fs.readFileSync(process.env.SSL_KEY_FILE ?? '') : null,
-  cert: env === 'production' ? fs.readFileSync(process.env.SSL_CERT_FILE ?? '') : null,
-};
 
 let corsOptions = {};
 if (env === 'production' && process.env.ALLOWED_ORIGINS) {
@@ -129,9 +123,7 @@ const startServer = () => new Promise((resolve) => {
     }
     resolve(server);
   };
-  const server = env === 'production' && process.env.SSL_ENABLED === 'true'
-    ? https.createServer(sslOptions, app).listen(port, () => listenCallback(server))
-    : app.listen(port, () => listenCallback(server));
+  const server = app.listen(port, () => listenCallback(server));
 });
 
 const closeServer = (server) => new Promise((resolve, reject) => {
