@@ -1,5 +1,5 @@
 {
-  "name": "shop3_server",
+  "name": "shop3_api",
   "version": "1.0.0",
   "description": "Shop3 API",
   "private": true,
