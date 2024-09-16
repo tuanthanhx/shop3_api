@@ -26,9 +26,9 @@
     }
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "shop3db_prod",
+    "username": "shop3",
+    "password": "ZBe0Bff1Bbp3",
+    "database": "shop3_prod",
     "host": "127.0.0.1",
     "dialect": "mariadb",
     "pool": {
