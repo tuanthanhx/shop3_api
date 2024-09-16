@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const swaggerUi = require('swagger-ui-express');
 const logger = require('./src/utils/logger');
 const morganMiddleware = require('./src/middlewares/morgan');
 const { authenticateToken } = require('./src/middlewares/authenticate_token');
@@ -16,7 +15,6 @@ require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
-const baseUrl = env === 'production' ? process.env.APP_URL_PROD : process.env.APP_URL_DEV;
 
 let corsOptions = {};
 if (env === 'production' && process.env.ALLOWED_ORIGINS) {
@@ -38,51 +36,6 @@ app.use(bodyParserErrorHandler());
 app.use(authenticateToken);
 app.use([handleQueries, validateRules]);
 
-const customCssPath = path.join(__dirname, 'docs/theme.css');
-let customCss = '';
-try {
-  customCss = fs.readFileSync(customCssPath, 'utf8');
-} catch (err) {
-  console.error('Error reading custom CSS file:', err);
-}
-
-const options = {
-  explorer: true,
-  customCss,
-  swaggerOptions: {
-    validatorUrl: null,
-    urls: [
-      {
-        url: `${baseUrl}/docs/api_common.yaml`,
-        name: 'Common',
-      },
-      {
-        url: `${baseUrl}/docs/api_admin.yaml`,
-        name: 'Administrator',
-      },
-      {
-        url: `${baseUrl}/docs/api_seller.yaml`,
-        name: 'Seller',
-      },
-      {
-        url: `${baseUrl}/docs/api_external.yaml`,
-        name: 'External',
-      },
-      {
-        url: `${baseUrl}/docs/api_user.yaml`,
-        name: 'User',
-      },
-      {
-        url: `${baseUrl}/docs/api_public.yaml`,
-        name: 'Public',
-      },
-    ],
-  },
-};
-
-app.use('/docs', express.static(path.join(__dirname, 'docs')));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
-
 db.sequelize.sync()
   .then(() => {
     if (env !== 'test') {
@@ -97,6 +50,7 @@ app.get('/', (req, res) => {
   res.json({
     message: process.env.TITLE,
     version: process.env.VERSION,
+    env,
   });
 });
 

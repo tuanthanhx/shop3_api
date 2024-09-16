@@ -78,8 +78,8 @@ exports.create = async (req, res) => {
       return;
     }
 
-    const bucketName = process.env.S3_BUCKET_NAME || '';
-    const region = process.env.AWS_REGION;
+    const bucketName = process.env.AWS_S3_BUCKET || '';
+    const region = process.env.AWS_S3_REGION;
 
     const createdFile = await db.file.create({
       file: uploadedFiles[0],
