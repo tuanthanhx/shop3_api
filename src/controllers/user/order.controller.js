@@ -283,7 +283,7 @@ exports.show = async (req, res) => {
 
     const order = await db.order.findOne({
       where: condition,
-      attributes: ['id', 'uniqueId', 'totalAmount'],
+      attributes: ['id', 'uniqueId', 'totalAmount', 'isWithdrawn'],
       include: [
         {
           model: db.shop,
@@ -631,13 +631,13 @@ exports.create = async (req, res) => {
     }
 
     await Promise.all([...orderCreationPromises]);
-    await db.cart.destroy({
-      where: {
-        id: cartIds,
-        userId,
-      },
-      transaction,
-    });
+    // await db.cart.destroy({
+    //   where: {
+    //     id: cartIds,
+    //     userId,
+    //   },
+    //   transaction,
+    // });
 
     await transaction.commit();
 
@@ -1194,6 +1194,12 @@ exports.getLogisticTrack = async (req, res) => {
 exports.createLogistic = async (req, res) => {
   try {
     const { id: orderId } = req.params;
+    const {
+      packageLength,
+      packageWidth,
+      packageHeight,
+      packageWeight,
+    } = req.body;
 
     const { user } = req;
     const userId = user.id;
@@ -1224,6 +1230,18 @@ exports.createLogistic = async (req, res) => {
       where: {
         id: orderId,
       },
+      include: [
+        {
+          model: db.order_item,
+          as: 'orderItems',
+          include: [
+            {
+              model: db.product,
+              as: 'product',
+            },
+          ],
+        },
+      ],
     });
 
     if (!order) {
@@ -1239,8 +1257,71 @@ exports.createLogistic = async (req, res) => {
       },
     });
 
+    const itemParams = order.orderItems.map((item) => {
+      const productVariant = tryParseJSON(item.productVariant);
+      return {
+        itemParam: {
+          englishName: `${item.product.name} (VID_${productVariant.refId})`,
+          itemId: `${item.product.uniqueId}_${productVariant.refId}`, // ProductUniqueId_VariantId
+          quantity: item.quantity,
+          unitPrice: item.price,
+          unitPriceCurrency: 'USD',
+          sku: productVariant.sku ?? `VID_${productVariant.refId}`,
+          clearanceShipVat: '0',
+          clearanceUnitPrice: 0,
+          clearanceShipUnitPrice: 0,
+          taxCurrency: 'USD',
+          taxRate: 0,
+          clearanceVat: '0',
+        },
+      };
+    });
+
+    const logisticData = {
+      // outOrderId: `SHOP3_TEST_ORDER_${order.uniqueId}`,
+      outOrderId: `SHOP3_TEST_ORDER_${Date.now()}`,
+      solutionParam: {
+        solutionCode: 'CN_GLO_STD',
+        importCustomsParam: {
+          taxNumber: 'P210001518521',
+        },
+      },
+      packageParams: {
+        packageParam: {
+          length: packageLength, // cm
+          width: packageWidth, // cm
+          height: packageHeight, // cm
+          weight: packageWeight, // grams
+          itemParams,
+        },
+      },
+      senderParam: {
+        name: shop.shopName,
+        mobilePhone: shop.phone,
+        email: shop.email,
+        zipCode: warehouse.zipCode,
+        countryCode: warehouse.countryCode,
+        state: warehouse.state,
+        city: warehouse.city,
+        district: warehouse.district,
+        street: warehouse.street,
+        detailAddress: warehouse.address,
+      },
+      receiverParam: {
+        name: `${shipping.firstName} ${shipping.lastName}`,
+        mobilePhone: shipping.phone,
+        countryCode: shipping.countryCode,
+        state: shipping.state,
+        city: shipping.city,
+        detailAddress: `${shipping.address} ${shipping.street}`,
+        zipCode: shipping.zipCode,
+      },
+      syncGetTrackingNumber: true,
+    };
+
     res.json({
       data: 'test ok',
+      logisticData,
       debug: {
         orderId,
         order,
