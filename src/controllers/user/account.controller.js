@@ -404,7 +404,7 @@ exports.getAddresses = async (req, res) => {
       where: {
         userId,
       },
-      attributes: ['id', 'firstName', 'lastName', 'phone', 'zipCode', 'state', 'city', 'district', 'address', 'isDefault'],
+      attributes: ['id', 'firstName', 'lastName', 'phone', 'zipCode', 'state', 'city', 'district', 'street', 'address', 'isDefault'],
       include: [
         {
           model: db.country,
@@ -438,6 +438,7 @@ exports.createAddress = async (req, res) => {
       state,
       city,
       district,
+      street,
       address,
       isDefault,
     } = req.body;
@@ -452,9 +453,23 @@ exports.createAddress = async (req, res) => {
       state,
       city,
       district,
+      street,
       address,
       isDefault,
     };
+
+    const country = await db.country.findOne({
+      where: {
+        code: countryCode,
+      },
+    });
+
+    if (!country) {
+      res.status(400).send({
+        message: 'countryCode is not valid',
+      });
+      return;
+    }
 
     const createdAddress = await db.user_address.create(object);
 
@@ -499,6 +514,7 @@ exports.updateAddress = async (req, res) => {
       state,
       city,
       district,
+      street,
       address,
       isDefault,
     } = req.body;
@@ -517,6 +533,19 @@ exports.updateAddress = async (req, res) => {
       return;
     }
 
+    const country = await db.country.findOne({
+      where: {
+        code: countryCode,
+      },
+    });
+
+    if (!country) {
+      res.status(400).send({
+        message: 'countryCode is not valid',
+      });
+      return;
+    }
+
     const object = {
       firstName,
       lastName,
@@ -526,6 +555,7 @@ exports.updateAddress = async (req, res) => {
       state,
       city,
       district,
+      street,
       address,
       isDefault,
     };

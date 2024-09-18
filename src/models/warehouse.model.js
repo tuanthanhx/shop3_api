@@ -24,6 +24,9 @@ module.exports = function (sequelize, Sequelize) {
     district: {
       type: Sequelize.STRING,
     },
+    street: {
+      type: Sequelize.STRING,
+    },
     address: {
       type: Sequelize.STRING,
       allowNull: false,

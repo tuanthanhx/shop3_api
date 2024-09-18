@@ -492,7 +492,7 @@ exports.create = async (req, res) => {
 
     if (!logisticsProviderOption) {
       res.status(404).json({
-        error: 'Logistics provider not found 2',
+        error: 'Logistics provider not found',
       });
       return;
     }
@@ -502,7 +502,7 @@ exports.create = async (req, res) => {
         userId,
         id: userAddressId,
       },
-      attributes: ['firstName', 'lastName', 'phone', 'countryCode', 'address'],
+      attributes: ['firstName', 'lastName', 'phone', 'countryCode', 'zipCode', 'state', 'city', 'district', 'street', 'address'],
     });
 
     if (!userAddress) {
@@ -605,12 +605,17 @@ exports.create = async (req, res) => {
         orderId: createdOrder.id,
         logisticsServiceName: logisticsProviderOption.logisticsService?.name,
         logisticsProviderName: logisticsProviderOption.logisticsProvider?.name,
-        fee: 0, // TODO: Dummy
+        fee: 0, // TODO: Dummy, estimate fee later
         status: 1,
         firstName: userAddress.firstName,
         lastName: userAddress.lastName,
         phone: userAddress.phone,
         countryCode: userAddress.countryCode,
+        zipCode: userAddress.zipCode,
+        state: userAddress.state,
+        city: userAddress.city,
+        district: userAddress.district,
+        street: userAddress.street,
         address: userAddress.address,
       }, { transaction });
 
