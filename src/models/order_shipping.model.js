@@ -12,6 +12,21 @@ module.exports = function (sequelize, Sequelize) {
     countryCode: {
       type: Sequelize.STRING(2),
     },
+    zipCode: {
+      type: Sequelize.STRING,
+    },
+    state: {
+      type: Sequelize.STRING,
+    },
+    city: {
+      type: Sequelize.STRING,
+    },
+    district: {
+      type: Sequelize.STRING,
+    },
+    street: {
+      type: Sequelize.STRING,
+    },
     address: {
       type: Sequelize.STRING,
       allowNull: false,

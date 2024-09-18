@@ -1234,15 +1234,18 @@ exports.createLogistic = async (req, res) => {
     }
 
     const shipping = await db.order_shipping.findOne({
-      orderId,
+      where: {
+        orderId,
+      },
     });
 
     res.json({
       data: 'test ok',
       debug: {
+        orderId,
+        order,
         shop,
         warehouse,
-        order,
         shipping,
       },
     });
