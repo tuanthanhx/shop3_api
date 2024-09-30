@@ -1169,7 +1169,7 @@ exports.createTracking = async (req, res) => {
   }
 };
 
-exports.getLogisticDetail = async (req, res) => {
+exports.getLogisticsDetail = async (req, res) => {
   try {
     const { id: orderId } = req.params;
 
@@ -1246,11 +1246,14 @@ exports.getLogisticDetail = async (req, res) => {
     }
 
     res.json({
-      data: response.data,
-      debug: {
-        bizData: tryParseJSON(contentString),
-        shipping,
+      data: {
+        ...response.data,
+        logisticsObject,
       },
+      // debug: {
+      //   bizData: tryParseJSON(contentString),
+      //   shipping,
+      // },
     });
   } catch (err) {
     logger.error(err);
@@ -1260,7 +1263,7 @@ exports.getLogisticDetail = async (req, res) => {
   }
 };
 
-exports.getLogisticTrack = async (req, res) => {
+exports.getLogisticsTrack = async (req, res) => {
   try {
     res.json({
       data: 'test ok',
@@ -1273,7 +1276,7 @@ exports.getLogisticTrack = async (req, res) => {
   }
 };
 
-exports.createLogistic = async (req, res) => {
+exports.createLogistics = async (req, res) => {
   try {
     const { id: orderId } = req.params;
     const {
@@ -1339,7 +1342,12 @@ exports.createLogistic = async (req, res) => {
       },
     });
 
-    // TODO: Check if it has logistic record already, then don't repeat
+    if (shipping.logisticsTrackingCode) {
+      res.status(400).send({
+        message: `The logistics order existed: ${shipping.logisticsTrackingCode}`,
+      });
+      return;
+    }
 
     // Check sender / receiver countries
 
@@ -1377,14 +1385,14 @@ exports.createLogistic = async (req, res) => {
 
     if (!allowedCountries.some((country) => country.code?.toLowerCase() === warehouse.countryCode?.toLowerCase())) {
       res.status(400).send({
-        message: 'Sender\'s country is not supported by the logistic service',
+        message: 'The sender\'s country is not supported by the logistics service. Supported countries are Malaysia, Cambodia, China, Hong Kong, Singapore, Thailand, and Vietnam.',
       });
       return;
     }
 
     if (!allowedCountries.some((country) => country.code?.toLowerCase() === shipping.countryCode?.toLowerCase())) {
       res.status(400).send({
-        message: 'Receiver\'s country is not supported by the logistic service',
+        message: 'Receiver\'s country is not supported by the logistics service. Supported countries are Malaysia, Cambodia, China, Hong Kong, Singapore, Thailand, and Vietnam.',
       });
       return;
     }
@@ -1539,13 +1547,19 @@ exports.createLogistic = async (req, res) => {
       return;
     }
 
-    // TODO: check some conditions
-    await shipping.update({
-      logisticsServiceName: 'Standard',
-      logisticsProviderName: 'BEST',
-      logisticsTrackingCode: response?.data.txLogisticId,
-      logisticsObject: response?.data,
-    });
+    if (response.data?.result) {
+      await shipping.update({
+        logisticsServiceName: 'Standard',
+        logisticsProviderName: 'BEST',
+        logisticsTrackingCode: response?.data.txLogisticId,
+        logisticsObject: response?.data,
+      });
+      await db.order_tracking.create({
+        orderId,
+        userId,
+        message: `The seller has created a shipment with BEST logistics, #${response?.data.txLogisticId}`,
+      });
+    }
 
     res.json({
       data: response.data,
@@ -1566,7 +1580,7 @@ exports.createLogistic = async (req, res) => {
   }
 };
 
-exports.updateLogistic = async (req, res) => {
+exports.updateLogistics = async (req, res) => {
   try {
     res.json({
       data: 'test ok',
@@ -1579,10 +1593,102 @@ exports.updateLogistic = async (req, res) => {
   }
 };
 
-exports.cancelLogistic = async (req, res) => {
+exports.cancelLogistics = async (req, res) => {
   try {
+    const { id: orderId } = req.params;
+
+    const { user } = req;
+    const userId = user.id;
+
+    const order = await db.order.findOne({
+      where: {
+        id: orderId,
+      },
+      // include: [
+      //   {
+      //     model: db.order_item,
+      //     as: 'orderItems',
+      //     include: [
+      //       {
+      //         model: db.product,
+      //         as: 'product',
+      //       },
+      //     ],
+      //   },
+      // ],
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const shipping = await db.order_shipping.findOne({
+      where: {
+        orderId,
+      },
+    });
+
+    if (!shipping.logisticsTrackingCode) {
+      res.status(404).send({
+        message: 'Logistic tracking code not found',
+      });
+      return;
+    }
+
+    // const logisticsObject = tryParseJSON(shipping.logisticsObject);
+
+    const content = {
+      txLogisticId: shipping.logisticsTrackingCode,
+      reason: 'CANCELLED BY SHOP3',
+    };
+    const contentString = JSON.stringify(content);
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+
+    const data = {
+      serviceType: 'KD_CANCEL_ORDER_NOTIFY',
+      bizData: contentString,
+      sign: signature,
+      partnerID: process.env.BEST_PARTNER_ID,
+      partnerKey: process.env.BEST_PARTNER_KEY,
+    };
+
+    const response = await axios.post(process.env.BEST_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
+    if (response.data?.result) {
+      await shipping.update({
+        logisticsTrackingCode: null,
+        logisticsObject: null,
+      });
+      await db.order_tracking.create({
+        orderId,
+        userId,
+        message: `The shipment #${shipping.logisticsTrackingCode} has been canceled.`,
+      });
+    }
+
     res.json({
-      data: 'test ok',
+      data: {
+        ...response.data,
+        // logisticsObject,
+      },
+      // debug: {
+      //   bizData: tryParseJSON(contentString),
+      //   shipping,
+      // },
     });
   } catch (err) {
     logger.error(err);

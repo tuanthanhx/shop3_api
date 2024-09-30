@@ -15,11 +15,11 @@ module.exports = (app) => {
   router.post('/:id/withdraw', rules.withdraw, orders.withdraw);
 
   // TODO: Update rules later
-  router.get('/:id/logistic', orders.getLogisticDetail);
-  router.get('/:id/logistic/track', orders.getLogisticTrack);
-  router.post('/:id/logistic', orders.createLogistic);
-  router.put('/:id/logistic', orders.updateLogistic);
-  router.post('/:id/logistic/cancel', orders.cancelLogistic);
+  router.get('/:id/logistics', orders.getLogisticsDetail);
+  router.get('/:id/logistics/track', orders.getLogisticsTrack);
+  router.post('/:id/logistics', orders.createLogistics);
+  router.put('/:id/logistics', orders.updateLogistics);
+  router.post('/:id/logistics/cancel', orders.cancelLogistics);
 
   app.use(`/api-seller/${apiVersion}/orders`, router);
 };
