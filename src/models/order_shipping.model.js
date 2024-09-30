@@ -40,6 +40,9 @@ module.exports = function (sequelize, Sequelize) {
     logisticsTrackingCode: {
       type: Sequelize.STRING,
     },
+    logisticsObject: {
+      type: Sequelize.JSON,
+    },
     fee: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,

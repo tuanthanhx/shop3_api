@@ -53,6 +53,7 @@ npx sequelize-cli db:migrate --to 20240916000001-remove_referrer_id_constant.js 
 npx sequelize-cli db:migrate --to 20240918000001-add_columns_to_warehouse.js --env production
 npx sequelize-cli db:migrate --to 20240918000002-add_columns_to_user_address.js --env production
 npx sequelize-cli db:migrate --to 20240918000003-add_columns_to_order_shipping.js --env production
+npx sequelize-cli db:migrate --to 20240930000010-add_columns_to_order_shipping.js --env production
 
 ===========
 

@@ -5,6 +5,24 @@ const logger = require('../../utils/logger');
 const logisticService = require('../../services/logistic');
 // const db = require('../../models');
 
+exports.getSignature = async (req, res) => {
+  try {
+    const { bizData } = req.body;
+    const signature = logisticService.generateSignature(bizData, process.env.BEST_PARTNER_KEY, 'best');
+
+    res.status(200).json({
+      data: {
+        signature,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.estimateFee = async (req, res) => {
   try {
     // const { content } = req.body; // TODO: Pass Shop3 order detail to here
@@ -77,7 +95,7 @@ exports.estimateFee = async (req, res) => {
       data: response.data,
       debug: { // TODO: Remove debug later
         signature,
-        contentString,
+        contentString: JSON.parse(contentString),
       },
     });
   } catch (err) {

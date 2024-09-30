@@ -6,6 +6,8 @@ module.exports = (app) => {
   require('dotenv').config();
   const apiVersion = process.env.VERSION || 'v1';
 
+  router.post('/signature', controller.getSignature); // TODO: FOR TESTING
+
   router.post('/estimate', controller.estimateFee);
   router.post('/orders', controller.createOrder);
   router.post('/orders/pdf', controller.createOrderPdf);

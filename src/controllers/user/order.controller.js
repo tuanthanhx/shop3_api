@@ -1,5 +1,9 @@
+const axios = require('axios');
+const qs = require('qs');
+
 const shopService = require('../../services/shop');
 const walletService = require('../../services/wallet');
+const logisticService = require('../../services/logistic');
 const { generateUniqueId, tryParseJSON, toHex } = require('../../utils/utils');
 const logger = require('../../utils/logger');
 const db = require('../../models');
@@ -1167,8 +1171,86 @@ exports.createTracking = async (req, res) => {
 
 exports.getLogisticDetail = async (req, res) => {
   try {
+    const { id: orderId } = req.params;
+
+    const order = await db.order.findOne({
+      where: {
+        id: orderId,
+      },
+      // include: [
+      //   {
+      //     model: db.order_item,
+      //     as: 'orderItems',
+      //     include: [
+      //       {
+      //         model: db.product,
+      //         as: 'product',
+      //       },
+      //     ],
+      //   },
+      // ],
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const shipping = await db.order_shipping.findOne({
+      where: {
+        orderId,
+      },
+    });
+
+    if (!shipping.logisticsTrackingCode) {
+      res.status(404).send({
+        message: 'Logistic tracking code not found',
+      });
+      return;
+    }
+
+    const logisticsObject = tryParseJSON(shipping.logisticsObject);
+
+    const content = {
+      langType: 'zh-CN',
+      mailNos: {
+        mailNo: [
+          logisticsObject.mailNo,
+        ],
+      },
+    };
+    const contentString = JSON.stringify(content);
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+
+    const data = {
+      serviceType: 'KD_TRACE_QUERY',
+      bizData: contentString,
+      sign: signature,
+      partnerID: process.env.BEST_PARTNER_ID,
+      partnerKey: process.env.BEST_PARTNER_KEY,
+    };
+
+    const response = await axios.post(process.env.BEST_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
     res.json({
-      data: 'test ok',
+      data: response.data,
+      debug: {
+        bizData: tryParseJSON(contentString),
+        shipping,
+      },
     });
   } catch (err) {
     logger.error(err);
@@ -1195,9 +1277,9 @@ exports.createLogistic = async (req, res) => {
   try {
     const { id: orderId } = req.params;
     const {
-      packageLength,
-      packageWidth,
-      packageHeight,
+      // packageLength, // TODO: WILL USE LATER, NO NEED FOR BEST
+      // packageWidth, // TODO: WILL USE LATER, NO NEED FOR BEST
+      // packageHeight, // TODO: WILL USE LATER, NO NEED FOR BEST
       packageWeight,
     } = req.body;
 
@@ -1257,6 +1339,57 @@ exports.createLogistic = async (req, res) => {
       },
     });
 
+    // TODO: Check if it has logistic record already, then don't repeat
+
+    // Check sender / receiver countries
+
+    // A list from BEST Inc.
+    const allowedCountries = [
+      {
+        code: 'my',
+        codeId: '01',
+      },
+      {
+        code: 'kh',
+        codeId: '02',
+      },
+      {
+        code: 'cn',
+        codeId: '03',
+      },
+      {
+        code: 'hk',
+        codeId: '04',
+      },
+      {
+        code: 'sg',
+        codeId: '05',
+      },
+      {
+        code: 'th',
+        codeId: '06',
+      },
+      {
+        code: 'vn',
+        codeId: '07',
+      },
+    ];
+
+    if (!allowedCountries.some((country) => country.code?.toLowerCase() === warehouse.countryCode?.toLowerCase())) {
+      res.status(400).send({
+        message: 'Sender\'s country is not supported by the logistic service',
+      });
+      return;
+    }
+
+    if (!allowedCountries.some((country) => country.code?.toLowerCase() === shipping.countryCode?.toLowerCase())) {
+      res.status(400).send({
+        message: 'Receiver\'s country is not supported by the logistic service',
+      });
+      return;
+    }
+
+    /* CODE FOR CAINIAO
     const itemParams = order.orderItems.map((item) => {
       const productVariant = tryParseJSON(item.productVariant);
       return {
@@ -1319,10 +1452,105 @@ exports.createLogistic = async (req, res) => {
       syncGetTrackingNumber: true,
     };
 
+    */
+
+    /* CODE FOR BEST INC */
+
+    const getCountryCodeId = (countryCode) => {
+      const country = allowedCountries.find((c) => c.code?.toLowerCase() === countryCode?.toLowerCase());
+      return country ? country.codeId : null;
+    };
+
+    const items = order.orderItems.reduce((acc, item, index) => {
+      const productVariant = tryParseJSON(item.productVariant);
+      acc[`item${index + 1}`] = {
+        itemName: `${item.product.name} (VID_${productVariant.refId})`,
+      };
+      return acc;
+    }, {});
+
+    const content = {
+      customerName: 'SHOP3',
+      txLogisticId: `SHOP3_TEST_ORDER_${Date.now()}`,
+      serviceType: '1',
+      goodsValue: order.totalAmount,
+      insuranceValue: '0',
+      itemsValue: order.totalAmount,
+      itemsWeight: packageWeight / 1000,
+      piece: '1',
+      remark: '',
+      special: '0',
+      certificateType: '01',
+      certificateNo: '1769900274531',
+      sender: {
+        name: shop.shopName,
+        mobile: shop.phone || '0399999999',
+        postCode: warehouse.zipCode,
+        prov: warehouse.state,
+        city: warehouse.city,
+        county: warehouse.district,
+        address: `${warehouse.address} ${warehouse.street}`,
+        country: getCountryCodeId(warehouse.countryCode),
+      },
+      receiver: {
+        name: `${shipping.firstName} ${shipping.lastName}`,
+        mobile: shipping.phone,
+        postCode: shipping.zipCode,
+        prov: shipping.state,
+        city: shipping.city,
+        county: shipping.district,
+        address: `${shipping.address} ${shipping.street}`,
+        country: getCountryCodeId(shipping.countryCode),
+      },
+      items,
+    };
+
+    const contentString = JSON.stringify(content);
+
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+
+    const data = {
+      // serviceType: 'KD_ORDER_FEE',
+      serviceType: 'KD_CREATE_WAYBILL_ORDER_NOTIFY',
+      bizData: contentString,
+      sign: signature,
+      partnerID: process.env.BEST_PARTNER_ID,
+      partnerKey: process.env.BEST_PARTNER_KEY,
+    };
+
+    const response = await axios.post(process.env.BEST_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
+    if (!response.data?.result) {
+      const { errorCode, errorDescription } = response.data;
+      res.status(400).send({
+        message: `${errorCode} - ${errorDescription}`,
+      });
+      return;
+    }
+
+    // TODO: check some conditions
+    await shipping.update({
+      logisticsServiceName: 'Standard',
+      logisticsProviderName: 'BEST',
+      logisticsTrackingCode: response?.data.txLogisticId,
+      logisticsObject: response?.data,
+    });
+
     res.json({
-      data: 'test ok',
-      logisticData,
+      data: response.data,
       debug: {
+        bizData: JSON.parse(contentString),
         orderId,
         order,
         shop,
