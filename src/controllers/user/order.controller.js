@@ -1169,6 +1169,8 @@ exports.createTracking = async (req, res) => {
   }
 };
 
+/* LOGISTICS */
+
 exports.getLogisticsDetail = async (req, res) => {
   try {
     const { id: orderId } = req.params;
@@ -1245,15 +1247,35 @@ exports.getLogisticsDetail = async (req, res) => {
       return;
     }
 
+    const responseData = response.data;
+
+    if (responseData.traceLogs && responseData.traceLogs?.length === 0) {
+      responseData.traceLogsExample = [{
+        packageStatusCode: 'sign_in_success',
+        statusCodeDesc: 'sign in success',
+        scanTime: '2019-11-17 08:00:41',
+        currentCity: 'Kandal',
+        remark: 'Kandal【autoTestSite1】【, autoTestSite1/3652154879】pick up',
+      },
+      {
+        packageStatusCode: 'send_from_station',
+        statusCodeDesc: 'send from station',
+        scanTime: '2019-11-17 08:00:42',
+        currentCity: 'Kandal',
+        nextCity: 'Kandal',
+        remark: 'Kandal【autoTestSite1】,on the way to【autoCenter1】',
+      }];
+    }
+
     res.json({
       data: {
-        ...response.data,
+        responseData,
         logisticsObject,
       },
-      // debug: {
-      //   bizData: tryParseJSON(contentString),
-      //   shipping,
-      // },
+      debug: {
+        bizData: tryParseJSON(contentString),
+        shipping,
+      },
     });
   } catch (err) {
     logger.error(err);
@@ -1342,9 +1364,11 @@ exports.createLogistics = async (req, res) => {
       },
     });
 
-    if (shipping.logisticsTrackingCode) {
+    const { logisticsTrackingCode } = shipping;
+
+    if (logisticsTrackingCode) {
       res.status(400).send({
-        message: `The logistics order existed: ${shipping.logisticsTrackingCode}`,
+        message: `The logistics order existed: ${logisticsTrackingCode}`,
       });
       return;
     }
@@ -1631,7 +1655,9 @@ exports.cancelLogistics = async (req, res) => {
       },
     });
 
-    if (!shipping.logisticsTrackingCode) {
+    const { logisticsTrackingCode } = shipping;
+
+    if (!logisticsTrackingCode) {
       res.status(404).send({
         message: 'Logistic tracking code not found',
       });
@@ -1641,7 +1667,7 @@ exports.cancelLogistics = async (req, res) => {
     // const logisticsObject = tryParseJSON(shipping.logisticsObject);
 
     const content = {
-      txLogisticId: shipping.logisticsTrackingCode,
+      txLogisticId: logisticsTrackingCode,
       reason: 'CANCELLED BY SHOP3',
     };
     const contentString = JSON.stringify(content);
@@ -1676,7 +1702,7 @@ exports.cancelLogistics = async (req, res) => {
       await db.order_tracking.create({
         orderId,
         userId,
-        message: `The shipment #${shipping.logisticsTrackingCode} has been canceled.`,
+        message: `The shipment #${logisticsTrackingCode} has been canceled.`,
       });
     }
 
