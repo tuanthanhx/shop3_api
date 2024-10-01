@@ -1298,6 +1298,103 @@ exports.getLogisticsTrack = async (req, res) => {
   }
 };
 
+exports.createLogisticsTrack = async (req, res) => {
+  try {
+    const { id: orderId } = req.params;
+
+    const {
+      packageStatusCode,
+      statusCodeDesc,
+      currentCity,
+      remark,
+      weight,
+    } = req.body;
+
+    const order = await db.order.findOne({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).send({
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    const shipping = await db.order_shipping.findOne({
+      where: {
+        orderId,
+      },
+    });
+
+    if (!shipping.logisticsTrackingCode) {
+      res.status(404).send({
+        message: 'Logistic tracking code not found',
+      });
+      return;
+    }
+
+    const newDate = () => new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    const logisticsObject = tryParseJSON(shipping.logisticsObject);
+
+    const content = {
+      txLogisticId: logisticsObject.txLogisticId,
+      mailNo: logisticsObject.mailNo,
+      operateTime: newDate(),
+      pushTime: newDate(),
+      packageStatusCode,
+      statusCodeDesc,
+      currentCity,
+      remark,
+      weight,
+    };
+    const contentString = JSON.stringify(content);
+    const signature = logisticService.generateSignature(contentString, process.env.BEST_PARTNER_KEY, 'best');
+
+    const data = {
+      serviceType: 'KD_ORDER_STATUS_PUSH',
+      bizData: contentString,
+      sign: signature,
+      partnerID: process.env.BEST_PARTNER_ID,
+      partnerKey: process.env.BEST_PARTNER_KEY,
+    };
+
+    const response = await axios.post(process.env.BEST_API_URL, qs.stringify(data), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    if (!response) {
+      res.status(400).send({
+        message: 'Error while calling 3rd-parties API',
+      });
+      return;
+    }
+
+    const responseData = response.data;
+
+    res.json({
+      data: {
+        responseData,
+        logisticsObject,
+      },
+      debug: {
+        bizData: tryParseJSON(contentString),
+        shipping,
+      },
+    });
+  } catch (err) {
+    logger.error(err);
+    res.status(500).send({
+      message: err.message || 'Some error occurred',
+    });
+  }
+};
+
 exports.createLogistics = async (req, res) => {
   try {
     const { id: orderId } = req.params;
@@ -1628,18 +1725,6 @@ exports.cancelLogistics = async (req, res) => {
       where: {
         id: orderId,
       },
-      // include: [
-      //   {
-      //     model: db.order_item,
-      //     as: 'orderItems',
-      //     include: [
-      //       {
-      //         model: db.product,
-      //         as: 'product',
-      //       },
-      //     ],
-      //   },
-      // ],
     });
 
     if (!order) {

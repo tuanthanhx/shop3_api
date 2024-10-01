@@ -17,6 +17,7 @@ module.exports = (app) => {
   // TODO: Update rules later
   router.get('/:id/logistics', orders.getLogisticsDetail);
   router.get('/:id/logistics/track', orders.getLogisticsTrack);
+  router.post('/:id/logistics/track', orders.createLogisticsTrack);
   router.post('/:id/logistics', orders.createLogistics);
   router.put('/:id/logistics', orders.updateLogistics);
   router.post('/:id/logistics/cancel', orders.cancelLogistics);
